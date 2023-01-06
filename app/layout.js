@@ -1,8 +1,14 @@
+import './globals.css';
+import NavBar from '../components/NavBar.jsx';
+
 export default function RootLayout({ children }) {
   return (
     <html>
       <head />
-      <body>{children}</body>
+      <body>
+        <NavBar />
+        {children}
+        </body>
     </html>
   )
 }
