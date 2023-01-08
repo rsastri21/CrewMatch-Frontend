@@ -1,6 +1,7 @@
 export const revalidate = 10;
 
 import CandidateCard from "../components/CandidateCard";
+import ProductionCard from "../components/ProductionCard";
 
 export default function Page() {
     return (
@@ -13,12 +14,13 @@ export default function Page() {
                         A new way to manage the crews of LUX Productions.
                     </p>
                     <hr className="h-px mt-8 mx-auto bg-gray-800 border-0 w-2/3 items-center"></hr>
-                    <p className="px-8 py-8 text-4xl text-center text-gray-800">
-                        View glanceable information below or login to get started. 
+                    <p className="px-8 py-8 text-3xl text-center text-gray-800">
+                        View glanceable information here or login to get started. 
                     </p>
                 </div>
-                <div className="w-1/2 h-min min-w-half mx-auto">
+                <div className="w-1/2 h-min min-w-half mx-auto flex justify-start">
                     <CandidateCard />
+                    <ProductionCard />
                 </div>
         </div>
     );

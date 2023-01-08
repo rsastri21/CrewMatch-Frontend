@@ -35,7 +35,7 @@ export default async function CandidateCard() {
     const [count, assigned, acting] = await Promise.all([countData, assignedData, actingData]);
     
     return (
-        <div className="box-border w-72 h-80 bg-white rounded-2xl shadow-md">
+        <div className="box-border w-72 h-80 ml-auto mr-4 bg-white rounded-2xl shadow-md">
             {/* Top bar label */}
             <div className="bg-white h-16 w-full rounded-t-2xl drop-shadow-md flex justify-between">
                 <h1 className="px-3 py-4 font-md text-2xl">Candidates</h1>
