@@ -10,6 +10,12 @@ module.exports = {
       width: {
         '128': '32rem',
         '104': '28rem',
+      },
+      height: {
+        '128': '32rem'
+      },
+      spacing: {
+        '128': '32rem'
       }
     },
   },
