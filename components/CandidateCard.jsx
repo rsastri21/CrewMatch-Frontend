@@ -2,7 +2,7 @@ async function getCandidateCount() {
     
     let candidateCount = 0;
 
-    const res = await fetch('http://localhost:8080/api/candidate/getCount', { next: { revalidate: 10 } })
+    const res = await fetch('http://localhost:8080/api/candidate/getCount', { cache: "no-store" })
                         .then(response => response.text())
                         .then(result => {
                                     candidateCount = parseInt(result);
@@ -16,7 +16,7 @@ async function getPercent(path) {
     
     let percent = 0.0;
 
-    const res = await fetch(`http://localhost:8080/api/candidate/get/percent${path}`,  { next: {revalidate: 10 } })
+    const res = await fetch(`http://localhost:8080/api/candidate/get/percent${path}`,  { cache: "no-store" })
                             .then(response => response.text())
                             .then(result => {
                                 percent = parseFloat(result);
