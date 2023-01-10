@@ -46,10 +46,11 @@ export default async function ProductionCard() {
                             rounded-lg text-slate-50 shadow-md">{count}</h1>
             </div>
             <div className="box-border p-2 w-full min-h-4 h-auto bg-white rounded-b-2xl flex flex-col items-left">
-             {productions.map(production => (
-                <h3 key={production.name} className="px-4 py-2 text-md">
-                    <span className="italic font-medium">{production.name}</span>, directed by {production.director}
-                </h3>
+             {count === 0 ? <h1 className="px-3 py-4 font-md text-lg">No productions created.</h1> :
+                productions.map(production => (
+                    <h3 key={production.name} className="px-4 py-2 text-md">
+                        <span className="italic font-medium">{production.name}</span>, directed by {production.director}
+                    </h3>
              ))}
             </div>
         </div>

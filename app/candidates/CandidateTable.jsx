@@ -22,7 +22,7 @@ export default function CandidateTable() {
     const renderTable = () => {
         if (candidates.length === 0) {
             return (
-                <h1 className="px-3 py-4 font-md text-lg">No candidates enrolled.</h1>
+                <h1 className="px-3 py-4 text-lg">No candidates enrolled.</h1>
             );
         } else {
             return (
@@ -48,8 +48,7 @@ export default function CandidateTable() {
                                     </span>
                                 </td>
                                 <td className="py-2 px-2 border border-slate-300 flex flex-auto justify-center">
-                                    <FaUserEdit size={24} className="ml-2 mr-1 hover:cursor-pointer hover:shadow-md"/>
-                                    <TiDelete size={24} className="mr-2 ml-1 hover:cursor-pointer hover:shadow-md"/>
+                                    <FaUserEdit size={24} className="mx-auto hover:cursor-pointer hover:shadow-md"/>
                                 </td>
                             </tr>
                         ))}
@@ -60,13 +59,13 @@ export default function CandidateTable() {
     }
     
     return (
-        <div className="box-border w-full h-min bg-white rounded-2xl shadow-md">
+        <section className="box-border w-full h-min bg-white rounded-2xl shadow-md">
             <div className="bg-white h-16 w-full rounded-t-2xl drop-shadow-md flex">
-                <h1 className="px-3 py-4 font-md text-2xl">Enrolled</h1>
+                <h1 className="px-3 py-4 font-medium text-2xl">Enrolled</h1>
             </div>
             <div className="box-border p-2 w-full min-h-4 max-h-128 rounded-b-2xl overflow-y-scroll">
                 {renderTable()}
             </div>
-        </div>
+        </section>
     );
 }
