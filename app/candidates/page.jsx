@@ -58,26 +58,19 @@ function HeaderForm({ showHeaderForm, toggle }) {
                     "Third Choice in Role", "Production Preference", "Acting Interest",
                     "Production to Audition For"];
 
-    const [currHeaders, setCurrHeaders] = useState([]);
     const [formData, setFormData] = useState([]);
 
-    const listObjs = [];
 
     useEffect(() => {
         const getHeaders = async () => {
             const res = await fetch('http://localhost:8080/api/headers/get');
             const data = await res.json();
 
-            setCurrHeaders(data.csvHeaders);
             setFormData(data.csvHeaders);
         }
 
         getHeaders().catch(console.error);
     }, [showHeaderForm]);
-
-    for (let i = 0; i < currHeaders.length; i++) {
-        listObjs[i] = { name: Headers[i], header: currHeaders[i] };
-    }
 
     function updateFormData(e, index) {
         const tempList = [...formData];
@@ -98,7 +91,7 @@ function HeaderForm({ showHeaderForm, toggle }) {
                         <h1 className="px-3 py-4 font-medium text-2xl">View and Update the Current CSV Headers</h1>
                     </div>
                     
-                        <section className="box-border p-4 w-full h-auto max-h-256 overflow-y-scroll rounded-b-2xl flex flex-col">
+                        <section className="box-border p-4 w-full h-auto max-h-[80vh] overflow-y-scroll rounded-b-2xl flex flex-col">
                             <p className="p-2 text-lg text-gray-900 bg-slate-100 rounded-lg">The form below contains the required CSV headers for  
                                 <span className="font-medium"> Crew Match</span>. Please ensure each field is filled
                                 before submitting the form.
