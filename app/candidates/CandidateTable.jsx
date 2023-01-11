@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { FaUserEdit } from "react-icons/fa";
 import { TiDelete } from "react-icons/ti";
 
@@ -8,7 +8,7 @@ export default function CandidateTable() {
     
     const [candidates, setCandidates] = useState([]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const get = async () => {
             const res = await fetch('http://localhost:8080/api/candidate/get');
             const data = await res.json();
@@ -39,10 +39,10 @@ export default function CandidateTable() {
                     <tbody>
                         {candidates.map(candidate => (
                             <tr key={candidate.id}>
-                                <td className="text-left py-2 px-2 border border-slate-300">{candidate.name}</td>
-                                <td className="text-center py-2 px-2 border border-slate-300">{candidate.pronouns}</td>
-                                <td className="text-center py-2 px-2 border border-slate-300">{candidate.email}</td>
-                                <td className="text-center py-2 px-2 border border-slate-300">
+                                <td key={"name-" + candidate.id} className="text-left py-2 px-2 border border-slate-300">{candidate.name}</td>
+                                <td key={"pro-" + candidate.id} className="text-center py-2 px-2 border border-slate-300">{candidate.pronouns}</td>
+                                <td key={"email-" + candidate.id} className="text-center py-2 px-2 border border-slate-300">{candidate.email}</td>
+                                <td key= {"a-" + candidate.id} className="text-center py-2 px-2 border border-slate-300">
                                     <span className={`text-slate-100 bg-gradient-to-r ${candidate.actingInterest ? 'from-violet-500 to-purple-500' : (candidate.assigned ? 'from-green-500 to-emerald-500' : 'from-red-500 to-rose-500')} px-2 py-1 rounded-lg`}>
                                         {candidate.actingInterest ? "acting" : (candidate.assigned ? "yes" : "no")}
                                     </span>

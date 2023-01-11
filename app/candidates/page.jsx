@@ -1,11 +1,15 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CandidateTable from "./CandidateTable.jsx";
 
 export default function Candidate() {
     
     const [showHeaderForm, setShowHeaderForm] = useState(false);
+
+    const toggleForm = () => {
+        setShowHeaderForm(!showHeaderForm);
+    }
     
     return (
         <div className="bg-gradient-to-r from-cyan-200 to-teal-200 flex flex-col min-h-screen h-auto w-screen pb-16">
@@ -20,14 +24,14 @@ export default function Candidate() {
             </div>
             <div className="w-1/2 max-w-3xl min-w-min h-min py-4 my-8 mx-auto flex flex-col space-y-12">
                 <CandidateTable />
-                <HeadersUI />
-                <HeaderForm />
+                <HeadersUI toggle={toggleForm} />
+                <HeaderForm showHeaderForm={showHeaderForm} toggle={toggleForm} />
             </div>
         </div>
     );
 }
 
-function HeadersUI() {
+function HeadersUI({ toggle }) {
     return (
         <section className="box-border w-full h-min bg-white rounded-2xl shadow-md">
             <div className="bg-white h-16 w-full rounded-t-2xl drop-shadow-md flex">
@@ -38,7 +42,7 @@ function HeadersUI() {
                     <span className="font-medium">Crew Match</span> needs to know what the headers of the CSV file are. This helps correctly store candidates
                     so they can be effectively matched later. Click below to get started.
                 </p>
-                <button className="p-4 w-64 font-medium text-xl text-gray-100 bg-slate-600 rounded-lg shadow-md hover:shadow-lg hover:bg-slate-500 active:bg-slate-700">
+                <button onClick={toggle} className="p-4 w-64 font-medium text-xl text-gray-100 bg-slate-600 rounded-lg shadow-md hover:shadow-lg hover:bg-slate-500 active:bg-slate-700">
                     Update CSV Headers
                 </button>
             </div>
@@ -46,7 +50,7 @@ function HeadersUI() {
     ); 
 }
 
-function HeaderForm() {
+function HeaderForm({ showHeaderForm, toggle }) {
     
     const Headers = ["Name", "Pronouns", "Email Address", "Timestamp", "Years in LUX", "Quarters in LUX",
                     "First Choice in Production", "Second Choice in Production", 
@@ -55,6 +59,8 @@ function HeaderForm() {
                     "Production to Audition For"];
 
     const [currHeaders, setCurrHeaders] = useState([]);
+    const [formData, setFormData] = useState([]);
+
     const listObjs = [];
 
     useEffect(() => {
@@ -63,38 +69,62 @@ function HeaderForm() {
             const data = await res.json();
 
             setCurrHeaders(data.csvHeaders);
+            setFormData(data.csvHeaders);
         }
 
         getHeaders().catch(console.error);
-    }, []);
+    }, [showHeaderForm]);
 
     for (let i = 0; i < currHeaders.length; i++) {
-        listObjs[i] = { name: Headers[i], header: currHeaders[i] }; 
+        listObjs[i] = { name: Headers[i], header: currHeaders[i] };
+    }
+
+    function updateFormData(e, index) {
+        const tempList = [...formData];
+        tempList[index] = e.target.value;
+        setFormData([...tempList]);
+    }
+
+    const submitForm = e => {
+        e.preventDefault();
+        console.log(formData);
     }
     
     return (
-        /* Dim screen div */
-        <div className="fixed bottom-0 left-0 right-0 z-10 w-screen h-screen p-4 bg-gray-700 bg-opacity-50">
-            <section className="mx-auto box-border w-1/2 h-min bg-white rounded-2xl shadow-md">
-                <div className="bg-white z-50 h-fit w-full rounded-t-2xl drop-shadow-md flex">
-                    <h1 className="px-3 py-4 font-medium text-2xl">View and Update the Current CSV Headers</h1>
-                </div>
+        showHeaderForm && 
+            <div className="fixed bottom-0 left-0 right-0 z-10 w-screen h-screen p-4 bg-gray-700 bg-opacity-50">
+                <section className="mx-auto box-border w-1/2 h-min bg-white rounded-2xl shadow-md">
+                    <div className="bg-white z-50 h-fit w-full rounded-t-2xl drop-shadow-md flex">
+                        <h1 className="px-3 py-4 font-medium text-2xl">View and Update the Current CSV Headers</h1>
+                    </div>
+                    
+                        <section className="box-border p-4 w-full h-auto max-h-256 overflow-y-scroll rounded-b-2xl flex flex-col">
+                            <p className="p-2 text-lg text-gray-900 bg-slate-100 rounded-lg">The form below contains the required CSV headers for  
+                                <span className="font-medium"> Crew Match</span>. Please ensure each field is filled
+                                before submitting the form.
+                            </p>
+                            <form className="py-2 my-4 border rounded-lg grid grid-cols-2 grid-rows-15 gap-y-4">
+                                {formData.map((form, index) => (
+                                    <React.Fragment key={index}><label key={index} className="px-3 py-4 mx-4 w-half font-medium text-lg text-right">
+                                        {Headers[index]}
+                                    </label><input key={"input-" + index} className="py-4 px-3 w-[90%] rounded-lg bg-slate-200 text-gray-700" type="text" name={Headers[index]} value={form} onChange={e => updateFormData(e, index)} required /></React.Fragment>
+                                ))}
+                            </form>
+                            <footer className="flex justify-end p-4 space-x-4">
+                                <button onClick={submitForm} className="p-4 w-42 font-medium text-lg text-gray-100 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg shadow-md 
+                                                    hover:shadow-lg hover:bg-gradient-to-r hover:from-green-600 hover:to-emerald-600 
+                                                    active:bg-gradient-to-r active:from-green-700 active:to-emerald-700">
+                                    Save Changes
+                                </button>
+                                <button onClick={toggle} className="p-4 w-32 font-medium text-lg text-gray-100 bg-gradient-to-r from-red-500 to-rose-500 rounded-lg shadow-md 
+                                                    hover:shadow-lg hover:bg-gradient-to-r hover:from-red-600 hover:to-rose-600 
+                                                    active:bg-gradient-to-r active:from-red-700 active:to-rose-700">
+                                    Cancel
+                                </button>
+                            </footer>
+                        </section>
+                </section>
                 
-                    <section className="box-border p-4 w-full h-auto max-h-256 overflow-y-scroll rounded-b-2xl flex flex-col">
-                        <p className="p-2 text-lg text-gray-900 bg-slate-100 rounded-lg">The form below contains the required CSV headers for  
-                            <span className="font-medium"> Crew Match</span>. Please ensure each field is filled
-                            before submitting the form.
-                        </p>
-                        <form className="py-2 my-4 border rounded-lg grid grid-cols-2 grid-rows-15 gap-y-4">
-                            {listObjs.map(listObj => (
-                                <><label className="px-3 py-4 mx-4 w-half font-medium text-lg text-right">
-                                    {listObj.name}
-                                </label><input className="py-4 px-3 w-[90%] rounded-lg bg-slate-300 text-gray-600" type="text" id="name" value={listObj.header} required /></>
-                            ))}
-                        </form>
-                    </section>
-            </section>
-            
-        </div>
+            </div>
     )
 }
