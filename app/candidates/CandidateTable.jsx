@@ -1,12 +1,17 @@
 "use client";
 
-import { useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useEffect, useState } from "react";
 import { FaUserEdit } from "react-icons/fa";
-import { TiDelete } from "react-icons/ti";
+import { AiOutlineUser } from "react-icons/ai";
+import { AiOutlineEdit } from "react-icons/ai";
 
 export default function CandidateTable() {
     
     const [candidates, setCandidates] = useState([]);
+    const [candidateIndex, setCandidateIndex] = useState(0);
+    const [indexEdit, setIndexEdit] = useState(0);
+    const [modal, setModal] = useState(false);
+    const [edit, setEdit] = useState(false);
 
     useLayoutEffect(() => {
         const get = async () => {
@@ -17,7 +22,25 @@ export default function CandidateTable() {
         }
 
         get().catch(console.error);
-    }, []);
+    }, [edit]);
+
+    const handleNameClick = (e, index) => {
+        setCandidateIndex(index);
+        toggle();
+    }
+
+    const toggle = () => {
+        setModal(!modal);
+    }
+
+    const handleEditClick = (event, index) => {
+        setIndexEdit(index);
+        toggleEdit();
+    }
+
+    const toggleEdit = () => {
+        setEdit(!edit);
+    }
 
     const renderTable = () => {
         if (candidates.length === 0) {
@@ -37,9 +60,11 @@ export default function CandidateTable() {
                         </tr>
                     </thead>
                     <tbody>
-                        {candidates.map(candidate => (
+                        {candidates.map((candidate, index) => (
                             <tr key={candidate.id}>
-                                <td key={"name-" + candidate.id} className="text-left py-2 px-2 border border-slate-300">{candidate.name}</td>
+                                <td key={"name-" + candidate.id} className="text-left border border-slate-300">
+                                    <button onClick={(event) => handleNameClick(event, index)} className="p-2 w-full rounded-md hover:shadow-md hover:cursor-pointer active:bg-slate-100">{candidate.name}</button>
+                                </td>
                                 <td key={"pro-" + candidate.id} className="text-center py-2 px-2 border border-slate-300">{candidate.pronouns}</td>
                                 <td key={"email-" + candidate.id} className="text-center py-2 px-2 border border-slate-300">{candidate.email}</td>
                                 <td key= {"a-" + candidate.id} className="text-center py-2 px-2 border border-slate-300">
@@ -48,7 +73,7 @@ export default function CandidateTable() {
                                     </span>
                                 </td>
                                 <td className="py-2 px-2 border border-slate-300 justify-center">
-                                    <FaUserEdit size={24} className="mx-auto hover:cursor-pointer hover:drop-shadow-lg"/>
+                                    <button onClick={(event) => handleEditClick(event, index)} className="w-full h-full"><FaUserEdit size={24} className="mx-auto hover:cursor-pointer hover:drop-shadow-lg"/></button>
                                 </td>
                             </tr>
                         ))}
@@ -60,6 +85,8 @@ export default function CandidateTable() {
     
     return (
         <section className="box-border w-full h-min bg-white rounded-2xl shadow-md">
+            <CandidateModal candidate={candidates[candidateIndex]} visible={modal} toggleModal={toggle}/>
+            <EditCandidate candidate={candidates[indexEdit]} visible={edit} toggleVisible={toggleEdit}/>
             <div className="bg-white h-16 w-full rounded-t-2xl drop-shadow-md flex">
                 <h1 className="px-3 py-4 font-medium text-2xl">Enrolled</h1>
             </div>
@@ -67,5 +94,217 @@ export default function CandidateTable() {
                 {renderTable()}
             </div>
         </section>
+    );
+}
+
+function CandidateModal({ candidate, visible, toggleModal }) {
+    
+    const handleEscPress = (event) => {
+        if (visible && event.key === 'Escape') {
+            toggleModal();
+        }
+    };
+
+    useEffect(() => {
+        // Event listener
+        document.addEventListener('keydown', handleEscPress);
+
+        // Remove event listener
+        return () => {
+            document.removeEventListener('keydown', handleEscPress);
+        };
+    }, [visible]);
+
+    return (
+        visible &&
+        <div className="fixed bottom-0 left-0 right-0 z-10 w-screen h-screen p-4 bg-gray-700 bg-opacity-50 flex flex-col justify-center">
+            <section className="mx-auto box-border w-fit min-w-fit h-min bg-white rounded-2xl shadow-md">
+                <div className={`px-4 bg-gradient-to-r ${candidate.actingInterest ? 'from-violet-300 to-purple-300' : (candidate.assigned ? 'from-green-300 to-emerald-300' : 'from-red-300 to-rose-300')} z-50 h-fit w-full rounded-t-2xl drop-shadow-md flex justify-center`}>
+                    <AiOutlineUser className="w-9 h-9 ml-2 mr-1 my-3" /> 
+                    <h1 className="px-3 py-4 font-medium text-2xl">{candidate.name} {candidate.pronouns !== null ? (candidate.pronouns.length !== 0 ?`(${candidate.pronouns})`: "") : ""} </h1>
+                </div>
+                <section className={`box-border p-2 w-full h-fit bg-gradient-to-r ${candidate.actingInterest ? 'from-violet-200 to-purple-200' : (candidate.assigned ? 'from-green-200 to-emerald-200' : 'from-red-200 to-rose-200')} rounded-b-2xl flex flex-col items-center`}>
+                    <div className="w-full h-full box-border p-2 columns-sm">
+                        <div className="text-center py-2 px-2">
+                            <span className={`px-4 py-8 text-slate-100 text-lg shadow-md bg-gradient-to-r ${candidate.actingInterest ? 'from-violet-500 to-purple-500' : (candidate.assigned ? 'from-green-500 to-emerald-500' : 'from-red-500 to-rose-500')} px-2 py-1 rounded-lg`}>
+                                {candidate.actingInterest ? "acting" : (candidate.assigned ? "assigned" : "not assigned")}
+                            </span>
+                        </div>
+                        <div className="mx-auto my-2 w-full shadow-sm border border-slate-400 bg-slate-50 bg-opacity-75 rounded-lg flex justify-between">
+                            <label className="px-3 py-2 font-medium text-lg">Contact:</label>
+                            <h2 className="px-3 py-2 font-normal text-lg">{candidate.email}</h2>
+                        </div>
+                        <div className="mx-auto my-4 w-full shadow-sm border border-slate-400 bg-slate-50 bg-opacity-75 rounded-lg flex justify-between">
+                            <label className="px-3 py-2 font-medium text-lg">Quarters in LUX:</label>
+                            <h2 className="px-3 py-2 font-normal text-lg">{candidate.quartersInLux}</h2>
+                        </div>
+                        <div className="mx-auto my-4 w-full shadow-sm border border-slate-400 bg-slate-50 bg-opacity-75 rounded-lg flex justify-between">
+                            <label className="px-3 py-2 font-medium text-lg">Years at UW:</label>
+                            <h2 className="px-3 py-2 font-normal text-lg">{candidate.yearsInUW}</h2>
+                        </div>
+                        {!candidate.actingInterest && candidate.productions.length !== 0 ?
+                            <div className="mx-auto my-4 py-2 w-full shadow-sm border border-slate-400 bg-slate-50 bg-opacity-75 rounded-lg">
+                                <label className="px-3 py-2 font-medium text-lg">Productions:</label>
+                                <ol className="list-decimal list-inside text-left w-full ml-4 mr-auto">
+                                    {candidate.productions.map((production, index) => (
+                                        <li key={'pl' + candidate.id + index} className="px-3 py-1 font-normal text-lg">
+                                            {production}
+                                        </li>
+                                    ))}
+                                </ol>
+                            </div>
+                        : null}
+                        {candidate.roles.length !== 0 ? 
+                            <div className="mx-auto my-4 py-2 w-full shadow-sm border border-slate-400 bg-slate-50 bg-opacity-75 rounded-lg">
+                                <label className="px-3 py-2 font-medium text-lg">Roles:</label>
+                                <ol className="list-decimal list-inside text-left w-full ml-4 mr-auto">
+                                    {candidate.roles.map((role, index) => (
+                                        <li key={'rl' + candidate.id + index} className="px-3 py-1 font-normal text-lg">
+                                            {role}
+                                        </li>
+                                    ))}
+                                </ol>
+                            </div>
+                        : null}
+                        {candidate.actingInterest && 
+                            <div className="mx-auto my-4 py-2 w-full shadow-sm border border-slate-400 bg-slate-50 bg-opacity-75 rounded-lg">
+                                <label className="px-3 py-2 font-medium text-lg">Wants to Audition for:</label>
+                                <ol className="list-decimal list-inside text-left w-full ml-4 mr-auto">
+                                    {candidate.productions.map(production => (
+                                        <li className="px-3 py-1 font-normal text-lg">
+                                            {production}
+                                        </li>
+                                    ))}
+                                </ol>
+                            </div>
+                        }
+                        <div className="w-full flex justify-center">
+                            <button onClick={toggleModal} className="p-2 w-24 font-medium text-center text-lg text-gray-100 bg-gradient-to-r from-red-500 to-rose-500 rounded-lg shadow-md 
+                                                    hover:shadow-lg hover:bg-gradient-to-r hover:from-red-600 hover:to-rose-600 
+                                                    active:bg-gradient-to-r active:from-red-700 active:to-rose-700">
+                                Close
+                            </button>
+                        </div>
+                        
+                    </div>
+                </section>
+            </section>
+        </div>
+    );
+}
+
+function EditCandidate({ candidate, visible, toggleVisible }) {
+    
+    const [formData, setFormData] = useState({});
+    const [loading, setLoading] = useState(false);
+
+    const handleEscPress = (event) => {
+        if (visible && event.key === 'Escape') {
+            toggleVisible();
+        }
+    };
+
+    useLayoutEffect(() => {
+        setFormData({...candidate});
+    }, [visible]);
+
+    useEffect(() => {
+        // Event listener
+        document.addEventListener('keydown', handleEscPress);
+
+        // Remove event listener
+        return () => {
+            document.removeEventListener('keydown', handleEscPress);
+        };
+    }, [visible]);
+
+    function updatePronouns(e) {
+        const tempObj = {...formData};
+        tempObj.pronouns = e.target.value;
+        setFormData(tempObj);
+    }
+
+    function updateContact(e) {
+        const tempObj = {...formData};
+        tempObj.email = e.target.value;
+        setFormData(tempObj);
+    }
+
+    function updateQuarters(e) {
+        const tempObj = {...formData};
+        tempObj.quartersInLux = e.target.value;
+        setFormData(tempObj);
+    }
+
+    function updateYears(e) {
+        const tempObj = {...formData};
+        tempObj.yearsInUW = e.target.value;
+        setFormData(tempObj);
+    }
+
+    const submitForm = e => {
+        setLoading(true);
+        e.preventDefault();
+
+        const requestOptions = {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({...formData})
+        }
+        fetch(`http://localhost:8080/api/candidate/update/${formData.id}`, requestOptions)
+            .then((res) => res.json())
+            .catch((err) => {
+                console.error(err);
+            })
+            .finally(() => {
+                setLoading(false);
+                toggleVisible();
+            });
+
+    }
+    
+    return (
+        visible && 
+        <div className="fixed bottom-0 left-0 right-0 z-10 w-screen h-screen p-4 bg-gray-700 bg-opacity-50 flex flex-col justify-center">
+            <section className="mx-auto box-border w-fit min-w-fit h-min bg-white rounded-2xl shadow-md">
+                <div className={`px-4 bg-gradient-to-r ${candidate.actingInterest ? 'from-violet-300 to-purple-300' : (candidate.assigned ? 'from-green-300 to-emerald-300' : 'from-red-300 to-rose-300')} z-50 h-fit w-full rounded-t-2xl drop-shadow-md flex justify-center`}>
+                    <AiOutlineEdit className="w-9 h-9 ml-2 mr-1 my-3" /> 
+                    <h1 className="px-3 py-4 font-medium text-2xl">Editing {candidate.name}</h1>
+                </div>
+                <section className={`box-border p-2 w-full h-fit bg-gradient-to-r ${candidate.actingInterest ? 'from-violet-200 to-purple-200' : (candidate.assigned ? 'from-green-200 to-emerald-200' : 'from-red-200 to-rose-200')} rounded-b-2xl flex flex-col items-center`}>
+                    <form onSubmit={submitForm} className="w-full h-full box-border p-2 columns-sm">
+                        <div className="mx-auto my-4 w-full shadow-sm border border-slate-400 bg-slate-50 bg-opacity-75 rounded-lg flex justify-between">
+                            <label className="px-3 py-2 font-medium text-lg">Pronouns:</label>
+                            <input className="px-3 py-2 font-normal text-lg rounded-lg" type="text" name="email" value={formData.pronouns} onChange={e => updatePronouns(e)}></input>
+                        </div>
+                        <div className="mx-auto my-4 w-full shadow-sm border border-slate-400 bg-slate-50 bg-opacity-75 rounded-lg flex justify-between">
+                            <label className="px-3 py-2 font-medium text-lg">Contact:</label>
+                            <input className="px-3 py-2 font-normal text-lg rounded-lg" type="text" name="email" value={formData.email} onChange={e => updateContact(e)}></input>
+                        </div>
+                        <div className="mx-auto my-4 w-full shadow-sm border border-slate-400 bg-slate-50 bg-opacity-75 rounded-lg flex justify-between">
+                            <label className="px-3 py-2 font-medium text-lg">Quarters in LUX:</label>
+                            <input className="px-3 py-2 font-normal text-lg rounded-lg" type="text" name="quarters" value={formData.quartersInLux} onChange={e => updateQuarters(e)}></input>
+                        </div>
+                        <div className="mx-auto my-4 w-full shadow-sm border border-slate-400 bg-slate-50 bg-opacity-75 rounded-lg flex justify-between">
+                            <label className="px-3 py-2 font-medium text-lg">Years at UW:</label>
+                            <input className="px-3 py-2 font-normal text-lg rounded-lg" type="text" name="years" value={formData.yearsInUW} onChange={e => updateYears(e)}></input>
+                        </div>
+                        <footer className="flex justify-center p-4 space-x-4">
+                            <button onClick={submitForm} className={`p-3 w-42 font-medium text-lg text-gray-100 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg shadow-md 
+                                                hover:shadow-lg hover:bg-gradient-to-r hover:from-green-600 hover:to-emerald-600 
+                                                active:bg-gradient-to-r active:from-green-700 active:to-emerald-700 ${loading ? "cursor-wait animate-pulse" : ""}`}>
+                                Save Changes
+                            </button>
+                            <button onClick={toggleVisible} className="p-3 w-32 font-medium text-lg text-gray-100 bg-gradient-to-r from-red-500 to-rose-500 rounded-lg shadow-md 
+                                                hover:shadow-lg hover:bg-gradient-to-r hover:from-red-600 hover:to-rose-600 
+                                                active:bg-gradient-to-r active:from-red-700 active:to-rose-700">
+                                Cancel
+                            </button>
+                        </footer>
+                        
+                    </form>
+                </section>
+            </section>
+        </div>
     );
 }
