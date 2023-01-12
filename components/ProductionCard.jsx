@@ -39,7 +39,7 @@ export default async function ProductionCard() {
     const [productions, count] = await Promise.all([productionsData, countData]);
     
     return (
-        <div className="box-border w-96 h-min ml-4 mr-auto bg-white rounded-2xl shadow-md">
+        <div className="box-border w-96 h-min min-w-fit ml-4 mr-auto bg-white rounded-2xl shadow-md">
             <div className="bg-white h-16 w-full rounded-t-2xl drop-shadow-md flex justify-between">
                 <h1 className="px-3 py-4 font-md text-2xl">Productions</h1>
                 <h1 className="fixed top-0 right-0 mr-2 mt-2 py-2 px-4 font-md text-2xl bg-gradient-to-r from-red-600 to-rose-500

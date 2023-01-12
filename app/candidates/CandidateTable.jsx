@@ -29,11 +29,11 @@ export default function CandidateTable() {
                 <table className="table-auto border-separate w-full">
                     <thead>
                         <tr>
-                            <th className="py-2 font-medium border border-slate-400 bg-slate-300 rounded-tl-lg">Name</th>
-                            <th className="py-2 font-medium border border-slate-400 bg-slate-300">Pronouns</th>
-                            <th className="py-2 font-medium border border-slate-400 bg-slate-300">Email</th>
-                            <th className="py-2 font-medium border border-slate-400 bg-slate-300">Assigned</th>
-                            <th className="py-2 font-medium border border-slate-400 bg-slate-300 rounded-tr-lg">Actions</th>
+                            <th className="py-2 px-1 font-medium border border-slate-400 bg-slate-300 rounded-tl-lg">Name</th>
+                            <th className="py-2 px-1 font-medium border border-slate-400 bg-slate-300">Pronouns</th>
+                            <th className="py-2 px-1 font-medium border border-slate-400 bg-slate-300">Email</th>
+                            <th className="py-2 px-1 font-medium border border-slate-400 bg-slate-300">Assigned</th>
+                            <th className="py-2 px-1 font-medium border border-slate-400 bg-slate-300 rounded-tr-lg">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -47,8 +47,8 @@ export default function CandidateTable() {
                                         {candidate.actingInterest ? "acting" : (candidate.assigned ? "yes" : "no")}
                                     </span>
                                 </td>
-                                <td className="py-2 px-2 border border-slate-300 flex flex-auto justify-center">
-                                    <FaUserEdit size={24} className="mx-auto hover:cursor-pointer hover:shadow-md"/>
+                                <td className="py-2 px-2 border border-slate-300 justify-center">
+                                    <FaUserEdit size={24} className="mx-auto hover:cursor-pointer hover:drop-shadow-lg"/>
                                 </td>
                             </tr>
                         ))}

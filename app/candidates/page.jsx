@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import CandidateTable from "./CandidateTable.jsx";
 
 export default function Candidate() {
@@ -59,6 +59,7 @@ function HeaderForm({ showHeaderForm, toggle }) {
                     "Production to Audition For"];
 
     const [formData, setFormData] = useState([]);
+    const [loading, setLoading] = useState(false);
 
 
     useEffect(() => {
@@ -72,6 +73,22 @@ function HeaderForm({ showHeaderForm, toggle }) {
         getHeaders().catch(console.error);
     }, [showHeaderForm]);
 
+    const handleEscPress = (event) => {
+        if (showHeaderForm && event.key === 'Escape') {
+            toggle();
+        }
+    };
+
+    useEffect(() => {
+        // Event listener
+        document.addEventListener('keydown', handleEscPress);
+
+        // Remove event listener
+        return () => {
+            document.removeEventListener('keydown', handleEscPress);
+        };
+    }, [showHeaderForm]);
+
     function updateFormData(e, index) {
         const tempList = [...formData];
         tempList[index] = e.target.value;
@@ -79,14 +96,32 @@ function HeaderForm({ showHeaderForm, toggle }) {
     }
 
     const submitForm = e => {
+        setLoading(true);
         e.preventDefault();
-        console.log(formData);
+
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: "header",
+                                   csvHeaders: [...formData]})
+        }
+        fetch("http://localhost:8080/api/headers/update", requestOptions)
+            .then((res) => res.json())
+            .then((data) => console.log(data))
+            .catch((err) => {
+                console.error(err);
+            })
+            .finally(() => {
+                setLoading(false);
+                toggle();
+            });
+
     }
     
     return (
         showHeaderForm && 
             <div className="fixed bottom-0 left-0 right-0 z-10 w-screen h-screen p-4 bg-gray-700 bg-opacity-50">
-                <section className="mx-auto box-border w-1/2 h-min bg-white rounded-2xl shadow-md">
+                <section className="mx-auto box-border w-1/2 min-w-min h-min bg-white rounded-2xl shadow-md">
                     <div className="bg-white z-50 h-fit w-full rounded-t-2xl drop-shadow-md flex">
                         <h1 className="px-3 py-4 font-medium text-2xl">View and Update the Current CSV Headers</h1>
                     </div>
@@ -96,7 +131,7 @@ function HeaderForm({ showHeaderForm, toggle }) {
                                 <span className="font-medium"> Crew Match</span>. Please ensure each field is filled
                                 before submitting the form.
                             </p>
-                            <form className="py-2 my-4 border rounded-lg grid grid-cols-2 grid-rows-15 gap-y-4">
+                            <form className="py-2 my-4 border border-separate rounded-lg grid grid-cols-2 grid-rows-15 gap-y-4">
                                 {formData.map((form, index) => (
                                     <React.Fragment key={index}><label key={index} className="px-3 py-4 mx-4 w-half font-medium text-lg text-right">
                                         {Headers[index]}
@@ -104,9 +139,9 @@ function HeaderForm({ showHeaderForm, toggle }) {
                                 ))}
                             </form>
                             <footer className="flex justify-end p-4 space-x-4">
-                                <button onClick={submitForm} className="p-4 w-42 font-medium text-lg text-gray-100 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg shadow-md 
+                                <button onClick={submitForm} className={`p-4 w-42 font-medium text-lg text-gray-100 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg shadow-md 
                                                     hover:shadow-lg hover:bg-gradient-to-r hover:from-green-600 hover:to-emerald-600 
-                                                    active:bg-gradient-to-r active:from-green-700 active:to-emerald-700">
+                                                    active:bg-gradient-to-r active:from-green-700 active:to-emerald-700 ${loading ? "cursor-wait animate-pulse" : ""}`}>
                                     Save Changes
                                 </button>
                                 <button onClick={toggle} className="p-4 w-32 font-medium text-lg text-gray-100 bg-gradient-to-r from-red-500 to-rose-500 rounded-lg shadow-md 

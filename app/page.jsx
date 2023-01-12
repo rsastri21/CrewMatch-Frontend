@@ -18,7 +18,7 @@ export default function Page() {
                         View glanceable information here or login to get started. 
                     </p>
                 </div>
-                <div className="w-1/2 h-min min-w-half mx-auto flex justify-start">
+                <div className="w-1/2 h-min min-w-half space-y-8 justify-center mx-auto md:flex md:justify-start md:space-y-0">
                     <CandidateCard />
                     <ProductionCard />
                 </div>
