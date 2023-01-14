@@ -26,6 +26,7 @@ export default function Candidate() {
                 <CandidateTable />
                 <HeadersUI toggle={toggleForm} />
                 <HeaderForm showHeaderForm={showHeaderForm} toggle={toggleForm} />
+                <UploadUI />
             </div>
         </div>
     );
@@ -37,7 +38,7 @@ function HeadersUI({ toggle }) {
             <div className="bg-white h-16 w-full rounded-t-2xl drop-shadow-md flex">
                 <h1 className="px-3 py-4 font-medium text-2xl">Update Headers</h1>
             </div>
-            <div className="box-border p-3 w-full h-64 rounded-b-2xl flex flex-col items-center space-y-12">
+            <div className="box-border p-3 w-full h-64 rounded-b-2xl flex flex-col items-center space-y-10">
                 <p className="p-2 text-lg text-gray-900 bg-slate-100 rounded-lg">
                     <span className="font-medium">Crew Match</span> needs to know what the headers of the CSV file are. This helps correctly store candidates
                     so they can be effectively matched later. Click below to get started.
@@ -155,4 +156,29 @@ function HeaderForm({ showHeaderForm, toggle }) {
                 
             </div>
     )
+}
+
+function UploadUI() {
+    return (
+        <section className="box-border w-full h-min bg-white rounded-2xl shadow-md flex flex-col space-y-1">
+            <div className="bg-white h-16 w-full rounded-t-2xl drop-shadow-md flex">
+                <h1 className="px-3 py-4 font-medium text-2xl">Add Candidates by CSV</h1>
+            </div>
+            <div className="box-border p-3 w-full h-min rounded-b-2xl flex flex-col items-center space-y-6">
+                <p className="p-2 text-lg text-gray-900 bg-slate-100 rounded-lg">
+                    <span className="font-medium">Crew Match</span> allows candidates to be added via a CSV file. Typically, 
+                    this file is the responses to the LUX Role Interest Form from a particular quarter. Select a file from your computer
+                    below.
+                </p>
+                <div className="box-border p-4 bg-white shadow-md rounded-lg w-full h-fit flex flex-col items-start">
+                    <label className="px-2 text-lg font-medium text-gray-900">Upload File</label>
+                    <input className="w-full p-2 text-gray-900 bg-white
+                         rounded-lg cursor-pointer border-2 border-slate-200 focus:outline-none file:bg-slate-600 file:text-gray-100 file:rounded-md
+                         file:p-2 file:font-medium file:border-none file:outline-none hover:file:bg-slate-500
+                          active:file:bg-slate-700 file:cursor-pointer" id="file_input" type="file" accept="text/csv"></input>
+                </div>
+            </div>
+        </section>
+
+    );
 }
