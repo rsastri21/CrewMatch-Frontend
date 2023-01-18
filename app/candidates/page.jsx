@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import CandidateTable from "./CandidateTable.jsx";
 
 export default function Candidate() {
@@ -159,23 +159,94 @@ function HeaderForm({ showHeaderForm, toggle }) {
 }
 
 function UploadUI() {
+    
+    const inputRef = useRef(null);
+    const [file, setFile] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(0);
+
+    function resetInput() {
+        inputRef.current.value = null;
+        setError(0);
+    }
+
+    function handleChange(event) {
+        event.preventDefault;
+        if (event.target.files && event.target.files[0]) {
+            setFile(event.target.files[0]);
+        }
+    }
+
+    function handleUploadClick() {
+
+        setLoading(true);
+
+        if (!file) {
+            return;
+        }
+
+        // Post with Fetch API
+
+        const formData = new FormData();
+        formData.append("file", file, file.name);
+
+        const requestOptions = {
+            method: 'POST',
+            body: formData,
+            redirect: 'follow'
+        }
+
+        fetch("http://localhost:8080/api/candidate/upload", requestOptions)
+            .then((res) => {
+                setError(res.status);
+                res.text();
+                console.log(res.body);
+            })
+            .catch((err) => {
+                console.error(err);
+            })
+            .finally((result) => {
+                setLoading(false);
+            });
+
+        resetInput();
+        if (error === 200) {
+            alert("The file was uploaded successfully. Reload the page to see the updated candidates.");
+        }
+    }
+    
     return (
         <section className="box-border w-full h-min bg-white rounded-2xl shadow-md flex flex-col space-y-1">
             <div className="bg-white h-16 w-full rounded-t-2xl drop-shadow-md flex">
                 <h1 className="px-3 py-4 font-medium text-2xl">Add Candidates by CSV</h1>
             </div>
-            <div className="box-border p-3 w-full h-min rounded-b-2xl flex flex-col items-center space-y-6">
+            <div className="box-border p-4 w-full h-min rounded-b-2xl flex flex-col items-center space-y-6">
                 <p className="p-2 text-lg text-gray-900 bg-slate-100 rounded-lg">
                     <span className="font-medium">Crew Match</span> allows candidates to be added via a CSV file. Typically, 
                     this file is the responses to the LUX Role Interest Form from a particular quarter. Select a file from your computer
                     below.
                 </p>
-                <div className="box-border p-4 bg-white shadow-md rounded-lg w-full h-fit flex flex-col items-start">
-                    <label className="px-2 text-lg font-medium text-gray-900">Upload File</label>
-                    <input className="w-full p-2 text-gray-900 bg-white
-                         rounded-lg cursor-pointer border-2 border-slate-200 focus:outline-none file:bg-slate-600 file:text-gray-100 file:rounded-md
-                         file:p-2 file:font-medium file:border-none file:outline-none hover:file:bg-slate-500
-                          active:file:bg-slate-700 file:cursor-pointer" id="file_input" type="file" accept="text/csv"></input>
+                <form id="csv-upload" className="w-full">
+                    <div className="box-border p-4 bg-white border-2 border-slate-200 rounded-lg w-full h-fit flex flex-col items-start">
+                        <label className="px-2 text-lg font-medium text-gray-900">Upload File</label>
+                        <input className="w-full p-2 text-gray-900 bg-white shadow-md
+                            rounded-lg cursor-pointer focus:outline-none file:bg-slate-600 file:text-gray-100 file:rounded-md
+                            file:p-2 file:font-medium file:border-none file:outline-none hover:file:bg-slate-500
+                            active:file:bg-slate-700 file:cursor-pointer " ref={inputRef} id="file_input" type="file" accept="text/csv" 
+                            onChange={(e) => handleChange(e)} multiple={false}></input>
+                    </div>
+                </form>
+                {(error >= 400) && <label className="font-medium text-lg text-rose-400">There was an error uploading the file.</label> }
+                <div className="w-full flex items-center justify-center space-x-4">
+                    <button onClick={handleUploadClick} className={`p-4 my-4 w-42 font-medium text-xl text-gray-100 bg-slate-600 rounded-lg shadow-md hover:shadow-lg hover:bg-slate-500 active:bg-slate-700
+                                                                ${loading ? "cursor-wait" : ""}`}>
+                        Upload File
+                    </button>
+                    <button onClick={resetInput} className="p-4 w-32 font-medium text-lg text-gray-100 bg-gradient-to-r from-red-500 to-rose-500 rounded-lg shadow-md 
+                                                hover:shadow-lg hover:bg-gradient-to-r hover:from-red-600 hover:to-rose-600 
+                                                active:bg-gradient-to-r active:from-red-700 active:to-rose-700">
+                        Cancel
+                    </button>
                 </div>
             </div>
         </section>
