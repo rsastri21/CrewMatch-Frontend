@@ -62,8 +62,8 @@ export default function CandidateTable() {
                     <tbody>
                         {candidates.map((candidate, index) => (
                             <tr key={candidate.id}>
-                                <td key={"name-" + candidate.id} className="text-left border border-slate-300">
-                                    <button onClick={(event) => handleNameClick(event, index)} className="p-2 w-full rounded-md hover:shadow-md hover:cursor-pointer active:bg-slate-100">{candidate.name}</button>
+                                <td key={"name-" + candidate.id} className="text-left border border-slate-300 transition-all">
+                                    <button onClick={(event) => handleNameClick(event, index)} className="p-2 w-full rounded-md bg-white hover:shadow-md hover:cursor-pointer hover:scale-105 hover:z-50 transition-all active:bg-slate-100">{candidate.name}</button>
                                 </td>
                                 <td key={"pro-" + candidate.id} className="text-center py-2 px-2 border border-slate-300">{candidate.pronouns}</td>
                                 <td key={"email-" + candidate.id} className="text-center py-2 px-2 border border-slate-300">{candidate.email}</td>
