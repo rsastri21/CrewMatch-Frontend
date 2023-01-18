@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import CandidateTable from "./CandidateTable.jsx";
+import CandidateCard from "../../components/CandidateCard.jsx";
 
 export default function Candidate() {
     
@@ -179,11 +180,12 @@ function UploadUI() {
 
     function handleUploadClick() {
 
-        setLoading(true);
 
         if (!file) {
             return;
         }
+
+        setLoading(true);
 
         // Post with Fetch API
 
@@ -200,7 +202,6 @@ function UploadUI() {
             .then((res) => {
                 setError(res.status);
                 res.text();
-                console.log(res.body);
             })
             .catch((err) => {
                 console.error(err);
@@ -209,10 +210,10 @@ function UploadUI() {
                 setLoading(false);
             });
 
-        resetInput();
         if (error === 200) {
             alert("The file was uploaded successfully. Reload the page to see the updated candidates.");
         }
+        resetInput();
     }
     
     return (
