@@ -5,7 +5,7 @@ import { FaUserEdit } from "react-icons/fa";
 import { AiOutlineUser } from "react-icons/ai";
 import { AiOutlineEdit } from "react-icons/ai";
 
-export default function CandidateTable() {
+export default function CandidateTable({ fetchURL, mode }) {
     
     const [candidates, setCandidates] = useState([]);
     const [candidateIndex, setCandidateIndex] = useState(0);
@@ -15,7 +15,7 @@ export default function CandidateTable() {
 
     useLayoutEffect(() => {
         const get = async () => {
-            const res = await fetch('http://localhost:8080/api/candidate/get');
+            const res = await fetch(fetchURL);
             const data = await res.json();
             
             setCandidates(data);
@@ -56,7 +56,10 @@ export default function CandidateTable() {
                             <th className="py-2 px-1 font-medium border border-slate-400 bg-slate-300">Pronouns</th>
                             <th className="py-2 px-1 font-medium border border-slate-400 bg-slate-300">Email</th>
                             <th className="py-2 px-1 font-medium border border-slate-400 bg-slate-300">Assigned</th>
-                            <th className="py-2 px-1 font-medium border border-slate-400 bg-slate-300 rounded-tr-lg">Actions</th>
+                            {mode !== "assign" ?
+                                <th className="py-2 px-1 font-medium border border-slate-400 bg-slate-300 rounded-tr-lg">Actions</th>
+                                : null 
+                            }
                         </tr>
                     </thead>
                     <tbody>
@@ -72,9 +75,12 @@ export default function CandidateTable() {
                                         {candidate.actingInterest ? "acting" : (candidate.assigned ? "yes" : "no")}
                                     </span>
                                 </td>
-                                <td className="py-2 px-2 border border-slate-300 justify-center">
-                                    <button onClick={(event) => handleEditClick(event, index)} className="w-full h-full"><FaUserEdit size={24} className="mx-auto hover:cursor-pointer hover:drop-shadow-lg"/></button>
-                                </td>
+                                {mode !== "assign" ?
+                                    <td className="py-2 px-2 border border-slate-300 justify-center">
+                                        <button onClick={(event) => handleEditClick(event, index)} className="w-full h-full"><FaUserEdit size={24} className="mx-auto hover:cursor-pointer hover:drop-shadow-lg"/></button>
+                                    </td>
+                                    : null
+                                }
                             </tr>
                         ))}
                     </tbody>
@@ -87,10 +93,10 @@ export default function CandidateTable() {
         <section className="box-border w-full h-min bg-white rounded-2xl shadow-md">
             <CandidateModal candidate={candidates[candidateIndex]} visible={modal} toggleModal={toggle}/>
             <EditCandidate candidate={candidates[indexEdit]} visible={edit} toggleVisible={toggleEdit}/>
-            <div className="bg-white h-16 w-full rounded-t-2xl drop-shadow-md flex">
-                <h1 className="px-3 py-4 font-medium text-2xl">Enrolled</h1>
+            <div className={`bg-white ${mode === "assign" ? "max-h-fit" : "h-16"} w-full rounded-t-2xl drop-shadow-md flex`}>
+                <h1 className="px-3 py-4 font-medium text-2xl">{mode === "assign" ? "Available to Assign" : "Enrolled"}</h1>
             </div>
-            <div className="box-border p-2 w-full min-h-4 max-h-128 rounded-b-2xl overflow-y-scroll">
+            <div className={`box-border p-2 w-full min-h-4 ${mode === "assign" ? "max-h-[75vh]" : "max-h-128"} rounded-b-2xl overflow-y-scroll`}>
                 {renderTable()}
             </div>
         </section>

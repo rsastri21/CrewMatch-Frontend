@@ -24,7 +24,7 @@ export default function Candidate() {
                 <hr className="h-px mt-8 mx-auto bg-gray-800 border-0 w-2/3 items-center"></hr>
             </div>
             <div className="w-[50%] min-w-min h-min py-4 my-8 mx-auto flex flex-col space-y-12 items-center">
-                <CandidateTable />
+                <CandidateTable fetchURL={'http://localhost:8080/api/candidate/get'} />
                 <HeadersUI toggle={toggleForm} />
                 <HeaderForm showHeaderForm={showHeaderForm} toggle={toggleForm} />
                 <UploadUI />
