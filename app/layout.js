@@ -1,5 +1,5 @@
 import './globals.css';
-import NavBar from '../components/NavBar.jsx';
+import { SessionProvider } from './SessionContext';
 
 export default function RootLayout({ children }) {
   return (
@@ -7,7 +7,6 @@ export default function RootLayout({ children }) {
       <head />
       <body>
         <SessionProvider>
-          <NavBar />
           {children}
         </SessionProvider>
         </body>

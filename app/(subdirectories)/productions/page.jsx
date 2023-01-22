@@ -108,10 +108,10 @@ function ProductionModal({ productions, index }) {
                 <h1 className="px-1 py-4 font-medium text-2xl">{productions[index].name}</h1>
             </div>
 
-            <section className="box-border p-6 w-full h-min rounded-b-2xl grid grid-cols-2">
+            <section className="box-border p-6 w-full h-[75vh] rounded-b-2xl grid grid-cols-2">
                 <ProductionInformation productions={productions} index={index} toggle={toggle} />
                 {visible ?
-                    <CandidateTable fetchURL={"http://localhost:8080/api/candidate/search?assigned=false&actingInterest=false"} mode="assign" /> 
+                    <CandidateTable fetchURL={`http://localhost:8080/api/candidate/search?assigned=false&actingInterest=false&production=${productions[index].name}`} mode="assign" /> 
                     : <p className="px-2 py-3 text-xl text-center my-auto">Select an empty slot to assign a member.</p>
                 }
             </section>
@@ -126,7 +126,7 @@ function ProductionInformation({ productions, index, toggle }) {
     const members = productions[index].members;
     
     return (
-        <section className="box-border border-2 p-2 w-[95%] max-h-[80vh] overflow-y-scroll border-white shadow-md rounded-2xl flex flex-col items-center space-y-4">
+        <section className="box-border border-2 p-2 w-[95%] max-h-full overflow-y-scroll border-white shadow-md rounded-2xl flex flex-col items-center space-y-4">
             <div className="flex w-full justify-between px-3 py-1 mx-2 rounded-xl">
                 <p className="font-semibold text-2xl">Role</p>
                 <p className="font-semibold text-2xl">Member</p>

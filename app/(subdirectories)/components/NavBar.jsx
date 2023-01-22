@@ -15,6 +15,7 @@ export default function NavBar() {
                 <Link href="/about" className="px-4 py-2 text-md font-medium bg-slate-100 rounded-md shadow-sm hover:bg-slate-200 hover:shadow-md active:bg-slate-300">About</Link>
                 <Link href="/candidates" className="px-4 py-2 text-md font-medium bg-slate-100 rounded-md shadow-sm hover:bg-slate-200 hover:shadow-md active:bg-slate-300">Candidates</Link>
                 <Link href="/productions" className="px-4 py-2 text-md font-medium bg-slate-100 rounded-md shadow-sm hover:bg-slate-200 hover:shadow-md active:bg-slate-300">Productions</Link>
+                <Link href="/login" className="px-4 py-2 text-md font-medium text-slate-100 bg-gray-700 rounded-md shadow-sm hover:bg-gray-600 hover:shadow-md active:bg-slate-800">Log In</Link>
             </ul>
         </nav>
     );
