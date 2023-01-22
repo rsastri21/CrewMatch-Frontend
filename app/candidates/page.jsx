@@ -2,7 +2,6 @@
 
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import CandidateTable from "./CandidateTable.jsx";
-import CandidateCard from "../../components/CandidateCard.jsx";
 
 export default function Candidate() {
     

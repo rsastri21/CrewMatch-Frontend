@@ -1,8 +1,12 @@
-async function getCandidateCount() {
+"use client";
+
+import { useState, useLayoutEffect } from 'react';
+
+function getCandidateCount() {
     
     let candidateCount = 0;
 
-    const res = await fetch('http://localhost:8080/api/candidate/getCount', { cache: "no-store" })
+    const res = fetch('http://localhost:8080/api/candidate/getCount')
                         .then(response => response.text())
                         .then(result => {
                                     candidateCount = parseInt(result);
@@ -12,11 +16,11 @@ async function getCandidateCount() {
 
 }
 
-async function getPercent(path) {
+function getPercent(path) {
     
     let percent = 0.0;
 
-    const res = await fetch(`http://localhost:8080/api/candidate/get/percent${path}`,  { cache: "no-store" })
+    const res = fetch(`http://localhost:8080/api/candidate/get/percent${path}`)
                             .then(response => response.text())
                             .then(result => {
                                 percent = parseFloat(result);
@@ -25,14 +29,33 @@ async function getPercent(path) {
     return percent;
 }
 
-export default async function CandidateCard() {
+export default function CandidateCard() {
 
-    const countData = getCandidateCount();
-    const assignedData = getPercent("Assigned");
-    const actingData = getPercent("Acting");
+    const [count, setCount] = useState(0);
+    const [percentAssigned, setPercentAssigned] = useState(0.0);
+    const [percentActing, setPercentActing] = useState(0.0);
 
-    // Waiting for promises to resolve
-    const [count, assigned, acting] = await Promise.all([countData, assignedData, actingData]);
+    useLayoutEffect(() => {
+
+        const getCandidateCount = async () => {
+            const res = await fetch('http://localhost:8080/api/candidate/getCount');
+            const data = await res.text();
+
+            setCount(parseInt(data));
+        }
+
+        const getPercent = async (path, setFunction) => {
+            const res = await fetch(`http://localhost:8080/api/candidate/get/percent${path}`);
+            const data = await res.text();
+
+            setFunction(parseFloat(data));
+        }
+
+        getCandidateCount().catch(console.error);
+        getPercent("Assigned", setPercentAssigned).catch(console.error);
+        getPercent("Acting", setPercentActing).catch(console.error);
+
+    }, [])
     
     return (
         <div className="box-border w-72 h-80 min-w-fit mx-auto md:mr-4 bg-white rounded-2xl shadow-md">
@@ -45,10 +68,10 @@ export default async function CandidateCard() {
             <div className="box-border p-2 w-full h-min bg-white rounded-b-2xl flex flex-col items-center">
                 <h3 className="px-3 py-3 font-md text-xl font-medium rounded-xl">Percent Assigned:</h3>
                 <h3 className="py-2 px-3 my-2 font-md text-2xl bg-gradient-to-r from-emerald-600 to-teal-500
-                            rounded-lg text-slate-50 shadow-md">{assigned}%</h3>
+                            rounded-lg text-slate-50 shadow-md">{percentAssigned}%</h3>
                 <h3 className="px-3 py-3 font-md text-xl font-medium rounded-xl">Interest in Acting:</h3>
                 <h3 className="py-2 px-3 my-2 text-2xl bg-gradient-to-r from-emerald-600 to-teal-500
-                            rounded-lg text-slate-50 shadow-md">{acting}%</h3>
+                            rounded-lg text-slate-50 shadow-md">{percentActing}%</h3>
             </div>
         </div>
     );

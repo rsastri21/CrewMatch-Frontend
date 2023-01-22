@@ -1,43 +1,41 @@
-import { GrStatusInfoSmall } from "react-icons/gr";
+"use client";
 
-async function getProductionCount() {
+import { useState, useLayoutEffect } from 'react';
 
-    let productionCount = 0;
-
-    const res = await fetch('http://localhost:8080/api/production/getCount', { cache: "no-store" })
-                        .then(response => response.text())
-                        .then(result => {
-                            productionCount = parseInt(result);
-                        });
+export default function ProductionCard() {
     
-    return productionCount;
-}
+    const [productions, setProductions] = useState([]);
+    const [count, setCount] = useState(0);
 
-async function getProductions() {
-    
-    let productions;
+    useLayoutEffect(() => {
+        
+        const getProductionCount = async () => {
+            const res = await fetch('http://localhost:8080/api/production/getCount');
+            const data = await res.text();
 
-    const res = await fetch('http://localhost:8080/api/production/get', { cache: "no-store" })
-                        .then(response => response.json())
-                        .then(result => {
-                            productions = result;
-                        });
-    
-    const prodNames = [];
-    for (let i = 0; i < productions.length; i++) {
-        prodNames[i] = { name: productions[i].name, director: productions[i].members[0] };
-    }
-    return prodNames;
-}
+            setCount(parseFloat(data));
+        }
 
-export default async function ProductionCard() {
-    
-    const productionsData = getProductions();
-    const countData = getProductionCount();
+        const getProductions = async () => {
+            const res = await fetch('http://localhost:8080/api/production/get');
+            const data = await res.json();
+            
 
-    // Wait for promises to resolve
-    const [productions, count] = await Promise.all([productionsData, countData]);
+            setProductions(data);
+            // const prodNames = [];
+            // for (let i = 0; i < data.length; i++) {
+            //     prodNames[i] = { name: productions[i].name, director: productions[i].members[0] };
+            // }
+
+        }
+
+        getProductionCount().catch(console.error);
+        getProductions().catch(console.error);
+
+    }, []);
     
+    // console.log(productions);
+
     return (
         <div className="box-border w-96 h-min min-w-fit mx-auto md:ml-4 bg-white rounded-2xl shadow-md">
             <div className="bg-white h-16 w-full rounded-t-2xl drop-shadow-md flex justify-between">
@@ -49,7 +47,7 @@ export default async function ProductionCard() {
              {count === 0 ? <h1 className="px-3 py-4 font-md text-lg">No productions created.</h1> :
                 productions.map(production => (
                     <h3 key={production.name} className="px-4 py-2 text-md">
-                        <span className="italic font-medium">{production.name}</span>, directed by {production.director}
+                        <span className="italic font-medium">{production.name}</span>, directed by {production.members[0]}
                     </h3>
              ))}
             </div>

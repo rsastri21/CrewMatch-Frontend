@@ -1,9 +1,16 @@
+"use client";
+
 export const revalidate = 10;
 
 import CandidateCard from "../components/CandidateCard";
 import ProductionCard from "../components/ProductionCard";
 
+import { useSession, useSessionUpdate } from "./SessionContext.js";
+
 export default function Page() {
+    
+    const user = useSession();
+    
     return (
         <div className="bg-gradient-to-r from-red-100 to-orange-200 flex flex-col min-h-screen h-auto w-screen pb-16">
                 <div className="w-1/2 h-min min-w-half mx-auto flex flex-col justify-center">
