@@ -22,11 +22,6 @@ export default function ProductionCard() {
             
 
             setProductions(data);
-            // const prodNames = [];
-            // for (let i = 0; i < data.length; i++) {
-            //     prodNames[i] = { name: productions[i].name, director: productions[i].members[0] };
-            // }
-
         }
 
         getProductionCount().catch(console.error);
