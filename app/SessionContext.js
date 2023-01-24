@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useContext, useState } from 'react';
+import { useContext, useState, createContext, useLayoutEffect } from 'react';
 
-const SessionContext = React.createContext();
-const SessionUpdateContext = React.createContext();
+const SessionContext = createContext();
+const SessionUpdateContext = createContext();
 
 export function useSession() {
     return useContext(SessionContext);
@@ -14,7 +14,15 @@ export function useSessionUpdate() {
 }
 
 export function SessionProvider({ children }) {
+    
     const [user, setUser] = useState({});
+
+    useLayoutEffect(() => {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser !== null) {
+            setUser(JSON.parse(storedUser));
+        }
+    }, []);
 
     function changeSession(newUser) {
         setUser({...newUser});

@@ -1,6 +1,7 @@
 "use client";
 
 import { useLayoutEffect, useEffect, useState } from "react";
+import { useSession, useSessionUpdate } from "../../SessionContext.js";
 import { FaUserEdit } from "react-icons/fa";
 import { AiOutlineUser } from "react-icons/ai";
 import { AiOutlineEdit } from "react-icons/ai";
@@ -12,6 +13,8 @@ export default function CandidateTable({ fetchURL, mode }) {
     const [indexEdit, setIndexEdit] = useState(0);
     const [modal, setModal] = useState(false);
     const [edit, setEdit] = useState(false);
+
+    const user = useSession();
 
     useLayoutEffect(() => {
         const get = async () => {
@@ -55,8 +58,11 @@ export default function CandidateTable({ fetchURL, mode }) {
                             <th className="py-2 px-1 font-medium border border-slate-400 bg-slate-300 rounded-tl-lg">Name</th>
                             <th className="py-2 px-1 font-medium border border-slate-400 bg-slate-300">Pronouns</th>
                             <th className="py-2 px-1 font-medium border border-slate-400 bg-slate-300">Email</th>
-                            <th className="py-2 px-1 font-medium border border-slate-400 bg-slate-300">Assigned</th>
-                            {mode !== "assign" ?
+                            {mode !== "assign" && user.role === "admin" ? 
+                                <th className="py-2 px-1 font-medium border border-slate-400 bg-slate-300">Assigned</th>
+                                : <th className="py-2 px-1 font-medium border rounded-tr-lg border-slate-400 bg-slate-300">Assigned</th>
+                            }
+                            {mode !== "assign" && user.role === "admin" ?
                                 <th className="py-2 px-1 font-medium border border-slate-400 bg-slate-300 rounded-tr-lg">Actions</th>
                                 : null 
                             }
@@ -66,7 +72,7 @@ export default function CandidateTable({ fetchURL, mode }) {
                         {candidates.map((candidate, index) => (
                             <tr key={candidate.id}>
                                 <td key={"name-" + candidate.id} className="text-left border border-slate-300 transition-all">
-                                    <button onClick={(event) => handleNameClick(event, index)} className="p-2 w-full rounded-md bg-white hover:shadow-md hover:cursor-pointer hover:scale-105 hover:z-50 transition-all active:bg-slate-100">{candidate.name}</button>
+                                    <button onClick={user.role === "admin" ? (event) => handleNameClick(event, index) : undefined} className={`p-2 w-full rounded-md bg-white ${user.role === "admin" ? "hover:shadow-md hover:cursor-pointer hover:scale-105 hover:z-50 transition-all active:bg-slate-100" : "hover:cursor-default"}`}>{candidate.name}</button>
                                 </td>
                                 <td key={"pro-" + candidate.id} className="text-center py-2 px-2 border border-slate-300">{candidate.pronouns}</td>
                                 <td key={"email-" + candidate.id} className="text-center py-2 px-2 border border-slate-300">{candidate.email}</td>
@@ -75,7 +81,7 @@ export default function CandidateTable({ fetchURL, mode }) {
                                         {candidate.actingInterest ? "acting" : (candidate.assigned ? "yes" : "no")}
                                     </span>
                                 </td>
-                                {mode !== "assign" ?
+                                {mode !== "assign" && user.role === "admin" ?
                                     <td className="py-2 px-2 border border-slate-300 justify-center">
                                         <button onClick={(event) => handleEditClick(event, index)} className="w-full h-full"><FaUserEdit size={24} className="mx-auto hover:cursor-pointer hover:drop-shadow-lg"/></button>
                                     </td>

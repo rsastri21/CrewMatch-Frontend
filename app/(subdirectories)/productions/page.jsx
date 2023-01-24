@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useCallback, useState } from "react";
+import { useEffect, useCallback, useState } from "react";
 import { BiCameraMovie } from "react-icons/bi";
 import { GiDirectorChair } from "react-icons/gi";
 import CandidateTable from "../candidates/CandidateTable.jsx";
@@ -10,7 +10,7 @@ export default function Productions() {
     const [productions, setProductions] = useState([]);
     const [productionsIndex, setProductionsIndex] = useState(-1);
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         const get = async () => {
             const res = await fetch('http://localhost:8080/api/production/get');
             const data = await res.json();
