@@ -53,7 +53,7 @@ export default function Productions() {
                 <ProductionsOverview productions={productions} changeIndex={handleCardClick} />
             </section>
             <hr className="h-px my-8 mx-auto bg-gray-800 border-0 w-1/3 items-center"></hr>
-            <section className="w-2/3 mx-auto h-auto flex flex-col p-4">
+            <section className="w-4/5 mx-auto h-auto flex flex-col p-4">
                 <ProductionModal productions={productions} index={productionsIndex} />
             </section>
             <hr className="h-px my-8 mx-auto bg-gray-800 border-0 w-1/3 items-center"></hr>
@@ -65,6 +65,8 @@ function ProductionsOverview({ productions, changeIndex }) {
     
     return (
         <div className="w-full h-min grid grid-cols-2 gap-8">
+            {productions.length === 0 ? <p className="px-2 py-3 text-xl font-medium text-center my-auto">No productions have been created yet.</p>
+                : null}
             {productions && productions.map((production, index) => (
                 <ProductionCard key={production.id} title={production.name} director={production.members[0]} index={index} changeIndex={changeIndex} /> 
             ))}
@@ -107,15 +109,20 @@ function ProductionModal({ productions, index }) {
         <section className="mx-auto box-border w-full min-w-min h-min bg-white rounded-2xl shadow-md">
             <div className="bg-white z-50 h-fit w-full rounded-t-2xl drop-shadow-md flex">
                 <BiCameraMovie className="w-12 h-12 p-2 ml-2 mr-1 my-2"/>
-                <h1 className="px-1 py-4 font-medium text-2xl">{productions[index].name}</h1>
+                <h1 className="px-1 py-4 font-medium text-xl lg:text-2xl">{productions[index].name}</h1>
             </div>
 
-            <section className="box-border p-6 w-full h-[75vh] rounded-b-2xl grid grid-cols-2">
-                <ProductionInformation productions={productions} index={index} toggle={toggle} />
+            <section className="box-border p-6 w-full h-[75vh] overflow-y-scroll rounded-b-2xl grid grid-cols-2 gap-y-6">
+                <div className="max-h-[80vh]">
+                    <ProductionInformation productions={productions} index={index} toggle={toggle} />
+                </div>
                 {visible ?
                     <CandidateTable fetchURL={API_URL + `/api/candidate/search?assigned=false&actingInterest=false&production=${productions[index].name}`} mode="assign" /> 
                     : <p className="px-2 py-3 text-xl text-center my-auto">Select an empty slot to assign a member.</p>
                 }
+                <section className="col-span-2">
+                    <CandidateTable fetchURL={API_URL + `/api/candidate/search?assigned=false&actingInterest=true&production=${productions[index].name}`} mode="actor" />
+                </section>
             </section>
 
         </section>
@@ -130,15 +137,15 @@ function ProductionInformation({ productions, index, toggle }) {
     return (
         <section className="box-border border-2 p-2 w-[95%] max-h-full overflow-y-scroll border-white shadow-md rounded-2xl flex flex-col items-center space-y-4">
             <div className="flex w-full justify-between px-3 py-1 mx-2 rounded-xl">
-                <p className="font-semibold text-2xl">Role</p>
-                <p className="font-semibold text-2xl">Member</p>
+                <p className="font-semibold text-xl xl:text-2xl">Role</p>
+                <p className="font-semibold text-xl xl:text-2xl">Member</p>
             </div>
             {roles.map((role, index) => (
                 <div key={index} className="flex w-full justify-between box-border border-2 p-3 mx-2 rounded-lg">
-                    <p className="p-2 font-semibold text-xl">{role}</p>
+                    <p className="p-2 font-semibold text-lg xl:text-xl">{role}</p>
                     <button onClick={members[index] === "" ? toggle : null} className={`p-2 rounded-lg ${members[index] === "" 
                      ? "italic font-light text-lg hover:shadow-md hover:scale-105 cursor-pointer active:scale-100 active:bg-slate-100 transition-all"
-                     : "text-xl"} `}>{members[index] === "" ? "add member" : members[index]}</button>
+                     : "text-lg lg:text-xl"} `}>{members[index] === "" ? "add member" : members[index]}</button>
                 </div>
             ))}
         </section>

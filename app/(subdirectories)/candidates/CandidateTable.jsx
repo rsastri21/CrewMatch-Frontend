@@ -99,8 +99,8 @@ export default function CandidateTable({ fetchURL, mode }) {
         <section className="box-border w-full h-full overflow-y-scroll bg-white rounded-2xl shadow-md">
             <CandidateModal candidate={candidates[candidateIndex]} visible={modal} toggleModal={toggle}/>
             <EditCandidate candidate={candidates[indexEdit]} visible={edit} toggleVisible={toggleEdit}/>
-            <div className={`bg-white ${mode === "assign" ? "max-h-fit" : "h-16"} w-full rounded-t-2xl drop-shadow-md flex`}>
-                <h1 className="px-3 py-4 font-medium text-2xl">{mode === "assign" ? "Available to Assign" : "Enrolled"}</h1>
+            <div className={`bg-white ${(mode === "assign" || mode === "actor") ? "max-h-fit" : "h-16"} w-full rounded-t-2xl drop-shadow-md flex`}>
+                <h1 className="px-3 py-4 font-medium text-2xl">{mode === "assign" ? "Available to Assign" : (mode === "actor" ? "Interested in Acting" : "Enrolled")}</h1>
             </div>
             <div className={`box-border p-2 w-full min-h-4 ${mode === "assign" ? "h-fit" : "max-h-128"} rounded-b-2xl overflow-y-scroll`}>
                 {renderTable()}
