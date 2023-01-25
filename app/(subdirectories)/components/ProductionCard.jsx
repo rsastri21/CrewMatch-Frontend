@@ -2,6 +2,8 @@
 
 import { useState, useLayoutEffect } from 'react';
 
+const API_URL = "https://crew-match.herokuapp.com";
+
 export default function ProductionCard() {
     
     const [productions, setProductions] = useState([]);
@@ -10,14 +12,14 @@ export default function ProductionCard() {
     useLayoutEffect(() => {
         
         const getProductionCount = async () => {
-            const res = await fetch('http://localhost:8080/api/production/getCount');
+            const res = await fetch(API_URL + '/api/production/getCount');
             const data = await res.text();
 
             setCount(parseFloat(data));
         }
 
         const getProductions = async () => {
-            const res = await fetch('http://localhost:8080/api/production/get');
+            const res = await fetch(API_URL + '/api/production/get');
             const data = await res.json();
             
 

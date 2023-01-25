@@ -5,6 +5,8 @@ import { BiCameraMovie } from "react-icons/bi";
 import { GiDirectorChair } from "react-icons/gi";
 import CandidateTable from "../candidates/CandidateTable.jsx";
 
+const API_URL = "https://crew-match.herokuapp.com";
+
 export default function Productions() {
     
     const [productions, setProductions] = useState([]);
@@ -12,7 +14,7 @@ export default function Productions() {
 
     useEffect(() => {
         const get = async () => {
-            const res = await fetch('http://localhost:8080/api/production/get');
+            const res = await fetch(API_URL + '/api/production/get');
             const data = await res.json();
 
             setProductions(data);
@@ -111,7 +113,7 @@ function ProductionModal({ productions, index }) {
             <section className="box-border p-6 w-full h-[75vh] rounded-b-2xl grid grid-cols-2">
                 <ProductionInformation productions={productions} index={index} toggle={toggle} />
                 {visible ?
-                    <CandidateTable fetchURL={`http://localhost:8080/api/candidate/search?assigned=false&actingInterest=false&production=${productions[index].name}`} mode="assign" /> 
+                    <CandidateTable fetchURL={API_URL + `/api/candidate/search?assigned=false&actingInterest=false&production=${productions[index].name}`} mode="assign" /> 
                     : <p className="px-2 py-3 text-xl text-center my-auto">Select an empty slot to assign a member.</p>
                 }
             </section>

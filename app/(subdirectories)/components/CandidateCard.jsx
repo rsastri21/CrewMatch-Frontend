@@ -2,32 +2,7 @@
 
 import { useState, useLayoutEffect } from 'react';
 
-function getCandidateCount() {
-    
-    let candidateCount = 0;
-
-    const res = fetch('http://localhost:8080/api/candidate/getCount')
-                        .then(response => response.text())
-                        .then(result => {
-                                    candidateCount = parseInt(result);
-                            });
-
-    return candidateCount;
-
-}
-
-function getPercent(path) {
-    
-    let percent = 0.0;
-
-    const res = fetch(`http://localhost:8080/api/candidate/get/percent${path}`)
-                            .then(response => response.text())
-                            .then(result => {
-                                percent = parseFloat(result);
-                            });
-    
-    return percent;
-}
+const API_URL = "https://crew-match.herokuapp.com";
 
 export default function CandidateCard() {
 
@@ -38,14 +13,14 @@ export default function CandidateCard() {
     useLayoutEffect(() => {
 
         const getCandidateCount = async () => {
-            const res = await fetch('http://localhost:8080/api/candidate/getCount');
+            const res = await fetch(API_URL + '/api/candidate/getCount');
             const data = await res.text();
 
             setCount(parseInt(data));
         }
 
         const getPercent = async (path, setFunction) => {
-            const res = await fetch(`http://localhost:8080/api/candidate/get/percent${path}`);
+            const res = await fetch(API_URL + `/api/candidate/get/percent${path}`);
             const data = await res.text();
 
             setFunction(parseFloat(data));
