@@ -2,11 +2,14 @@
 
 import { useLayoutEffect, useEffect, useState } from "react";
 import { useSession, useSessionUpdate } from "../../SessionContext.js";
+import { useRouter } from 'next/navigation';
 import { FaUserEdit } from "react-icons/fa";
 import { AiOutlineUser } from "react-icons/ai";
 import { AiOutlineEdit } from "react-icons/ai";
 
-export default function CandidateTable({ fetchURL, mode }) {
+const API_URL = 'https://crew-match.herokuapp.com';
+
+export default function CandidateTable({ fetchURL, mode, role, index, prod }) {
     
     const [candidates, setCandidates] = useState([]);
     const [candidateIndex, setCandidateIndex] = useState(0);
@@ -16,7 +19,7 @@ export default function CandidateTable({ fetchURL, mode }) {
 
     const user = useSession();
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         const get = async () => {
             const res = await fetch(fetchURL);
             const data = await res.json();
@@ -25,7 +28,7 @@ export default function CandidateTable({ fetchURL, mode }) {
         }
 
         get().catch(console.error);
-    }, [edit]);
+    }, [edit, fetchURL, modal]);
 
     const handleNameClick = (e, index) => {
         setCandidateIndex(index);
@@ -58,11 +61,11 @@ export default function CandidateTable({ fetchURL, mode }) {
                             <th className="py-2 px-1 font-medium border border-slate-400 bg-slate-300 rounded-tl-lg">Name</th>
                             <th className="py-2 px-1 font-medium border border-slate-400 bg-slate-300">Pronouns</th>
                             <th className="py-2 px-1 font-medium border border-slate-400 bg-slate-300">Email</th>
-                            {mode !== "assign" && user.role === "admin" ? 
+                            {(mode !== "assign" && mode !== "actor") && user.role === "admin" ? 
                                 <th className="py-2 px-1 font-medium border border-slate-400 bg-slate-300">Assigned</th>
                                 : <th className="py-2 px-1 font-medium border rounded-tr-lg border-slate-400 bg-slate-300">Assigned</th>
                             }
-                            {mode !== "assign" && user.role === "admin" ?
+                            {(mode !== "assign" && mode !== "actor") && user.role === "admin" ?
                                 <th className="py-2 px-1 font-medium border border-slate-400 bg-slate-300 rounded-tr-lg">Actions</th>
                                 : null 
                             }
@@ -81,7 +84,7 @@ export default function CandidateTable({ fetchURL, mode }) {
                                         {candidate.actingInterest ? "acting" : (candidate.assigned ? "yes" : "no")}
                                     </span>
                                 </td>
-                                {mode !== "assign" && user.role === "admin" ?
+                                {(mode !== "assign" && mode !== "actor") && user.role === "admin" ?
                                     <td className="py-2 px-2 border border-slate-300 justify-center">
                                         <button onClick={(event) => handleEditClick(event, index)} className="w-full h-full"><FaUserEdit size={24} className="mx-auto hover:cursor-pointer hover:drop-shadow-lg"/></button>
                                     </td>
@@ -94,10 +97,10 @@ export default function CandidateTable({ fetchURL, mode }) {
             )
         }
     }
-    
+
     return (
         <section className="box-border w-full h-full overflow-y-scroll bg-white rounded-2xl shadow-md">
-            <CandidateModal candidate={candidates[candidateIndex]} visible={modal} toggleModal={toggle}/>
+            <CandidateModal candidate={candidates[candidateIndex]} visible={modal} toggleModal={toggle} role={role} roleIndex={index} prodID={prod} />
             <EditCandidate candidate={candidates[indexEdit]} visible={edit} toggleVisible={toggleEdit}/>
             <div className={`bg-white ${(mode === "assign" || mode === "actor") ? "max-h-fit" : "h-16"} w-full rounded-t-2xl drop-shadow-md flex`}>
                 <h1 className="px-3 py-4 font-medium text-2xl">{mode === "assign" ? "Available to Assign" : (mode === "actor" ? "Interested in Acting" : "Enrolled")}</h1>
@@ -109,8 +112,11 @@ export default function CandidateTable({ fetchURL, mode }) {
     );
 }
 
-function CandidateModal({ candidate, visible, toggleModal }) {
+function CandidateModal({ candidate, visible, toggleModal, role, prodID, roleIndex }) {
     
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
+
     const handleEscPress = (event) => {
         if (visible && event.key === 'Escape') {
             toggleModal();
@@ -126,6 +132,23 @@ function CandidateModal({ candidate, visible, toggleModal }) {
             document.removeEventListener('keydown', handleEscPress);
         };
     }, [visible]);
+
+    const assignCandidate = (e) => {
+        setLoading(true);
+        e.preventDefault();
+
+        const requestOptions = {
+            method: 'PUT',
+        }
+        fetch(API_URL + `/api/production/assign/${prodID}/${candidate.id}/${roleIndex}`, requestOptions)
+            .then((res) => res.text())
+            .catch((err) => console.error(err))
+            .finally(() => {
+                setLoading(false);
+                router.push(`/productions/${prodID}`);
+                toggleModal();
+            });
+    }
 
     return (
         visible &&
@@ -190,7 +213,14 @@ function CandidateModal({ candidate, visible, toggleModal }) {
                                 </ol>
                             </div>
                         }
-                        <div className="w-full flex justify-center">
+                        <div className="w-full flex flex-col justify-center items-center space-y-4">
+                            {role && 
+                                <button onClick={(e) => assignCandidate(e)} className={`p-2 w-[50%] max-w-fit font-medium text-center text-lg text-gray-100 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg shadow-md 
+                                hover:shadow-lg hover:bg-gradient-to-r hover:from-green-600 hover:to-emerald-600 
+                                active:bg-gradient-to-r active:from-green-700 active:to-emerald-700 ${loading ? "cursor-wait" : ""}`}>
+                                    Assign to {role}
+                                </button>
+                            }
                             <button onClick={toggleModal} className="p-2 w-24 font-medium text-center text-lg text-gray-100 bg-gradient-to-r from-red-500 to-rose-500 rounded-lg shadow-md 
                                                     hover:shadow-lg hover:bg-gradient-to-r hover:from-red-600 hover:to-rose-600 
                                                     active:bg-gradient-to-r active:from-red-700 active:to-rose-700">
