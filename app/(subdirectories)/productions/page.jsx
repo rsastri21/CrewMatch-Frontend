@@ -3,6 +3,7 @@
 import { useEffect, useCallback, useState } from "react";
 import { BiCameraMovie } from "react-icons/bi";
 import { GiDirectorChair } from "react-icons/gi";
+import { FcPlus } from "react-icons/fc";
 import { useRouter } from 'next/navigation';
 import { useSession } from '../../SessionContext';
 
@@ -29,6 +30,10 @@ export default function Productions() {
         router.push(`/productions/${productions[index].id}`)
     }
 
+    const handleCreateClick = (e) => {
+        router.push("/productions/create");
+    }
+
     return (
         <div className="bg-gradient-to-r from-green-200 to-emerald-200 flex flex-col min-h-screen h-auto w-screen pb-16">
             <div className="w-1/2 h-min min-w-half mx-auto justify-center">
@@ -40,13 +45,18 @@ export default function Productions() {
                 </p>
                 <hr className="h-px mt-8 mx-auto bg-gray-800 border-0 w-2/3 items-center"></hr>
             </div>
-            <section className="w-2/3 max-w-3xl min-w-min h-min py-4 my-2 mx-auto flex flex-col space-y-4">
-                <h1 className="text-5xl px-8 py-4 font-medium text-center text-gray-800">
+            <section className="w-2/3 max-w-3xl min-w-min h-min py-4 my-2 mx-auto flex flex-col space-y-8">
+                <h1 className="text-5xl px-4 py-2 font-medium text-center text-gray-800">
                     Current Productions
                 </h1>
+                <p className="text-center text-xl my-2">Select a production to redirect to it's management page.</p>
                 <ProductionsOverview productions={productions} changeIndex={handleCardClick} />
+                <button onClick={(e) => handleCreateClick(e)} className="bg-white flex rounded-xl w-fit mx-auto p-4 text-xl font-medium shadow-md hover:scale-105 hover:shadow-lg active:scale-100 active:bg-slate-200 transition-all">
+                    <span className="ml-0 mr-2 my-auto"><FcPlus className="w-6 h-6"/></span>
+                    Create a New Production
+                </button>
             </section>
-            <hr className="h-px my-8 mx-auto bg-gray-800 border-0 w-1/3 items-center"></hr>
+            <hr className="h-px my-4 mx-auto bg-gray-800 border-0 w-1/3 items-center"></hr>
         </div>
     );
 }
