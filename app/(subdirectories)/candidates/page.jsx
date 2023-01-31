@@ -112,8 +112,6 @@ function HeaderForm({ showHeaderForm, toggle }) {
             body: JSON.stringify({ name: "header",
                                    csvHeaders: [...formData]})
         }
-
-        console.log(requestOptions.body);
         fetch(API_URL + "/api/headers/update", requestOptions)
             .then((res) => res.json())
             .then((data) => console.log(data))

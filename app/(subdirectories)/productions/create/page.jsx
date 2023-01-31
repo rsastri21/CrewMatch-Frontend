@@ -96,7 +96,6 @@ export default function CreateProductionForm() {
                 members: [...members]
             })
         };
-        console.log(requestOptions.body);
         fetch(API_URL + "/api/production/create", requestOptions)
             .then((res) => {
                 setError(res.status);
