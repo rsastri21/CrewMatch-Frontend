@@ -112,6 +112,8 @@ function HeaderForm({ showHeaderForm, toggle }) {
             body: JSON.stringify({ name: "header",
                                    csvHeaders: [...formData]})
         }
+
+        console.log(requestOptions.body);
         fetch(API_URL + "/api/headers/update", requestOptions)
             .then((res) => res.json())
             .then((data) => console.log(data))
@@ -148,7 +150,7 @@ function HeaderForm({ showHeaderForm, toggle }) {
                         <footer className="flex justify-end p-4 space-x-4">
                             <button onClick={submitForm} className={`p-4 w-42 font-medium text-lg text-gray-100 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg shadow-md 
                                                 hover:shadow-lg hover:bg-gradient-to-r hover:from-green-600 hover:to-emerald-600 
-                                                active:bg-gradient-to-r active:from-green-700 active:to-emerald-700 ${loading ? "cursor-wait animate-ping" : ""}`}>
+                                                active:bg-gradient-to-r active:from-green-700 active:to-emerald-700 ${loading ? "cursor-wait" : ""}`}>
                                 Save Changes
                             </button>
                             <button onClick={toggle} className="p-4 w-32 font-medium text-lg text-gray-100 bg-gradient-to-r from-red-500 to-rose-500 rounded-lg shadow-md 
