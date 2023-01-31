@@ -293,8 +293,9 @@ function EditCandidate({ candidate, visible, toggleVisible }) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({...formData})
         }
-        fetch(`http://localhost:8080/api/candidate/update/${formData.id}`, requestOptions)
+        fetch(API_URL + `/api/candidate/update/${formData.id}`, requestOptions)
             .then((res) => res.json())
+            .then((res) => console.log(res))
             .catch((err) => {
                 console.error(err);
             })
@@ -317,19 +318,19 @@ function EditCandidate({ candidate, visible, toggleVisible }) {
                     <form onSubmit={submitForm} className="w-full h-full box-border p-2 columns-sm">
                         <div className="mx-auto my-4 w-full shadow-sm border border-slate-400 bg-slate-50 bg-opacity-75 rounded-lg flex justify-between">
                             <label className="px-3 py-2 font-medium text-lg">Pronouns:</label>
-                            <input className="px-3 py-2 font-normal text-lg rounded-lg" type="text" name="email" value={formData.pronouns} onChange={e => updatePronouns(e)}></input>
+                            <input className="px-3 py-2 font-normal text-lg rounded-lg" type="text" name="email" value={formData.pronouns === null ? "" : formData.pronouns} onChange={e => updatePronouns(e)}></input>
                         </div>
                         <div className="mx-auto my-4 w-full shadow-sm border border-slate-400 bg-slate-50 bg-opacity-75 rounded-lg flex justify-between">
                             <label className="px-3 py-2 font-medium text-lg">Contact:</label>
-                            <input className="px-3 py-2 font-normal text-lg rounded-lg" type="text" name="email" value={formData.email} onChange={e => updateContact(e)}></input>
+                            <input className="px-3 py-2 font-normal text-lg rounded-lg" type="text" name="email" value={formData.email === null ? "" : formData.email} onChange={e => updateContact(e)}></input>
                         </div>
                         <div className="mx-auto my-4 w-full shadow-sm border border-slate-400 bg-slate-50 bg-opacity-75 rounded-lg flex justify-between">
                             <label className="px-3 py-2 font-medium text-lg">Quarters in LUX:</label>
-                            <input className="px-3 py-2 font-normal text-lg rounded-lg" type="text" name="quarters" value={formData.quartersInLux} onChange={e => updateQuarters(e)}></input>
+                            <input className="px-3 py-2 font-normal text-lg rounded-lg" type="text" name="quarters" value={formData.quartersInLux === null ? "" : formData.quartersInLux} onChange={e => updateQuarters(e)}></input>
                         </div>
                         <div className="mx-auto my-4 w-full shadow-sm border border-slate-400 bg-slate-50 bg-opacity-75 rounded-lg flex justify-between">
                             <label className="px-3 py-2 font-medium text-lg">Years at UW:</label>
-                            <input className="px-3 py-2 font-normal text-lg rounded-lg" type="text" name="years" value={formData.yearsInUW} onChange={e => updateYears(e)}></input>
+                            <input className="px-3 py-2 font-normal text-lg rounded-lg" type="text" name="years" value={formData.yearsInUW === null ? "" : formData.yearsInUW} onChange={e => updateYears(e)}></input>
                         </div>
                         <footer className="flex justify-center p-4 space-x-4">
                             <button onClick={submitForm} className={`p-3 w-42 font-medium text-lg text-gray-100 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg shadow-md 
