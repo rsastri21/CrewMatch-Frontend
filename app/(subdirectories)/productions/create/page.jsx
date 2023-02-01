@@ -129,7 +129,8 @@ export default function CreateProductionForm() {
                         <br></br> <br></br>
                         <span className="font-medium"> Crew Match</span> will let you add up to 24 roles initially. If more roles are required for your
                         production, they may be added after the role assignment process is completed. When creating new roles, try to be general. If you have someone in mind
-                        to perform a certain role, enter their name in the second column. 
+                        to perform a certain role, enter their name in the second column. <br></br><br></br>
+                        Roles <span className="font-medium">CANNOT </span> be empty. If there is a row with an empty row, please remove it using the minus button.
                     </p>
                     <h1 className="px-3 py-3 text-2xl text-gray-900 font-medium rounded-lg shadow-md">Enter the crew roles and desired members below.</h1>
 

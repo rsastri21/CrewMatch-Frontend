@@ -75,7 +75,8 @@ export default function CandidateTable({ fetchURL, mode, role, index, prod }) {
                         {candidates.map((candidate, index) => (
                             <tr key={candidate.id}>
                                 <td key={"name-" + candidate.id} className="text-left border border-slate-300 transition-all">
-                                    <button onClick={user.role === "admin" ? (event) => handleNameClick(event, index) : undefined} className={`p-2 w-full rounded-md bg-white ${user.role === "admin" ? "hover:shadow-md hover:cursor-pointer hover:scale-105 hover:z-50 transition-all active:bg-slate-100" : "hover:cursor-default"}`}>{candidate.name}</button>
+                                    <button onClick={(user.role === "admin" || user.role === "production head") ? (event) => handleNameClick(event, index) : undefined} className={`p-2 w-full rounded-md bg-white ${(user.role === "admin" || user.role === "production head")
+                                     ? "hover:shadow-md hover:cursor-pointer hover:scale-105 hover:z-50 transition-all active:bg-slate-100" : "hover:cursor-default"}`}>{candidate.name}</button>
                                 </td>
                                 <td key={"pro-" + candidate.id} className="text-center py-2 px-2 border border-slate-300">{candidate.pronouns}</td>
                                 <td key={"email-" + candidate.id} className="text-center py-2 px-2 border border-slate-300">{candidate.email}</td>
@@ -205,8 +206,8 @@ function CandidateModal({ candidate, visible, toggleModal, role, prodID, roleInd
                             <div className="mx-auto my-4 py-2 w-full shadow-sm border border-slate-400 bg-slate-50 bg-opacity-75 rounded-lg">
                                 <label className="px-3 py-2 font-medium text-lg">Wants to Audition for:</label>
                                 <ol className="list-decimal list-inside text-left w-full ml-4 mr-auto">
-                                    {candidate.productions.map(production => (
-                                        <li className="px-3 py-1 font-normal text-lg">
+                                    {candidate.productions.map((production, index) => (
+                                        <li key={'prod' + candidate.id + index} className="px-3 py-1 font-normal text-lg">
                                             {production}
                                         </li>
                                     ))}

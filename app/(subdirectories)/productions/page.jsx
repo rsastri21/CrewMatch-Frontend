@@ -45,18 +45,21 @@ export default function Productions() {
                 </p>
                 <hr className="h-px mt-8 mx-auto bg-gray-800 border-0 w-2/3 items-center"></hr>
             </div>
-            <section className="w-2/3 max-w-3xl min-w-min h-min py-4 my-2 mx-auto flex flex-col space-y-8">
+            <section className="w-2/3 max-w-3xl min-w-min h-min py-4 my-2 mx-auto flex flex-col space-y-6">
                 <h1 className="text-5xl px-4 py-2 font-medium text-center text-gray-800">
                     Current Productions
                 </h1>
                 <p className="text-center text-xl my-2">Select a production to redirect to it's management page.</p>
                 <ProductionsOverview productions={productions} changeIndex={handleCardClick} />
-                <button onClick={(e) => handleCreateClick(e)} className="bg-white flex rounded-xl w-fit mx-auto p-4 text-xl font-medium shadow-md hover:scale-105 hover:shadow-lg active:scale-100 active:bg-slate-200 transition-all">
-                    <span className="ml-0 mr-2 my-auto"><FcPlus className="w-6 h-6"/></span>
-                    Create a New Production
-                </button>
+                {user.role === "admin" || user.role === "production head" ?
+                    <button onClick={(e) => handleCreateClick(e)} className="bg-white flex rounded-xl w-fit mx-auto p-4 text-xl font-medium shadow-md hover:scale-105 hover:shadow-lg active:scale-100 active:bg-slate-200 transition-all">
+                        <span className="ml-0 mr-2 my-auto"><FcPlus className="w-6 h-6"/></span>
+                        Create a New Production
+                    </button>
+                : null}
             </section>
             <hr className="h-px my-4 mx-auto bg-gray-800 border-0 w-1/3 items-center"></hr>
+            {user.role === "admin" ? <MatchUI /> : null}
         </div>
     );
 }
@@ -65,7 +68,7 @@ function ProductionsOverview({ productions, changeIndex }) {
     
     return (
         <div className="w-full h-min grid grid-cols-2 gap-8">
-            {productions.length === 0 ? <p className="px-2 py-3 text-xl font-medium text-center my-auto">No productions have been created yet.</p>
+            {productions.length === 0 ? <p className="col-span-2 px-2 py-3 text-xl font-medium text-center my-auto">No productions have been created yet.</p>
                 : null}
             {productions && productions.map((production, index) => (
                 <ProductionCard key={production.id} title={production.name} director={production.members[0]} index={index} changeIndex={changeIndex} /> 
@@ -92,4 +95,159 @@ function ProductionCard({ title, director, index, changeIndex }) {
             </div>
         </div>
     )
+}
+
+function MatchUI() {
+    
+    const [visible, setVisible] = useState(false);
+    const [method, setMethod] = useState("");
+    const [methodURL, setMethodURL] = useState("");
+
+    const toggleVisible = () => {
+        setVisible(!visible);
+    }
+
+    const changeMethod = (method) => {
+        setMethod(method);
+    }
+
+    const changeMethodURL = (url) => {
+        setMethodURL(url);
+    }
+    
+    return (
+        <section className="w-1/2 h-min py-4 my-2 mx-auto flex flex-col space-y-8">
+            <h1 className="text-5xl px-4 py-2 font-medium text-center text-gray-800">
+                Matching Candidates
+            </h1>
+            <p className="text-center text-xl my-2">View the different candidate matching processes below.</p>
+
+            {visible && <MatchModal visible={visible} setVisible={toggleVisible} method={method} methodURL={methodURL} />}
+            <MatchWithPreference visible={visible} setVisible={toggleVisible} method={method} setMethod={changeMethod} methodURL={methodURL} setMethodURL={changeMethodURL} />
+            <MatchWithoutPreference visible={visible} setVisible={toggleVisible} method={method} setMethod={changeMethod} methodURL={methodURL} setMethodURL={changeMethodURL} />
+            
+        </section>
+    );
+}
+
+function MatchWithPreference({ visible, setVisible, method, setMethod, methodURL, setMethodURL }) {
+    
+    function handleMatchClick(event) {
+        setMethod("Match With Preferences");
+        setMethodURL("/api/production/match");
+        setVisible();
+    }
+
+    return (
+        <section className="box-border w-2/3 h-min mx-auto bg-white rounded-2xl shadow-md flex flex-col space-y-1">
+            <div className="bg-white h-16 w-full rounded-t-2xl drop-shadow-md flex">
+                <h1 className="px-3 py-4 font-medium text-2xl">Match with Preferences</h1>
+            </div>
+            <div className="box-border p-4 w-full h-min rounded-b-2xl flex flex-col items-center space-y-6 pb-6">
+                <p className="p-2 text-lg text-gray-900 bg-slate-100 rounded-lg">
+                    Match with Preferences follows the traditional logic of crew matching. <span className="font-medium">Crew Match </span>
+                    will use the standard process of prioritizing candidates who have been in LUX the longest, been at UW the longest, response submission time,
+                    and lastly, alphabetically if all else fails. <br></br><br></br>
+                    Match with Preferences takes all preferences into account and will not place a candidate if the available role does not satisfy at least one 
+                    of their preferences. 
+                </p>
+                <button onClick={(e) => handleMatchClick(e)} className="p-4 w-64 font-medium text-xl text-gray-100 bg-slate-600 rounded-lg shadow-md hover:shadow-lg hover:bg-slate-500 active:bg-slate-700
+                    hover:scale-105 transition-all">
+                    Match Candidates
+                </button>
+            </div>
+        </section>
+    );
+}
+
+function MatchWithoutPreference({ visible, setVisible, method, setMethod, methodURL, setMethodURL }) {
+    
+    function handleMatchClick(event) {
+        setMethod("Match Without Preferences");
+        setMethodURL("/api/production/matchNoPreference");
+        setVisible();
+    }
+    
+    return (
+        <section className="box-border w-2/3 h-min mx-auto bg-white rounded-2xl shadow-md flex flex-col space-y-1">
+            <div className="bg-white h-16 w-full rounded-t-2xl drop-shadow-md flex">
+                <h1 className="px-3 py-4 font-medium text-2xl">Match without Preferences</h1>
+            </div>
+            <div className="box-border p-4 w-full h-min rounded-b-2xl flex flex-col items-center space-y-6 pb-6">
+                <p className="p-2 text-lg text-gray-900 bg-slate-100 rounded-lg">
+                    Match without Preferences starts with the same logic as Match with Preferences, but it goes further to ensure a role placement
+                    if space is available. If a candidate's preferences are not satisfied, <span className="font-medium">Crew Match </span> will place 
+                    them on <span className="italic">any</span> production with their top roles, or <span className="italic">any</span> role in their top productions 
+                    according to their production/role preference. <br></br><br></br>
+                    If there are open roles available, Match without Preferences ensures placement.
+                    <br></br><br></br>
+                    <span className="font-medium">A Note on Usage: </span> <br></br>
+                    This method of matching is best used as a supplement to Match with Preferences. In the normal assignment workflow,
+                    candidates will be placed first by the previous method, and then by this method. However, no errors will be encountered
+                    if this is used first, though the matching cannot be undone without a site reset. 
+                </p>
+                <button onClick={(e) => handleMatchClick(e)} className="p-4 w-64 font-medium text-xl text-gray-100 bg-slate-600 rounded-lg shadow-md hover:shadow-lg hover:bg-slate-500 active:bg-slate-700
+                    hover:scale-105 transition-all">
+                    Match Candidates
+                </button>
+            </div>
+        </section>
+    );
+}
+
+function MatchModal({ method, methodURL, visible, setVisible }) {
+    
+    const [loading, setLoading] = useState(false);
+    const [message, setMessage] = useState("");
+    
+    const handleEscPress = (event) => {
+        if (visible && event.key === 'Escape') {
+            setVisible();
+        }
+    };
+
+    const handleConfirmClick = (event) => {
+        
+        setLoading(true);
+
+        fetch(API_URL + methodURL)
+            .then((res) => res.text())
+            .then((data) => setMessage(data))
+            .catch((error) => console.error(error))
+            .finally((result) => {
+                setLoading(false);
+            });
+    }
+
+    useEffect(() => {
+        // Event listener
+        document.addEventListener('keydown', handleEscPress);
+
+        // Remove event listener
+        return () => {
+            document.removeEventListener('keydown', handleEscPress);
+        };
+    }, [visible]);
+
+    return (
+        <div className="fixed bottom-0 left-0 right-0 z-10 w-screen h-screen p-4 bg-gray-700 bg-opacity-50 flex flex-col justify-center items-center">
+            <section className="w-1/4 h-auto bg-white rounded-2xl flex flex-col box-border p-4 shadow-2xl">
+                <h1 className="px-3 py-4 font-medium text-2xl text-center">Confirm {method}?</h1>
+                <p className="text-lg text-center font-normal px-3 py-2 ">This action cannot be undone.</p>
+                {message.length === 0 ? null : <p className="text-xl text-center font-medium px-3 py-2 ">{message}</p>}
+                <div className="w-full h-auto flex space-x-4 justify-center box-border p-4">
+                    <button onClick={(e) => handleConfirmClick(e)} disabled={loading} className={`p-4 w-fit font-medium text-lg text-gray-100 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg shadow-md 
+                                                    hover:shadow-lg hover:bg-gradient-to-r hover:from-green-600 hover:to-emerald-600 ${loading ? "cursor-wait" : ""}
+                                                    active:bg-gradient-to-r active:from-green-700 active:to-emerald-700 hover:scale-105 transition-all`}>
+                        Confirm Match
+                    </button>
+                    <button onClick={() => setVisible()} className="p-4 w-fit font-medium text-lg text-gray-100 bg-gradient-to-r from-red-500 to-rose-500 rounded-lg shadow-md 
+                                                    hover:shadow-lg hover:bg-gradient-to-r hover:from-red-600 hover:to-rose-600 
+                                                    active:bg-gradient-to-r active:from-red-700 active:to-rose-700 hover:scale-105 transition-all">
+                        Return to Page
+                    </button>
+                </div>
+            </section>
+        </div>
+    );
 }
