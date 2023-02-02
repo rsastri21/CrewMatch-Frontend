@@ -4,4 +4,5 @@
     experimental: {
       appDir: true,
     },
+    reactStrictMode: false
   };

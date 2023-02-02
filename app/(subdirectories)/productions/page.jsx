@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useCallback, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
+import { Transition } from "@headlessui/react";
 import { BiCameraMovie } from "react-icons/bi";
 import { GiDirectorChair } from "react-icons/gi";
 import { FcPlus } from "react-icons/fc";
@@ -36,7 +37,7 @@ export default function Productions() {
 
     return (
         <div className="bg-gradient-to-r from-green-200 to-emerald-200 flex flex-col min-h-screen h-auto w-screen pb-16">
-            <div className="w-1/2 h-min min-w-half mx-auto justify-center">
+            <section className="w-1/2 h-min min-w-half mx-auto justify-center">
                 <h1 className="pt-24 pb-12 px-8 text-8xl text-center text-gray-800">
                    Productions Home. 
                 </h1>
@@ -44,7 +45,7 @@ export default function Productions() {
                     Create, view, or edit productions — Match candidates and more.
                 </p>
                 <hr className="h-px mt-8 mx-auto bg-gray-800 border-0 w-2/3 items-center"></hr>
-            </div>
+            </section>
             <section className="w-2/3 max-w-3xl min-w-min h-min py-4 my-2 mx-auto flex flex-col space-y-6">
                 <h1 className="text-5xl px-4 py-2 font-medium text-center text-gray-800">
                     Current Productions
@@ -122,9 +123,35 @@ function MatchUI() {
             </h1>
             <p className="text-center text-xl my-2">View the different candidate matching processes below.</p>
 
-            {visible && <MatchModal visible={visible} setVisible={toggleVisible} method={method} methodURL={methodURL} />}
             <MatchWithPreference visible={visible} setVisible={toggleVisible} method={method} setMethod={changeMethod} methodURL={methodURL} setMethodURL={changeMethodURL} />
             <MatchWithoutPreference visible={visible} setVisible={toggleVisible} method={method} setMethod={changeMethod} methodURL={methodURL} setMethodURL={changeMethodURL} />
+
+            <Transition show={visible} >
+                <Transition.Child
+                    enter="transition-opacity ease-out duration-200"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="transition-opacity ease-out duration-200"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                    className="fixed bottom-0 left-0 right-0 w-screen h-screen"
+                >
+                    <BackgroundOverlay />
+                </Transition.Child>
+                
+                <Transition.Child
+                    enter="transition-all ease-in-out duration-200"
+                    enterFrom="translate-y-full scale-50"
+                    enterTo="translate-y-0 scale-100"
+                    leave="transition-all ease-in-out duration-200"
+                    leaveFrom="translate-y-0 scale-100"
+                    leaveTo="translate-y-full scale-50"
+                    className="fixed bottom-0 left-0 right-0 w-screen h-screen"
+                >
+                    <MatchModal visible={visible} setVisible={toggleVisible} method={method} methodURL={methodURL} />
+                </Transition.Child>
+                
+            </Transition>
             
         </section>
     );
@@ -139,7 +166,7 @@ function MatchWithPreference({ visible, setVisible, method, setMethod, methodURL
     }
 
     return (
-        <section className="box-border w-2/3 h-min mx-auto bg-white rounded-2xl shadow-md flex flex-col space-y-1">
+        <section className="box-border w-2/3 h-min z-0 mx-auto bg-white rounded-2xl shadow-md flex flex-col space-y-1">
             <div className="bg-white h-16 w-full rounded-t-2xl drop-shadow-md flex">
                 <h1 className="px-3 py-4 font-medium text-2xl">Match with Preferences</h1>
             </div>
@@ -169,7 +196,7 @@ function MatchWithoutPreference({ visible, setVisible, method, setMethod, method
     }
     
     return (
-        <section className="box-border w-2/3 h-min mx-auto bg-white rounded-2xl shadow-md flex flex-col space-y-1">
+        <section className="box-border w-2/3 h-min z-0 mx-auto bg-white rounded-2xl shadow-md flex flex-col space-y-1">
             <div className="bg-white h-16 w-full rounded-t-2xl drop-shadow-md flex">
                 <h1 className="px-3 py-4 font-medium text-2xl">Match without Preferences</h1>
             </div>
@@ -192,6 +219,12 @@ function MatchWithoutPreference({ visible, setVisible, method, setMethod, method
                 </button>
             </div>
         </section>
+    );
+}
+
+function BackgroundOverlay() {
+    return (
+        <div className="fixed bottom-0 left-0 right-0 z-50 w-screen h-screen p-4 bg-gray-700 bg-opacity-50 flex flex-col justify-center items-center"></div> 
     );
 }
 
@@ -230,7 +263,7 @@ function MatchModal({ method, methodURL, visible, setVisible }) {
     }, [visible]);
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 z-10 w-screen h-screen p-4 bg-gray-700 bg-opacity-50 flex flex-col justify-center items-center">
+        <div className="fixed bottom-0 left-0 right-0 z-50 w-screen h-screen p-4 flex flex-col justify-center items-center">
             <section className="w-1/4 h-auto bg-white rounded-2xl flex flex-col box-border p-4 shadow-2xl">
                 <h1 className="px-3 py-4 font-medium text-2xl text-center">Confirm {method}?</h1>
                 <p className="text-lg text-center font-normal px-3 py-2 ">This action cannot be undone.</p>

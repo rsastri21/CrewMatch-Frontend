@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useCallback, useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { Transition } from "@headlessui/react";
 import { useSession } from "../../SessionContext.js";
 import CandidateTable from "./CandidateTable.jsx";
 
@@ -26,12 +27,39 @@ export default function Candidate() {
                 </p>
                 <hr className="h-px mt-8 mx-auto bg-gray-800 border-0 w-2/3 items-center"></hr>
             </div>
-            <div className="w-[50%] min-w-min h-min py-4 my-8 mx-auto flex flex-col space-y-12 items-center">
+            <div className="w-[50%] min-w-min h-min py-4 my-8 mx-auto z-0 flex flex-col space-y-12 items-center">
                 <CandidateTable fetchURL={API_URL + '/api/candidate/get'} />
                 {user.role === "admin" &&
                     <><HeadersUI toggle={toggleForm} />
-                    <HeaderForm showHeaderForm={showHeaderForm} toggle={toggleForm} />
-                    <UploadUI /></>
+
+                    <UploadUI />
+
+                    <Transition show={showHeaderForm} >
+                        <Transition.Child
+                            enter="transition-opacity ease-out duration-200"
+                            enterFrom="opacity-0"
+                            enterTo="opacity-100"
+                            leave="transition-opacity ease-out duration-200"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                            className="fixed bottom-0 left-0 right-0 w-screen h-screen"
+                        >
+                            <BackgroundOverlay />
+                        </Transition.Child>
+                        <Transition.Child
+                            enter="transition-all ease-in-out duration-200"
+                            enterFrom="translate-y-full scale-50"
+                            enterTo="translate-y-0 scale-100"
+                            leave="transition-all ease-in-out duration-200"
+                            leaveFrom="translate-y-0 scale-100"
+                            leaveTo="translate-y-full scale-50"
+                            className="fixed bottom-0 left-0 right-0 w-screen h-screen"
+                        >
+                            <HeaderForm showHeaderForm={showHeaderForm} toggle={toggleForm} />
+                        </Transition.Child>
+                    </Transition>
+
+                    </>
                 }
             </div>
         </div>
@@ -40,7 +68,7 @@ export default function Candidate() {
 
 function HeadersUI({ toggle }) {
     return (
-        <section className="box-border w-full h-min bg-white rounded-2xl shadow-md">
+        <section className="box-border w-full h-min bg-white rounded-2xl shadow-md z-0">
             <div className="bg-white h-16 w-full rounded-t-2xl drop-shadow-md flex">
                 <h1 className="px-3 py-4 font-medium text-2xl">Update Headers</h1>
             </div>
@@ -55,6 +83,12 @@ function HeadersUI({ toggle }) {
             </div>
         </section>
     ); 
+}
+
+function BackgroundOverlay() {
+    return (
+        <div className="fixed bottom-0 left-0 right-0 z-50 w-screen h-screen p-4 bg-gray-700 bg-opacity-50 flex flex-col justify-center"></div>
+    );
 }
 
 function HeaderForm({ showHeaderForm, toggle }) {
@@ -126,41 +160,40 @@ function HeaderForm({ showHeaderForm, toggle }) {
     }
     
     return (
-        showHeaderForm && 
-            <div className="fixed bottom-0 left-0 right-0 z-10 w-screen h-screen p-4 bg-gray-700 bg-opacity-50">
-                <section className="mx-auto box-border w-1/2 min-w-min h-min bg-white rounded-2xl shadow-md">
-                    <div className="bg-white z-50 h-fit w-full rounded-t-2xl drop-shadow-md flex">
-                        <h1 className="px-3 py-4 font-medium text-2xl">View and Update the Current CSV Headers</h1>
-                    </div>
-                    
-                    <section className="box-border p-4 w-full h-auto max-h-[80vh] overflow-y-scroll rounded-b-2xl flex flex-col">
-                        <p className="p-2 text-lg text-gray-900 bg-slate-100 rounded-lg">The form below contains the required CSV headers for  
-                            <span className="font-medium"> Crew Match</span>. Please ensure each field is filled
-                            before submitting the form.
-                        </p>
-                        <form className="py-2 my-4 border border-separate rounded-lg grid grid-cols-2 grid-rows-15 gap-y-4">
-                            {formData.map((form, index) => (
-                                <React.Fragment key={index}><label key={index} className="px-3 py-4 mx-4 w-half font-medium text-lg text-right">
-                                    {Headers[index]}
-                                </label><input key={"input-" + index} className="py-4 px-3 w-[90%] rounded-lg bg-slate-200 text-gray-700" type="text" name={Headers[index]} value={form} onChange={e => updateFormData(e, index)} required /></React.Fragment>
-                            ))}
-                        </form>
-                        <footer className="flex justify-end p-4 space-x-4">
-                            <button onClick={submitForm} className={`p-4 w-42 font-medium text-lg text-gray-100 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg shadow-md 
-                                                hover:shadow-lg hover:bg-gradient-to-r hover:from-green-600 hover:to-emerald-600 
-                                                active:bg-gradient-to-r active:from-green-700 active:to-emerald-700 ${loading ? "cursor-wait" : ""}`}>
-                                Save Changes
-                            </button>
-                            <button onClick={toggle} className="p-4 w-32 font-medium text-lg text-gray-100 bg-gradient-to-r from-red-500 to-rose-500 rounded-lg shadow-md 
-                                                hover:shadow-lg hover:bg-gradient-to-r hover:from-red-600 hover:to-rose-600 
-                                                active:bg-gradient-to-r active:from-red-700 active:to-rose-700">
-                                Cancel
-                            </button>
-                        </footer>
-                    </section>
-                </section>
+        <div className="fixed bottom-0 left-0 right-0 z-50 w-screen h-screen p-4 flex flex-col justify-center">
+            <section className="mx-auto box-border w-1/2 min-w-min h-min bg-white rounded-2xl shadow-md">
+                <div className="bg-white h-fit w-full rounded-t-2xl drop-shadow-md flex">
+                    <h1 className="px-3 py-4 font-medium text-2xl">View and Update the Current CSV Headers</h1>
+                </div>
                 
-            </div>
+                <section className="box-border p-4 w-full h-auto max-h-[80vh] overflow-y-scroll rounded-b-2xl flex flex-col">
+                    <p className="p-2 text-lg text-gray-900 bg-slate-100 rounded-lg">The form below contains the required CSV headers for  
+                        <span className="font-medium"> Crew Match</span>. Please ensure each field is filled
+                        before submitting the form.
+                    </p>
+                    <form className="py-2 my-4 border border-separate rounded-lg grid grid-cols-2 grid-rows-15 gap-y-4">
+                        {formData.map((form, index) => (
+                            <React.Fragment key={index}><label key={index} className="px-3 py-4 mx-4 w-half font-medium text-lg text-right">
+                                {Headers[index]}
+                            </label><input key={"input-" + index} className="py-4 px-3 w-[90%] rounded-lg bg-slate-200 text-gray-700" type="text" name={Headers[index]} value={form} onChange={e => updateFormData(e, index)} required /></React.Fragment>
+                        ))}
+                    </form>
+                    <footer className="flex justify-end p-4 space-x-4">
+                        <button onClick={submitForm} className={`p-4 w-42 font-medium text-lg text-gray-100 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg shadow-md 
+                                            hover:shadow-lg hover:bg-gradient-to-r hover:from-green-600 hover:to-emerald-600 
+                                            active:bg-gradient-to-r active:from-green-700 active:to-emerald-700 ${loading ? "cursor-wait" : ""}`}>
+                            Save Changes
+                        </button>
+                        <button onClick={toggle} className="p-4 w-32 font-medium text-lg text-gray-100 bg-gradient-to-r from-red-500 to-rose-500 rounded-lg shadow-md 
+                                            hover:shadow-lg hover:bg-gradient-to-r hover:from-red-600 hover:to-rose-600 
+                                            active:bg-gradient-to-r active:from-red-700 active:to-rose-700">
+                            Cancel
+                        </button>
+                    </footer>
+                </section>
+            </section>
+            
+        </div>
     )
 }
 
@@ -222,7 +255,7 @@ function UploadUI() {
     }
     
     return (
-        <section className="box-border w-full h-min bg-white rounded-2xl shadow-md flex flex-col space-y-1">
+        <section className="box-border w-full h-min z-0 bg-white rounded-2xl shadow-md flex flex-col space-y-1">
             <div className="bg-white h-16 w-full rounded-t-2xl drop-shadow-md flex">
                 <h1 className="px-3 py-4 font-medium text-2xl">Add Candidates by CSV</h1>
             </div>

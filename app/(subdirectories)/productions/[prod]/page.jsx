@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useLayoutEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { Transition } from '@headlessui/react';
 import CandidateTable from '../../candidates/CandidateTable';
 import { FcFilmReel } from "react-icons/fc";
 import { useSession } from '../../../SessionContext';
@@ -66,9 +67,42 @@ export default function ProductionUI({ params, }) {
                 </h1>
                 {production && <CandidateTable fetchURL={API_URL + `/api/candidate/search?assigned=false&actingInterest=true&production=${production.name}`} mode="actor" />}
             </section>
-            <DeleteModal id={production.id} visible={deleteModal} setVisible={toggleDelete} />
             <DeleteProductionBox visible={deleteModal} setVisible={toggleDelete} />
+
+            <Transition show={deleteModal} >
+                <Transition.Child
+                    enter="transition-opacity ease-out duration-200"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="transition-opacity ease-out duration-200"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                    className="fixed bottom-0 left-0 right-0 w-screen h-screen"
+                >
+                    <BackgroundOverlay />
+                </Transition.Child>
+                
+                <Transition.Child
+                    enter="transition-all ease-in-out duration-200"
+                    enterFrom="translate-y-full scale-50"
+                    enterTo="translate-y-0 scale-100"
+                    leave="transition-all ease-in-out duration-200"
+                    leaveFrom="translate-y-0 scale-100"
+                    leaveTo="translate-y-full scale-50"
+                    className="fixed bottom-0 left-0 right-0 w-screen h-screen"
+                >
+                    <DeleteModal id={production.id} visible={deleteModal} setVisible={toggleDelete} />
+                </Transition.Child>
+                
+            </Transition>
+
         </div>
+    );
+}
+
+function BackgroundOverlay() {
+    return (
+        <div className="fixed bottom-0 left-0 right-0 z-50 w-screen h-screen p-4 bg-gray-700 bg-opacity-50 flex flex-col justify-center"></div>
     );
 }
 
@@ -184,8 +218,7 @@ function DeleteModal({ id, visible, setVisible }) {
     }
     
     return (
-        visible && 
-        <div className="fixed bottom-0 left-0 right-0 z-10 w-screen h-screen p-4 bg-gray-700 bg-opacity-50 flex flex-col justify-center items-center">
+        <div className="fixed bottom-0 left-0 right-0 z-10 w-screen h-screen p-4 flex flex-col justify-center items-center">
             <section className="w-1/4 h-auto bg-white rounded-2xl flex flex-col box-border p-4 shadow-2xl">
                 <h1 className="px-3 py-4 font-medium text-2xl text-center">Are you sure you want to delete this production?</h1>
                 <p className="text-lg text-center font-normal px-3 py-2 ">This action cannot be undone.</p>

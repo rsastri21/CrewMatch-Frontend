@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { FaUserEdit } from "react-icons/fa";
 import { AiOutlineUser } from "react-icons/ai";
 import { AiOutlineEdit } from "react-icons/ai";
+import { Transition } from "@headlessui/react";
 
 const API_URL = 'https://crew-match.herokuapp.com';
 
@@ -76,7 +77,7 @@ export default function CandidateTable({ fetchURL, mode, role, index, prod }) {
                             <tr key={candidate.id}>
                                 <td key={"name-" + candidate.id} className="text-left border border-slate-300 transition-all">
                                     <button onClick={(user.role === "admin" || user.role === "production head") ? (event) => handleNameClick(event, index) : undefined} className={`p-2 w-full rounded-md bg-white ${(user.role === "admin" || user.role === "production head")
-                                     ? "hover:shadow-md hover:cursor-pointer hover:scale-105 hover:z-50 transition-all active:bg-slate-100" : "hover:cursor-default"}`}>{candidate.name}</button>
+                                     ? "hover:shadow-md hover:cursor-pointer hover:scale-105 hover:z-0 transition-all active:bg-slate-100" : "hover:cursor-default"}`}>{candidate.name}</button>
                                 </td>
                                 <td key={"pro-" + candidate.id} className="text-center py-2 px-2 border border-slate-300">{candidate.pronouns}</td>
                                 <td key={"email-" + candidate.id} className="text-center py-2 px-2 border border-slate-300">{candidate.email}</td>
@@ -101,15 +102,69 @@ export default function CandidateTable({ fetchURL, mode, role, index, prod }) {
 
     return (
         <section className="box-border w-full h-full overflow-y-scroll bg-white rounded-2xl shadow-md">
-            <CandidateModal candidate={candidates[candidateIndex]} visible={modal} toggleModal={toggle} role={role} roleIndex={index} prodID={prod} />
-            <EditCandidate candidate={candidates[indexEdit]} visible={edit} toggleVisible={toggleEdit}/>
-            <div className={`bg-white ${(mode === "assign" || mode === "actor") ? "max-h-fit" : "h-16"} w-full rounded-t-2xl drop-shadow-md flex`}>
+            <Transition show={edit} className="z-50">
+                <Transition.Child
+                    enter="transition-opacity ease-out duration-200"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="transition-opacity ease-out duration-200"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                    className="fixed bottom-0 left-0 right-0 w-screen h-screen z-40"
+                >
+                    <BackgroundOverlay /> 
+                </Transition.Child>
+                <Transition.Child
+                    enter="transition-all ease-in-out duration-200"
+                    enterFrom="translate-y-full scale-50"
+                    enterTo="translate-y-0 scale-100"
+                    leave="transition-all ease-in-out duration-200"
+                    leaveFrom="translate-y-0 scale-100"
+                    leaveTo="translate-y-full scale-50"
+                    className="fixed bottom-0 left-0 right-0 w-screen h-screen z-50"
+                >
+                    <EditCandidate candidate={candidates[indexEdit]} visible={edit} toggleVisible={toggleEdit}/>
+                </Transition.Child>
+            </Transition>
+            
+            <Transition show={modal} className="z-50">
+                <Transition.Child
+                    enter="transition-opacity ease-out duration-200"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="transition-opacity ease-out duration-200"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                    className="fixed bottom-0 left-0 right-0 w-screen h-screen z-40"
+                >
+                    <BackgroundOverlay /> 
+                </Transition.Child>
+                <Transition.Child
+                    enter="transition-all ease-in-out duration-200"
+                    enterFrom="translate-y-full scale-50"
+                    enterTo="translate-y-0 scale-100"
+                    leave="transition-all ease-in-out duration-200"
+                    leaveFrom="translate-y-0 scale-100"
+                    leaveTo="translate-y-full scale-50"
+                    className="fixed bottom-0 left-0 right-0 w-screen h-screen z-50"
+                >
+                    <CandidateModal candidate={candidates[candidateIndex]} visible={modal} toggleModal={toggle} role={role} roleIndex={index} prodID={prod} />
+                </Transition.Child>
+            </Transition>
+            
+            <div className={`bg-white ${(mode === "assign" || mode === "actor") ? "max-h-fit" : "h-16"} w-full rounded-t-2xl drop-shadow-md z-0 flex`}>
                 <h1 className="px-3 py-4 font-medium text-2xl">{mode === "assign" ? "Available to Assign" : (mode === "actor" ? "Interested in Acting" : "Enrolled")}</h1>
             </div>
-            <div className={`box-border p-2 w-full min-h-4 ${mode === "assign" ? "h-fit" : "max-h-128"} rounded-b-2xl overflow-y-scroll`}>
+            <div className={`box-border p-2 w-full min-h-4 ${mode === "assign" ? "h-fit" : "max-h-128"} rounded-b-2xl overflow-y-scroll z-0`}>
                 {renderTable()}
             </div>
         </section>
+    );
+}
+
+function BackgroundOverlay() {
+    return (
+        <div className="fixed bottom-0 left-0 right-0 z-50 w-screen h-screen p-4 bg-gray-700 bg-opacity-50 flex flex-col justify-center"></div>
     );
 }
 
@@ -152,8 +207,7 @@ function CandidateModal({ candidate, visible, toggleModal, role, prodID, roleInd
     }
 
     return (
-        visible &&
-        <div className="fixed bottom-0 left-0 right-0 z-10 w-screen h-screen p-4 bg-gray-700 bg-opacity-50 flex flex-col justify-center">
+        <div className="fixed bottom-0 left-0 right-0 z-50 w-screen h-screen p-4 flex flex-col justify-center">
             <section className="mx-auto box-border w-fit min-w-fit h-min bg-white rounded-2xl shadow-md">
                 <div className={`px-4 bg-gradient-to-r ${candidate.actingInterest ? 'from-violet-300 to-purple-300' : (candidate.assigned ? 'from-green-300 to-emerald-300' : 'from-red-300 to-rose-300')} z-50 h-fit w-full rounded-t-2xl drop-shadow-md flex justify-center`}>
                     <AiOutlineUser className="w-9 h-9 ml-2 mr-1 my-3" /> 
@@ -247,6 +301,11 @@ function EditCandidate({ candidate, visible, toggleVisible }) {
         }
     };
 
+    const toggle = (event) => {
+        event.preventDefault();
+        toggleVisible();
+    }
+
     useLayoutEffect(() => {
         setFormData({...candidate});
     }, [visible]);
@@ -307,9 +366,8 @@ function EditCandidate({ candidate, visible, toggleVisible }) {
 
     }
     
-    return (
-        visible && 
-        <div className="fixed bottom-0 left-0 right-0 z-10 w-screen h-screen p-4 bg-gray-700 bg-opacity-50 flex flex-col justify-center">
+    return ( 
+        <div className="fixed bottom-0 left-0 right-0 z-10 w-screen h-screen p-4 flex flex-col justify-center">
             <section className="mx-auto box-border w-fit min-w-fit h-min bg-white rounded-2xl shadow-md">
                 <div className={`px-4 bg-gradient-to-r ${candidate.actingInterest ? 'from-violet-300 to-purple-300' : (candidate.assigned ? 'from-green-300 to-emerald-300' : 'from-red-300 to-rose-300')} z-50 h-fit w-full rounded-t-2xl drop-shadow-md flex justify-center`}>
                     <AiOutlineEdit className="w-9 h-9 ml-2 mr-1 my-3" /> 
@@ -339,7 +397,7 @@ function EditCandidate({ candidate, visible, toggleVisible }) {
                                                 active:bg-gradient-to-r active:from-green-700 active:to-emerald-700 ${loading ? "cursor-wait animate-pulse" : ""}`}>
                                 Save Changes
                             </button>
-                            <button onClick={toggleVisible} className="p-3 w-32 font-medium text-lg text-gray-100 bg-gradient-to-r from-red-500 to-rose-500 rounded-lg shadow-md 
+                            <button onClick={(e) => toggle(e)} className="p-3 w-32 font-medium text-lg text-gray-100 bg-gradient-to-r from-red-500 to-rose-500 rounded-lg shadow-md 
                                                 hover:shadow-lg hover:bg-gradient-to-r hover:from-red-600 hover:to-rose-600 
                                                 active:bg-gradient-to-r active:from-red-700 active:to-rose-700">
                                 Cancel
