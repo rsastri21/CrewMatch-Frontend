@@ -264,10 +264,18 @@ function UploadUI() {
                 setLoading(false);
             });
 
-        if (error === 200) {
-            alert("The file was uploaded successfully. Reload the page to see the updated candidates.");
-        }
         resetInput();
+    }
+
+    function renderErrorMessage() {
+        switch(true) {
+            case error === 200:
+                return <label className="font-medium text-lg text-emerald-400">File uploaded successfully. Refresh the page to see the updated candidate table.</label>;
+            case error >= 400:
+                return <label className="font-medium text-lg text-rose-400">There was an error uploading the file.</label>;
+            default:
+                return null;
+        }
     }
     
     return (
@@ -291,7 +299,7 @@ function UploadUI() {
                             onChange={(e) => handleChange(e)} multiple={false}></input>
                     </div>
                 </form>
-                {(error >= 400) && <label className="font-medium text-lg text-rose-400">There was an error uploading the file.</label> }
+                {renderErrorMessage()}
                 <div className="w-full flex items-center justify-center space-x-4">
                     <button onClick={handleUploadClick} className={`p-4 my-4 w-42 font-medium text-xl text-gray-100 bg-slate-600 rounded-lg shadow-md hover:shadow-lg hover:bg-slate-500 active:bg-slate-700
                                                                 ${loading ? "cursor-wait" : ""}`}>
