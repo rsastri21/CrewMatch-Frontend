@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useLayoutEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Transition } from '@headlessui/react';
 import CandidateTable from '../../candidates/CandidateTable';
@@ -11,11 +11,7 @@ const API_URL = "https://crew-match.herokuapp.com";
 
 export default function ProductionUI({ params, }) {
     
-    const user = useSession();
-
-    if (user.role !== "admin" && user.role !== "production head") {
-        return (alert("You do not have access to this page."));
-    } 
+    const user = useSession(); 
     
     const [production, setProduction] = useState({});
     const [tableVisible, setTableVisible] = useState(false);
@@ -43,6 +39,7 @@ export default function ProductionUI({ params, }) {
     }
     
     return (
+        
         <div className="bg-gradient-to-r from-green-200 to-emerald-200 flex flex-col min-h-screen h-auto w-screen pb-16">
             <div className="w-1/2 h-min min-w-half mx-auto justify-center">
                 <FcFilmReel className="w-48 h-48 pt-12 mx-auto my-2"/>
