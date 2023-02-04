@@ -7,8 +7,6 @@ import CandidateTable from '../../candidates/CandidateTable';
 import { FcFilmReel } from "react-icons/fc";
 import { useSession } from '../../../SessionContext';
 
-const API_URL = "https://crew-match.herokuapp.com";
-
 export default function ProductionUI({ params, }) {
     
     const user = useSession(); 
@@ -20,7 +18,7 @@ export default function ProductionUI({ params, }) {
 
     useEffect(() => {
         const get = async () => {
-            const res = await fetch(API_URL + '/api/production/get/' + params.prod);
+            const res = await fetch(process.env.API_URL + '/api/production/get/' + params.prod);
             const data = await res.json();
 
             setProduction({...data});
@@ -62,7 +60,7 @@ export default function ProductionUI({ params, }) {
                 <h1 className="text-5xl px-8 py-4 font-medium text-center text-gray-800">
                     Casting
                 </h1>
-                {production && <CandidateTable fetchURL={API_URL + `/api/candidate/search?assigned=false&actingInterest=true&production=${production.name}`} mode="actor" />}
+                {production && <CandidateTable fetchURL={process.env.API_URL + `/api/candidate/search?assigned=false&actingInterest=true&production=${production.name}`} mode="actor" />}
             </section>
             <DeleteProductionBox visible={deleteModal} setVisible={toggleDelete} />
 
@@ -148,7 +146,7 @@ function AvailableCandidateModal({ production, visible, toggleModal, role, index
         visible &&
         <div className="fixed bottom-0 left-0 right-0 z-10 w-screen h-screen p-4 bg-gray-700 bg-opacity-50 flex flex-col justify-center items-center">
             <section className="w-1/2 h-1/2">
-                <CandidateTable fetchURL={API_URL + `/api/candidate/search?assigned=false&actingInterest=false&production=${production}`} mode={'assign'} role={role} index={index} prod={prodID} />
+                <CandidateTable fetchURL={process.env.API_URL + `/api/candidate/search?assigned=false&actingInterest=false&production=${production}`} mode={'assign'} role={role} index={index} prod={prodID} />
             </section>
         </div>
     );
@@ -205,7 +203,7 @@ function DeleteModal({ id, visible, setVisible }) {
         const requestOptions = {
             method: 'DELETE'
         }
-        fetch(API_URL + "/api/production/delete/" + id, requestOptions)
+        fetch(process.env.API_URL + "/api/production/delete/" + id, requestOptions)
             .then((res) => res.text())
             .catch(err => console.error(err))
             .finally((result) => {

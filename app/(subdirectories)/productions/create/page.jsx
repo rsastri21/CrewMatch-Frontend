@@ -6,8 +6,6 @@ import { GrLinkPrevious } from "react-icons/gr";
 import { useRouter } from 'next/navigation';
 import Link from "next/link";
 
-const API_URL = "https://crew-match.herokuapp.com";
-
 export default function CreateProductionForm() {
     
     const initialData = [
@@ -96,7 +94,7 @@ export default function CreateProductionForm() {
                 members: [...members]
             })
         };
-        fetch(API_URL + "/api/production/create", requestOptions)
+        fetch(process.env.API_URL + "/api/production/create", requestOptions)
             .then((res) => {
                 setError(res.status);
                 res.text();

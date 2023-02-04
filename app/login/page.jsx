@@ -5,8 +5,6 @@ import { useState } from 'react';
 import { useSession, useSessionUpdate } from "../SessionContext.js";
 import { useRouter } from 'next/navigation';
 
-const API_URL = "https://crew-match.herokuapp.com";
-
 export default function Login() {
     
     const router = useRouter();
@@ -37,7 +35,7 @@ export default function Login() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         }
-        fetch(API_URL + "/api/user/login", requestOptions)
+        fetch(process.env.API_URL + "/api/user/login", requestOptions)
             .then((res) => {
                 if (res.status === 400) {
                     console.log("User does not exist. Please sign up instead.");

@@ -8,8 +8,6 @@ import { FcPlus } from "react-icons/fc";
 import { useRouter } from 'next/navigation';
 import { useSession } from '../../SessionContext';
 
-const API_URL = "https://crew-match.herokuapp.com";
-
 export default function Productions() {
     
     const router = useRouter();
@@ -18,7 +16,7 @@ export default function Productions() {
 
     useEffect(() => {
         const get = async () => {
-            const res = await fetch(API_URL + '/api/production/get');
+            const res = await fetch(process.env.API_URL + '/api/production/get');
             const data = await res.json();
 
             setProductions(data);
@@ -259,7 +257,7 @@ function MatchModal({ method, methodURL, visible, setVisible }) {
         
         setLoading(true);
 
-        fetch(API_URL + methodURL)
+        fetch(process.env.API_URL + methodURL)
             .then((res) => res.text())
             .then((data) => setMessage(data))
             .catch((error) => console.error(error))

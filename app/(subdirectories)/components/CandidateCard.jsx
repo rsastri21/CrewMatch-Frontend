@@ -2,8 +2,6 @@
 
 import { useState, useLayoutEffect } from 'react';
 
-const API_URL = "https://crew-match.herokuapp.com";
-
 export default function CandidateCard() {
 
     const [count, setCount] = useState(0);
@@ -13,14 +11,14 @@ export default function CandidateCard() {
     useLayoutEffect(() => {
 
         const getCandidateCount = async () => {
-            const res = await fetch(API_URL + '/api/candidate/getCount');
+            const res = await fetch(process.env.API_URL + '/api/candidate/getCount');
             const data = await res.text();
 
             setCount(parseInt(data));
         }
 
         const getPercent = async (path, setFunction) => {
-            const res = await fetch(API_URL + `/api/candidate/get/percent${path}`);
+            const res = await fetch(process.env.API_URL + `/api/candidate/get/percent${path}`);
             const data = await res.text();
 
             setFunction(parseFloat(data));

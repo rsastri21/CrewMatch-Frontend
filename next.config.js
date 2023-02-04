@@ -4,5 +4,8 @@
     experimental: {
       appDir: true,
     },
-    reactStrictMode: false
+    reactStrictMode: false,
+    env: {
+      API_URL: "https://crew-match.herokuapp.com"
+    }
   };

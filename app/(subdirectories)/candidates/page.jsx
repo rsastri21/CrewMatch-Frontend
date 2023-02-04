@@ -5,8 +5,6 @@ import { Transition } from "@headlessui/react";
 import { useSession } from "../../SessionContext.js";
 import CandidateTable from "./CandidateTable.jsx";
 
-const API_URL = "https://crew-match.herokuapp.com";
-
 export default function Candidate() {
 
     const user = useSession();
@@ -44,7 +42,7 @@ export default function Candidate() {
                 <hr className="h-px mt-8 mx-auto bg-gray-800 border-0 w-2/3 items-center"></hr>
             </div>
             <div className="w-[50%] min-w-min h-min py-4 my-8 mx-auto z-0 flex flex-col space-y-12 items-center">
-                <CandidateTable fetchURL={API_URL + '/api/candidate/get'} />
+                <CandidateTable fetchURL={process.env.API_URL + '/api/candidate/get'} />
                 {user.role === "admin" &&
                     <><HeadersUI toggle={toggleForm} />
 
@@ -121,7 +119,7 @@ function HeaderForm({ showHeaderForm, toggle }) {
 
     useEffect(() => {
         const getHeaders = async () => {
-            const res = await fetch(API_URL + '/api/headers/get');
+            const res = await fetch(process.env.API_URL + '/api/headers/get');
             const data = await res.json();
 
             setFormData(data.csvHeaders);
@@ -162,7 +160,7 @@ function HeaderForm({ showHeaderForm, toggle }) {
             body: JSON.stringify({ name: "header",
                                    csvHeaders: [...formData]})
         }
-        fetch(API_URL + "/api/headers/update", requestOptions)
+        fetch(process.env.API_URL + "/api/headers/update", requestOptions)
             .then((res) => res.json())
             .then((data) => console.log(data))
             .catch((err) => {
@@ -252,7 +250,7 @@ function UploadUI() {
             redirect: 'follow'
         }
 
-        fetch(API_URL + "/api/candidate/upload", requestOptions)
+        fetch(process.env.API_URL + "/api/candidate/upload", requestOptions)
             .then((res) => {
                 setError(res.status);
                 res.text();

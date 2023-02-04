@@ -5,8 +5,6 @@ import { useState } from 'react';
 import { useSession, useSessionUpdate } from "../SessionContext.js";
 import { useRouter } from 'next/navigation';
 
-const API_URL = "https://crew-match.herokuapp.com";
-
 export default function Signup() {
     
     const router = useRouter();
@@ -51,7 +49,7 @@ export default function Signup() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         }
-        fetch(API_URL + "/api/user/register", requestOptions)
+        fetch(process.env.API_URL + "/api/user/register", requestOptions)
             .then((res) => {
                 if (res.status === 409) {
                     console.log("User is already registered. Please log in.");

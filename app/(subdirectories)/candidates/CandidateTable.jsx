@@ -8,8 +8,6 @@ import { AiOutlineUser } from "react-icons/ai";
 import { AiOutlineEdit } from "react-icons/ai";
 import { Transition } from "@headlessui/react";
 
-const API_URL = 'https://crew-match.herokuapp.com';
-
 export default function CandidateTable({ fetchURL, mode, role, index, prod }) {
     
     const [candidates, setCandidates] = useState([]);
@@ -196,7 +194,7 @@ function CandidateModal({ candidate, visible, toggleModal, role, prodID, roleInd
         const requestOptions = {
             method: 'PUT',
         }
-        fetch(API_URL + `/api/production/assign/${prodID}/${candidate.id}/${roleIndex}`, requestOptions)
+        fetch(process.env.API_URL + `/api/production/assign/${prodID}/${candidate.id}/${roleIndex}`, requestOptions)
             .then((res) => res.text())
             .catch((err) => console.error(err))
             .finally(() => {
@@ -353,7 +351,7 @@ function EditCandidate({ candidate, visible, toggleVisible }) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({...formData})
         }
-        fetch(API_URL + `/api/candidate/update/${formData.id}`, requestOptions)
+        fetch(process.env.API_URL + `/api/candidate/update/${formData.id}`, requestOptions)
             .then((res) => res.json())
             .then((res) => console.log(res))
             .catch((err) => {
