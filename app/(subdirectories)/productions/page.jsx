@@ -74,6 +74,10 @@ export default function Productions() {
                 : null}
             </section>
             <hr className="h-px my-4 mx-auto bg-gray-800 border-0 w-1/3 items-center"></hr>
+            {user.role === "admin" ? <>
+                    <RolesUI />
+                    <hr className="h-px my-4 mx-auto bg-gray-800 border-0 w-1/3 items-center"></hr>
+                </> : null }
             {user.role === "admin" ? <MatchUI /> : null}
         </div>
     );
@@ -110,6 +114,50 @@ function ProductionCard({ title, director, index, changeIndex }) {
             </div>
         </div>
     )
+}
+
+function RolesUI() {
+    
+    const [roles, setRoles] = useState([]);
+
+    useEffect(() => {
+        const get = async () => {
+            const res = await fetch(process.env.API_URL + "/api/production/get/roles");
+            const data = await res.json();
+
+            setRoles(data);
+        }
+        get().catch(console.error);
+    }, []);
+    
+
+    console.log(roles);
+
+    return (
+        <section className="w-1/2 min-w-fit h-min py-4 my-2 mx-auto flex flex-col space-y-8">
+            <h1 className="text-5xl px-4 py-2 font-medium text-center text-gray-800">
+                Retrieve Roles
+            </h1>
+            <section className="box-border w-2/3 h-min z-0 mx-auto bg-white rounded-2xl shadow-md flex flex-col space-y-1">
+                <div className="bg-white h-16 w-full rounded-t-2xl drop-shadow-md flex">
+                    <h1 className="px-3 py-4 font-medium text-2xl">All Roles from Current Productions</h1>
+                </div>
+                <div className="box-border p-4 w-full h-min rounded-b-2xl flex flex-col items-center space-y-6 pb-6">
+                    <p className="p-2 text-lg text-gray-900 bg-slate-100 rounded-lg">
+                        In order to make sure the Role Interest Survey contains the same roles that productions are requesting, <span className="font-medium">Crew Match </span>
+                        will find all the unique roles and present them in a list. <br></br><br></br>
+                        This ensures that candidates filling out the form are able to be matched to crews most effectively. 
+                    </p>
+                    <h1 className="px-3 py-4 min-w-fit shadow-md text-center text-xl font-medium rounded-xl">The following roles are requested by productions</h1>
+                    <div className="box-border p-2 grid grid-cols-2 gap-4 w-full h-auto shadow-md rounded-2xl">
+                        {roles && roles.map(role => (
+                            <p className="p-2 text-lg text-center">{role}</p>
+                        ))}
+                    </div>
+                </div>
+            </section>
+        </section>
+    );
 }
 
 function MatchUI() {
