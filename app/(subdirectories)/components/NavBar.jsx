@@ -1,10 +1,12 @@
 "use client";
 
 import { GrGroup } from "react-icons/gr";
+import { BiUserCircle, BiChevronDown } from "react-icons/bi";
+import { FcSettings, FcUndo } from "react-icons/fc";
 import Link from "next/link";
-import { Menu } from "@headlessui/react";
-
+import { Menu, Transition } from "@headlessui/react";
 import { useSession, useSessionUpdate } from "../../SessionContext.js";
+import { Fragment } from "react";
 
 export default function NavBar() {
     
@@ -34,11 +36,79 @@ export default function NavBar() {
                     </>
                 }
                 {Object.keys(user).length === 0 ? 
-                    <Link href="/login" className="px-4 py-2 text-md font-medium text-slate-100 bg-gray-700 rounded-md shadow-sm hover:bg-gray-600 hover:shadow-md active:bg-slate-800">Log In</Link>
+                    <Link href="/login" className="px-4 py-2 text-md font-medium bg-slate-100 rounded-md shadow-sm hover:bg-slate-200 hover:shadow-md active:bg-slate-300">Log In</Link>
                     :
-                    <button onClick={() => handleSignOut()} className="px-4 py-2 text-md font-medium text-slate-100 bg-gray-700 rounded-md shadow-sm hover:bg-gray-600 hover:shadow-md active:bg-slate-800">Sign Out</button>
+                    <UserOptions user={user} signOut={handleSignOut} />
                 }
             </ul>
         </nav>
+    );
+}
+
+function UserOptions({ user, signOut }) {
+    
+    return (
+        <Menu as="div" className="relative">
+            <div>
+                <Menu.Button className="px-3 py-2 text-md justify-center items-center font-medium bg-slate-100 rounded-md shadow-sm hover:bg-slate-200 hover:shadow-md active:bg-slate-300 inline-flex">
+                    <span className="mr-2"><BiUserCircle className="w-6 h-6 my-auto" /></span> {user.username} <span className="ml-2"><BiChevronDown className="w-6 h-6 my-auto" /></span>
+                </Menu.Button>
+            </div>
+            <Transition 
+                as={Fragment}
+                enter="transition ease-out duration-100"
+                enterFrom="transform opacity-0 scale-95"
+                enterTo="transform opacity-100 scale-100"
+                leave="transition ease-in duration-75"
+                leaveFrom="transform opacity-100 scale-100"
+                leaveTo="transform opacity-0 scale-95"
+            >
+                <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <div className="px-1 py-1">
+                        {user.role === "admin" ?
+                            <Menu.Item>
+                                {({ active }) => (
+                                    <button 
+                                        className={`${
+                                            active ? 'bg-slate-200' : ''
+                                        } group flex w-full items-center rounded-lg px-2 py-2 text-md`}
+                                    >
+                                        <FcSettings className="mr-2 h-6 w-6" />
+                                        <span className="font-medium">Admin Panel</span>
+                                    </button>
+                                )}
+                            </Menu.Item>
+                        : null}
+                        {user.role === "production head" ? 
+                            <Menu.Item>
+                            {({ active }) => (
+                                <button 
+                                    className={`${
+                                        active ? 'bg-slate-200' : ''
+                                    } group flex w-full items-center rounded-lg px-2 py-2 text-md`}
+                                >
+                                    <FcSettings className="mr-2 h-6 w-6" />
+                                    <span className="font-medium">Lead Panel</span>
+                                </button>
+                            )}
+                        </Menu.Item>
+                        : null}
+                        <Menu.Item>
+                            {({ active }) => (
+                                <button 
+                                    onClick={signOut}
+                                    className={`${
+                                        active ? 'bg-slate-200' : ''
+                                    } group flex w-full items-center rounded-lg px-2 py-2 text-md`}
+                                >
+                                    <FcUndo className="mr-2 h-6 w-6" />
+                                    <span className="font-medium">Sign Out</span>
+                                </button>
+                            )}
+                        </Menu.Item>
+                    </div>
+                </Menu.Items>
+            </Transition>
+        </Menu>
     );
 }
