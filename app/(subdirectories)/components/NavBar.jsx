@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Menu, Transition } from "@headlessui/react";
 import { useSession, useSessionUpdate } from "../../SessionContext.js";
 import { Fragment } from "react";
+import { useRouter } from "next/navigation";
 
 export default function NavBar() {
     
@@ -47,6 +48,8 @@ export default function NavBar() {
 
 function UserOptions({ user, signOut }) {
     
+    const router = useRouter();
+
     return (
         <Menu as="div" className="relative">
             <div>
@@ -69,6 +72,7 @@ function UserOptions({ user, signOut }) {
                             <Menu.Item>
                                 {({ active }) => (
                                     <button 
+                                        onClick={() => router.push("/admin")}
                                         className={`${
                                             active ? 'bg-slate-200' : ''
                                         } group flex w-full items-center rounded-lg px-2 py-2 text-md`}
