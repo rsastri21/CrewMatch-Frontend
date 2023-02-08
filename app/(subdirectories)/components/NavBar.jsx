@@ -13,10 +13,12 @@ export default function NavBar() {
     
     const user = useSession();
     const updateUser = useSessionUpdate();
+    const router = useRouter();
 
     function handleSignOut() {
         updateUser({});
         localStorage.removeItem('user');
+        router.push("/");
     }
     
     return (

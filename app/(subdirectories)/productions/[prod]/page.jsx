@@ -44,6 +44,11 @@ export default function ProductionUI({ params, }) {
                 <h1 className="pt-8 pb-12 px-8 text-8xl text-center text-gray-800">
                     {production.name}
                 </h1>
+                {production.prodLead && 
+                <p className="px-8 text-2xl text-center text-gray-800">
+                    Production Lead: <span className="italic font-medium">{production.prodLead}</span>.
+                </p>
+                }
                 <p className="px-8 text-2xl text-center text-gray-800">
                     Manage the details of <span className="italic font-medium">{production.name}</span> here.
                 </p>

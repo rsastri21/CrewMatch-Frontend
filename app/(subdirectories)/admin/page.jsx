@@ -60,7 +60,7 @@ function UserTable() {
         }
 
         const getProds = async () => {
-            const res = await fetch(process.env.API_URL + '/api/production/get');
+            const res = await fetch(process.env.API_URL + '/api/production/getNoLead');
             const data = await res.json();
 
             setProductions(data);
@@ -220,7 +220,7 @@ function EditUser({ user, productions, visible, toggleVisible }) {
                                 value={prodLead}
                                 onChange={(e) => setProdLead(e.target.value)}
                             >
-                                <option value="empty"></option>
+                                <option value=""></option>
                                 {productions.map((production) => (
                                     <option key={production.id} value={production.name}>{production.name}</option>
                                 ))}
@@ -233,14 +233,14 @@ function EditUser({ user, productions, visible, toggleVisible }) {
                             <h1 className="px-2 py-2 my-1 font-medium text-lg">{prodMessage}</h1>
                         }
                         <div className="mx-auto my-4 pt-2 w-full flex justify-center">
-                            <button type="submit" className={`px-2 py-2 mr-1 ml-auto rounded-lg shadow-md bg-gradient-to-r from-green-500 to-emerald-500 text-center text-slate-100 font-medium
+                            <button type="submit" className={`px-3 py-3 mr-1 ml-auto rounded-lg shadow-md bg-gradient-to-r from-green-500 to-emerald-500 text-center text-slate-100 font-medium
                                 hover:scale-105 hover:shadow-lg active:scale-100 transition-all ${loading ? "cursor-wait" : ""}`}>
                                 Save Changes
                             </button>
                             <button 
                                 type="button" 
                                 onClick={() => toggleVisible()}
-                                className="px-2 py-2 ml-1 mr-auto rounded-lg shadow-md bg-gradient-to-r from-red-500 to-rose-500 text-center text-slate-100 font-medium
+                                className="px-3 py-3 ml-1 mr-auto rounded-lg shadow-md bg-gradient-to-r from-red-500 to-rose-500 text-center text-slate-100 font-medium
                                     hover:scale-105 hover:shadow-lg active:scale-100 transition-all">
                                 Close
                             </button>
