@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { AiOutlineUser } from "react-icons/ai";
 import { Transition } from "@headlessui/react";
+import { useSession } from "../../SessionContext";
 
 export default function AdminUI() {
     return (
@@ -67,7 +68,7 @@ function UserTable() {
 
         getUsers().catch(console.error);
         getProds().catch(console.error);
-    }, []);
+    }, [visible]);
 
     if (users.length === 0) {
         return (
@@ -126,11 +127,48 @@ function BackgroundOverlay() {
 
 function EditUser({ user, productions, visible, toggleVisible }) {
     
+    const [role, setRole] = useState(!user.role ? "" : user.role);
+    const [prodLead, setProdLead] = useState(!user.leads ? "" : user.leads);
+    const [message, setMessage] = useState("");
+    const [prodMessage, setProdMessage] = useState("");
+    const [loading, setLoading] = useState(false);
+    const currUser = useSession();
+    
     const handleEscPress = (event) => {
         if (visible && event.key === 'Escape') {
             toggleVisible();
         }
     };
+
+    const handleSubmit = (e) => {
+        setLoading(true);
+        e.preventDefault();
+
+        console.log(user.username);
+        console.log(role);
+        console.log(prodLead);
+
+        // Update the username if it is not the current user
+        if (user.username !== currUser.username) {
+            fetch(process.env.API_URL + `/api/user/update?username=${user.username}&role=${role}`, {
+                method: 'PUT'
+            })
+                .then((res) => res.text())
+                .then((data) => setMessage(data))
+                .catch((err) => console.error(err));
+
+        } else if (role !== currUser.role) {
+            setMessage("The current user's role cannot be modified.");
+        }
+
+        fetch(process.env.API_URL + `/api/user/assign?username=${user.username}&production=${prodLead}`, {
+            method: 'PUT'
+        })
+            .then((res) => res.text())
+            .then((data) => setProdMessage(data))
+            .catch((err) => console.error(err))
+            .finally(() => setLoading(false));
+    }
     
     useEffect(() => {
         // Event listener
@@ -156,18 +194,19 @@ function EditUser({ user, productions, visible, toggleVisible }) {
                         </span>
                     </div>
                     {!user.leads || user.leads.length > 0 &&
-                        <div>
-                            <span className="px-4 py-8 text-slate-100 text-lg shadow-md bg-gradient-to-r from-emerald-500 to-teal-500 rounded-lg">
+                        <div className="text-center py-2 px-2">
+                            <span className="px-2 py-1 text-slate-100 text-lg shadow-md bg-gradient-to-r from-emerald-500 to-teal-500 rounded-lg">
                                 {user.leads}
                             </span>
                         </div>
                     }
-                    <form className="w-full h-full box-border p-2 columns-sm">
+                    <form onSubmit={handleSubmit} className="w-full h-full box-border p-2 columns-sm">
                         <div className="mx-auto my-4 w-full shadow-sm border border-slate-400 bg-slate-50 rounded-lg flex justify-between">
                             <label className="px-3 py-2 font-medium text-lg">Update Role:</label>
                             <select 
                                 className="px-2 py-2 ml-6 rounded-lg"
-                                defaultValue={user.role}
+                                value={role}
+                                onChange={(e) => setRole(e.target.value)}
                             >
                                 <option value="user">user</option>
                                 <option value="production head">production head</option>
@@ -178,13 +217,33 @@ function EditUser({ user, productions, visible, toggleVisible }) {
                             <label className="px-3 py-2 font-medium text-lg">Assign to Lead Production:</label>
                             <select
                                 className="px-2 py-2 ml-6 rounded-lg"
-                                defaultValue="empty"
+                                value={prodLead}
+                                onChange={(e) => setProdLead(e.target.value)}
                             >
                                 <option value="empty"></option>
                                 {productions.map((production) => (
-                                    <option value={production.name}>{production.name}</option>
+                                    <option key={production.id} value={production.name}>{production.name}</option>
                                 ))}
                             </select>
+                        </div>
+                        {message.length !== 0 && 
+                            <h1 className="px-2 py-2 my-1 font-medium text-lg">{message}</h1>
+                        }
+                        {prodMessage.length !== 0 && 
+                            <h1 className="px-2 py-2 my-1 font-medium text-lg">{prodMessage}</h1>
+                        }
+                        <div className="mx-auto my-4 pt-2 w-full flex justify-center">
+                            <button type="submit" className={`px-2 py-2 mr-1 ml-auto rounded-lg shadow-md bg-gradient-to-r from-green-500 to-emerald-500 text-center text-slate-100 font-medium
+                                hover:scale-105 hover:shadow-lg active:scale-100 transition-all ${loading ? "cursor-wait" : ""}`}>
+                                Save Changes
+                            </button>
+                            <button 
+                                type="button" 
+                                onClick={() => toggleVisible()}
+                                className="px-2 py-2 ml-1 mr-auto rounded-lg shadow-md bg-gradient-to-r from-red-500 to-rose-500 text-center text-slate-100 font-medium
+                                    hover:scale-105 hover:shadow-lg active:scale-100 transition-all">
+                                Close
+                            </button>
                         </div>
                     </form>
                 </section>
