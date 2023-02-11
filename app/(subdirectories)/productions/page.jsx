@@ -151,7 +151,7 @@ function RolesUI() {
                     <h1 className="px-3 py-4 min-w-fit shadow-md text-center text-xl font-medium rounded-xl">The following roles are requested by productions</h1>
                     <div className="box-border p-2 grid grid-cols-2 gap-4 w-full h-auto shadow-md rounded-2xl">
                         {roles && roles.map(role => (
-                            <p className="p-2 text-lg text-center">{role}</p>
+                            <p key={role} className="p-2 text-lg text-center">{role}</p>
                         ))}
                     </div>
                 </div>

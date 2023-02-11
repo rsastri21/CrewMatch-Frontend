@@ -7,8 +7,8 @@ import { useSession } from "../../SessionContext";
 
 export default function AdminUI() {
     return (
-        <div className="bg-gradient-to-r from-red-100 to-orange-200 flex flex-col min-h-screen h-auto w-screen pb-16">
-            <div className="w-1/2 h-min min-w-half mx-auto flex flex-col justify-center pb-12">
+        <div className="bg-gradient-to-r from-red-100 to-orange-200 flex flex-col gap-12 min-h-screen h-auto w-screen pb-16">
+            <div className="w-1/2 h-min min-w-half mx-auto flex flex-col justify-center">
                 <h1 className="pt-24 pb-12 px-8 text-8xl mx-auto font-md text-center text-gray-800">
                     Admin Panel.
                 </h1>
@@ -18,6 +18,7 @@ export default function AdminUI() {
                 <hr className="h-px mt-8 mx-auto bg-gray-800 border-0 w-2/3 items-center"></hr>
             </div>
             <ManageUsers />
+            <ExportCSVUI />
         </div>
     );
 }
@@ -250,4 +251,77 @@ function EditUser({ user, productions, visible, toggleVisible }) {
             </section>
         </div>
     );
+}
+
+function ExportCSVUI() {
+    
+    const [fileName, setFileName] = useState("");
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [noName, setNoName] = useState(false);
+
+    const handleChange = (event) => {
+        if (event.target.value.length === 0) {
+            setNoName(true);
+        } else {
+            setNoName(false);
+        }
+        setFileName(event.target.value);
+    }
+    
+    const getCSVFile = () => {
+        if (fileName.length === 0) {
+            return;
+        }
+        setLoading(true);
+
+        fetch(process.env.API_URL + `/api/production/getCSV/${fileName}`)
+            .then(res => res.text())
+            .then(res => setData(res))
+            .catch(err => console.error(err))
+            .finally(() => {
+                setLoading(false);
+
+                const blob = new Blob([data], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.download = fileName + '.csv';
+                link.href = url;
+                link.click();
+            });
+    }
+    
+    return (
+        <section className="w-1/2 h-auto mx-auto bg-white rounded-2xl shadow-md">
+            <div className="bg-white h-fit w-full rounded-t-2xl drop-shadow-md flex">
+                <h1 className="px-3 py-4 font-medium text-2xl">Export Productions</h1>
+            </div>
+            <div className="box-border px-2 pt-2 pb-10 w-full h-auto flex flex-col gap-3">
+                <p className="p-2 my-2 text-lg text-gray-900 bg-slate-100 rounded-lg">
+                    <span className="font-medium">Crew Match </span> allows the productions to be exported as a CSV file containing each production,
+                    its current roles, and current members. A file will not be returned if no productions have been created yet. A name should be provided to title the
+                    output file. For best compatibility with other file systems, it is recommended that the file name contain <span className="font-medium">no spaces</span>.
+                </p>
+                <div className="flex space-x-4 w-fit mx-auto bg-white rounded-xl shadow-md p-6">
+                    <div className="border p-2 mx-auto w-fit min-w-fit h-auto flex space-x-4 rounded-xl border-slate-200">
+                        <label className="px-2 py-2 font-medium text-xl text-gray-900">Enter a file name:</label>
+                        <input
+                            className={`p-2 text-lg rounded-lg bg-slate-50 w-auto ${noName && "outline-red-400 outline outline-1"}`}
+                            name="filename"
+                            placeholder="File name"
+                            onChange={event => handleChange(event)}
+                            value={fileName}
+                        />
+                    </div>
+                    <button 
+                        onClick={() => getCSVFile()}
+                        className={`px-2 py-4 text-lg my-auto rounded-xl font-medium text-slate-100 bg-gradient-to-r from-green-500 to-emerald-500
+                                        shadow-md transition-all hover:scale-105 hover:shadow-lg active:scale-100 active:shadow-md
+                                        ${loading ? "cursor-wait" : ""}`}>
+                        Get File
+                    </button>
+                </div>
+            </div>
+        </section>
+    )
 }
