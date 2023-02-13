@@ -1,20 +1,52 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { AiOutlineUser } from "react-icons/ai";
 import { Transition } from "@headlessui/react";
 import { useSession } from "../../SessionContext";
-import SwapUI from "../components/SwapUI";
+import SwapTable from "../components/SwapUI";
 import { useRouter } from "next/navigation";
 
 export default function AdminUI() {
     
     const user = useSession();
     const [deleteModal, setDeleteModal] = useState(false);
+    const [userIndex, setUserIndex] = useState(0);
+    const [visible, setVisible] = useState(false);
+    const [users, setUsers] = useState([]);
+    const [productions, setProductions] = useState([]);
 
     const toggleDelete = () => {
         setDeleteModal(!deleteModal);
     }
+
+    const handleUsernameClick = (event, index) => {
+        setUserIndex(index)
+        toggle();
+    }
+
+    const toggle = () => {
+        setVisible(!visible);
+    }
+
+    useEffect(() => {
+        const getUsers = async () => {
+            const res = await fetch(process.env.API_URL + '/api/user/get');
+            const data = await res.json();
+
+            setUsers(data);
+        }
+
+        const getProds = async () => {
+            const res = await fetch(process.env.API_URL + '/api/production/getNoLead');
+            const data = await res.json();
+
+            setProductions(data);
+        }
+
+        getUsers().catch(console.error);
+        getProds().catch(console.error);
+    }, [visible]);
 
     if (!user || user.role !== "admin") {
         return (
@@ -60,6 +92,13 @@ export default function AdminUI() {
                     <DeleteModal visible={deleteModal} setVisible={toggleDelete} />
                 </Transition.Child>
             </Transition>
+
+            {visible && 
+                <>
+                    <BackgroundOverlay />
+                    <EditUser user={users[userIndex]} productions={productions} visible={visible} toggleVisible={setVisible} />
+                </>
+            }
             
             <div className="w-1/2 h-min min-w-half mx-auto flex flex-col justify-center">
                 <h1 className="pt-24 pb-12 px-8 text-8xl mx-auto font-md text-center text-gray-800">
@@ -70,62 +109,30 @@ export default function AdminUI() {
                 </p>
                 <hr className="h-px mt-8 mx-auto bg-gray-800 border-0 w-2/3 items-center"></hr>
             </div>
-            <ManageUsers />
+            <ManageUsers users={users} handleUsernameClick={handleUsernameClick} />
             <ExportCSVUI />
-            <SwapUI />
+            <SwapTable outgoing={false} />
+            <SwapTable outgoing={true} />
             <DeleteProductionBox visible={deleteModal} setVisible={toggleDelete} />
         </div>
     );
 }
 
-function ManageUsers() {
+function ManageUsers({ users, handleUsernameClick }) {
     return (
         <section className="w-1/2 min-w-fit h-auto mx-auto bg-white rounded-2xl shadow-md">
             <div className="bg-white h-fit w-full rounded-t-2xl drop-shadow-md flex">
                 <h1 className="px-3 py-4 font-medium text-2xl">Manage Users</h1>
             </div>
             <div className="box-border p-2 w-full max-h-128 overflow-y-scroll">
-                <UserTable />
+                <UserTable users={users} handleUsernameClick={handleUsernameClick} />
             </div>
         </section>
     );
 }
 
-function UserTable() {
+function UserTable({ users, handleUsernameClick }) {
     
-    const [users, setUsers] = useState([]);
-    const [productions, setProductions] = useState([]);
-    const [userIndex, setUserIndex] = useState(0);
-    const [visible, setVisible] = useState(false);
-
-    const handleUsernameClick = (event, index) => {
-        setUserIndex(index)
-        toggle();
-    }
-
-    const toggle = () => {
-        setVisible(!visible);
-    }
-
-    useEffect(() => {
-        const getUsers = async () => {
-            const res = await fetch(process.env.API_URL + '/api/user/get');
-            const data = await res.json();
-
-            setUsers(data);
-        }
-
-        const getProds = async () => {
-            const res = await fetch(process.env.API_URL + '/api/production/getNoLead');
-            const data = await res.json();
-
-            setProductions(data);
-        }
-
-        getUsers().catch(console.error);
-        getProds().catch(console.error);
-    }, [visible]);
-
     if (users.length === 0) {
         return (
             <h1 className="px-3 py-4 text-lg">No users registered.</h1>
@@ -134,12 +141,13 @@ function UserTable() {
 
     return (
         <>
-            {visible && 
+            {/* {visible && 
             <>
                 <BackgroundOverlay />
                 <EditUser user={users[userIndex]} productions={productions} visible={visible} toggleVisible={setVisible} />
             </>
-            }
+            } */}
+            
             
             <table className="table-auto border-separate w-full min-w-fit">
                 <thead>

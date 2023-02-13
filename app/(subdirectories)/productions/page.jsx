@@ -129,9 +129,6 @@ function RolesUI() {
         }
         get().catch(console.error);
     }, []);
-    
-
-    console.log(roles);
 
     return (
         <section className="w-1/2 min-w-fit h-min py-4 my-2 mx-auto flex flex-col space-y-8">
