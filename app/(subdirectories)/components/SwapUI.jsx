@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import { useSession, useSessionUpdate } from "../../SessionContext";
 import { Transition } from "@headlessui/react";
+import { FcPlus } from "react-icons/fc";
 
-export default function SwapTable({ outgoing }) {
+export default function SwapTable({ outgoing, form, setForm }) {
     
     const user = useSession();
     const [requests, setRequests] = useState([]);
@@ -84,6 +85,12 @@ export default function SwapTable({ outgoing }) {
                 </div>
                 <div className="box-border p-2 w-full h-auto max-h-128 overflow-y-scroll">
                     {renderTable()}
+                    {outgoing && 
+                        <button onClick={() => setForm()} className="bg-emerald-50 flex rounded-xl w-fit mx-auto my-4 p-4 text-lg font-medium shadow-md hover:scale-105 hover:shadow-lg active:scale-100 active:bg-slate-200 transition-all">
+                            <span className="ml-0 mr-2 my-auto"><FcPlus className="w-5 h-5"/></span>
+                            Create a New Swap Request
+                        </button>
+                    }
                 </div>
             </section>
             <Transition show={modal} className="z-50">

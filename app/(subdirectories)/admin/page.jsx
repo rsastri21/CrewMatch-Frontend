@@ -6,6 +6,7 @@ import { Transition } from "@headlessui/react";
 import { useSession } from "../../SessionContext";
 import SwapTable from "../components/SwapUI";
 import { useRouter } from "next/navigation";
+import SwapForm from "../components/SwapForm";
 
 export default function AdminUI() {
     
@@ -15,6 +16,8 @@ export default function AdminUI() {
     const [visible, setVisible] = useState(false);
     const [users, setUsers] = useState([]);
     const [productions, setProductions] = useState([]);
+    const [productionsWithLead, setProductionsWithLead] = useState([]);
+    const [formVisible, setFormVisible] = useState(false);
 
     const toggleDelete = () => {
         setDeleteModal(!deleteModal);
@@ -27,6 +30,10 @@ export default function AdminUI() {
 
     const toggle = () => {
         setVisible(!visible);
+    }
+
+    const toggleForm = () => {
+        setFormVisible(!formVisible);
     }
 
     useEffect(() => {
@@ -44,8 +51,16 @@ export default function AdminUI() {
             setProductions(data);
         }
 
+        const getManagedProds = async () => {
+            const res = await fetch(process.env.API_URL + '/api/production/getLead');
+            const data = await res.json();
+
+            setProductionsWithLead(data);
+        }
+
         getUsers().catch(console.error);
         getProds().catch(console.error);
+        getManagedProds().catch(console.error);
     }, [visible]);
 
     if (!user || user.role !== "admin") {
@@ -93,6 +108,33 @@ export default function AdminUI() {
                 </Transition.Child>
             </Transition>
 
+            <Transition show={formVisible} className="z-50">
+                <Transition.Child
+                    enter="transition-opacity ease-out duration-200"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="transition-opacity ease-out duration-200"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                    className="fixed bottom-0 left-0 right-0 w-screen h-screen"
+                >
+                    <BackgroundOverlay />
+                </Transition.Child>
+                
+                <Transition.Child
+                    enter="transition-all ease-in-out duration-200"
+                    enterFrom="translate-y-full scale-50"
+                    enterTo="translate-y-0 scale-100"
+                    leave="transition-all ease-in-out duration-200"
+                    leaveFrom="translate-y-0 scale-100"
+                    leaveTo="translate-y-full scale-50"
+                    className="fixed bottom-0 left-0 right-0 w-screen h-screen"
+                >
+                    <SwapForm visible={formVisible} setVisible={toggleForm} productions={productionsWithLead} />
+                </Transition.Child>
+            </Transition>
+
+
             {visible && 
                 <>
                     <BackgroundOverlay />
@@ -112,7 +154,7 @@ export default function AdminUI() {
             <ManageUsers users={users} handleUsernameClick={handleUsernameClick} />
             <ExportCSVUI />
             <SwapTable outgoing={false} />
-            <SwapTable outgoing={true} />
+            <SwapTable outgoing={true} form={formVisible} setForm={toggleForm} />
             <DeleteProductionBox visible={deleteModal} setVisible={toggleDelete} />
         </div>
     );
