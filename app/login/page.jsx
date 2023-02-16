@@ -48,11 +48,11 @@ export default function Login() {
                 } else {
                     setError("");
                 }
-                return res.text();
+                return res.json();
             })
             .then((data) => {
                 if (data !== "error") {
-                    user = { username: username, role: data };
+                    user = { username: username, role: data[0], leads: data[1] };
                 }
             })
             .catch((err) => {

@@ -25,7 +25,7 @@ export default function SwapTable({ outgoing, form, setForm }) {
         }
 
         getRequests().catch(console.error);
-    }, [modal]);
+    }, [modal, form]);
 
     
 

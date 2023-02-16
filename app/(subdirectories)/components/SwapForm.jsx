@@ -8,9 +8,8 @@ import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 export default function SwapForm({ visible, setVisible, productions }) {
     
     const session = useSession();
-    
+    const [production, setProduction] = useState({});
     const [page, setPage] = useState(0);
-    const [user, setUser] = useState({});
     const [formData, setFormData] = useState({
         fromLead: "",
         toLead: "",
@@ -31,18 +30,21 @@ export default function SwapForm({ visible, setVisible, productions }) {
     }
 
     useEffect(() => {
-        const getUser = async () => {
-            const res = await fetch(process.env.API_URL + `/api/user/search?username=${session.username}`);
+
+        const getProduction = async () => {
+            const res = await fetch(process.env.API_URL + `/api/production/search?name=${session.leads}`);
             const data = await res.json();
 
-            setUser(data);
-            setFormData({...formData,
-                fromLead: data.username,
-                production1: data.leads
-            });
+            setProduction(data);
         }
 
-        getUser().catch(console.error);
+        getProduction().catch(console.error);
+
+        setFormData({...formData,
+            fromLead: session.username,
+            production1: session.leads
+        });
+
     }, []);
 
     const handleEscPress = (event) => {
@@ -66,9 +68,9 @@ export default function SwapForm({ visible, setVisible, productions }) {
             case 0:
                 return <FirstPage page={page} nextPage={nextPage} />;
             case 1:
-                return <SecondPage page={page} nextPage={nextPage} prevPage={previousPage} user={user} form={formData} updateForm={setFormData} />;
+                return <SecondPage page={page} nextPage={nextPage} prevPage={previousPage} production={production} form={formData} updateForm={setFormData} />;
             case 2:
-                return <ThirdPage page={page} nextPage={nextPage} prevPage={previousPage} user={user} productions={productions} form={formData} updateForm={setFormData} />;
+                return <ThirdPage page={page} nextPage={nextPage} prevPage={previousPage} productions={productions} form={formData} updateForm={setFormData} />;
             case 3:
                 return <FinalPage page={page} prevPage={previousPage} form={formData} updateForm={setFormData} visible={visible} setVisible={setVisible} />;
         }
@@ -108,27 +110,17 @@ export function FirstPage({ page, nextPage }) {
     );
 }
 
-export function SecondPage({ page, nextPage, prevPage, user, form, updateForm }) {
+export function SecondPage({ page, nextPage, prevPage, production, form, updateForm }) {
+
+    const [buttons, setButtons] = useState(form.member1 ? true : false);
     
-    const [production, setProduction] = useState({});
-
-    useEffect(() => {
-        const getProduction = async () => {
-            const res = await fetch(process.env.API_URL + `/api/production/search?name=${user.leads}`);
-            const data = await res.json();
-
-            setProduction(data);
-        }
-
-        getProduction().catch(console.error);
-    }, []);
-
     const updateMember = (event) => {
         updateForm({
             ...form,
             member1: production.members[event.target.value],
             role1: production.roles[event.target.value]
         });
+        setButtons(true);
     }
 
     return ( 
@@ -141,10 +133,15 @@ export function SecondPage({ page, nextPage, prevPage, user, form, updateForm })
                 <select
                     className="px-2 py-2 my-auto ml-6 mr-2 rounded-lg bg-slate-100"
                     onChange={(e) => updateMember(e)}
+                    defaultValue="default"
                 >
-                    {production.members.map((member, index) => (
+                    <option disabled={true} value="default">Select a member</option>
+                    {production.members.map((member, index) => {return (
+                        member.length !== 0 ?
                         <option key={index} value={index}>{member}</option>
-                    ))}
+                        :
+                        null
+                    )})}
                 </select>
             </div>
             <div className="flex flex-col space-y-2 w-fit p-4 mx-auto rounded-xl bg-red-100 border border-gray-300">
@@ -162,25 +159,28 @@ export function SecondPage({ page, nextPage, prevPage, user, form, updateForm })
                 </p>
             </div>
             <p className="px-3 py-2 text-xl text-center">
-                If this is your desired selection, please continue to the next step.
+                {buttons ? "If this is your desired selection, please continue to the next step." : "Complete your selection before continuing to the next step."}
             </p>
-            <footer className="flex space-x-4 mx-auto">
-                <button onClick={prevPage} className="p-3 font-medium text-xl bg-slate-200 w-28 mb-2 rounded-xl shadow-md
-                    transition-all hover:scale-105 hover:shadow-lg active:scale-100">
-                    Previous
-                </button>
-                <button onClick={nextPage} className="p-3 font-medium text-xl bg-slate-200 w-24 mb-2 rounded-xl shadow-md
-                    transition-all hover:scale-105 hover:shadow-lg active:scale-100">
-                    Next
-                </button>
-            </footer>
+            {buttons && 
+                <footer className="flex space-x-4 mx-auto">
+                    <button onClick={prevPage} className="p-3 font-medium text-xl bg-slate-200 w-28 mb-2 rounded-xl shadow-md
+                        transition-all hover:scale-105 hover:shadow-lg active:scale-100">
+                        Previous
+                    </button>
+                    <button onClick={nextPage} className="p-3 font-medium text-xl bg-slate-200 w-24 mb-2 rounded-xl shadow-md
+                        transition-all hover:scale-105 hover:shadow-lg active:scale-100">
+                        Next
+                    </button>
+                </footer>
+            }
         </div>
     );
 }
 
-export function ThirdPage({ page, nextPage, prevPage, user, productions, form, updateForm }) {
+export function ThirdPage({ page, nextPage, prevPage, productions, form, updateForm }) {
 
     const [prod, setProd] = useState(null);
+    const [buttons, setButtons] = useState(form.member2 ? true : false);
     
     const updateProduction = (event) => {
         updateForm({
@@ -197,6 +197,7 @@ export function ThirdPage({ page, nextPage, prevPage, user, productions, form, u
             member2: prod.members[event.target.value],
             role2: prod.roles[event.target.value]
         });
+        setButtons(true);
     }
     
     return (
@@ -207,7 +208,9 @@ export function ThirdPage({ page, nextPage, prevPage, user, productions, form, u
                 <select
                     className="px-2 py-2 my-auto ml-6 mr-2 rounded-lg bg-slate-100"
                     onChange={(e) => updateProduction(e)}
+                    defaultValue="default"
                 >
+                    <option disabled={true} value="default">Select</option>
                     {productions.map((production, index) => (
                         <option key={index} value={index}>{production.name}</option>
                     ))}
@@ -221,10 +224,15 @@ export function ThirdPage({ page, nextPage, prevPage, user, productions, form, u
                         <select
                             className="px-2 py-2 my-auto ml-6 mr-2 rounded-lg bg-slate-100"
                             onChange={(e) => updateMember(e)}
+                            defaultValue="default"
                         >
-                            {prod.members.map((member, index) => (
+                            <option disabled={true} value="default">Select a member</option>
+                            {prod.members.map((member, index) => {return (
+                                member.length !== 0 ?
                                 <option key={index} value={index}>{member}</option>
-                            ))}
+                                :
+                                null
+                            )})}
                         </select>
                     </div>
                     <div className="flex flex-col space-y-2 w-fit p-4 mx-auto rounded-xl bg-emerald-100 border border-gray-300">
@@ -244,17 +252,19 @@ export function ThirdPage({ page, nextPage, prevPage, user, productions, form, u
                 </>
             }
             <p className="px-3 py-2 text-xl text-center">
-                If these are your desired selections, view a summary on the next page.
+                {buttons ? "If these are your desired selections, view a summary on the next page." : "Please complete your selections before continuing."}
             </p>
             <footer className="flex space-x-4 mx-auto">
                 <button onClick={prevPage} className="p-3 font-medium text-xl bg-slate-200 w-28 mb-2 rounded-xl shadow-md
                     transition-all hover:scale-105 hover:shadow-lg active:scale-100">
                     Previous
                 </button>
-                <button onClick={nextPage} className="p-3 font-medium text-xl bg-slate-200 w-24 mb-2 rounded-xl shadow-md
-                    transition-all hover:scale-105 hover:shadow-lg active:scale-100">
-                    Next
-                </button>
+                {buttons &&
+                    <button onClick={nextPage} className="p-3 font-medium text-xl bg-slate-200 w-24 mb-2 rounded-xl shadow-md
+                        transition-all hover:scale-105 hover:shadow-lg active:scale-100">
+                        Next
+                    </button>
+                }
             </footer>
             
         </div>

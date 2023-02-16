@@ -66,7 +66,7 @@ export default function Signup() {
             })
             .then((status) => {
                 if (status === 201) {
-                    user = { username: username, role: "user" };
+                    user = { username: username, role: "user", leads: null };
                 }
             })
             .catch((err) => {

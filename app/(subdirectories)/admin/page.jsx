@@ -148,13 +148,19 @@ export default function AdminUI() {
                 </h1>
                 <p className="px-8 text-2xl text-center text-gray-800">
                     Home for approving swap requests, granting permissions, and resetting <span className="font-medium"> Crew Match</span>.
+                    <br></br>
+                    Logged in as <span className="font-medium">{user.username}</span>.
                 </p>
                 <hr className="h-px mt-8 mx-auto bg-gray-800 border-0 w-2/3 items-center"></hr>
             </div>
             <ManageUsers users={users} handleUsernameClick={handleUsernameClick} />
             <ExportCSVUI />
-            <SwapTable outgoing={false} />
-            <SwapTable outgoing={true} form={formVisible} setForm={toggleForm} />
+            {user.leads &&
+                <>
+                    <SwapTable outgoing={false} form={formVisible} setForm={toggleForm} />
+                    <SwapTable outgoing={true} form={formVisible} setForm={toggleForm} />
+                </>
+            }
             <DeleteProductionBox visible={deleteModal} setVisible={toggleDelete} />
         </div>
     );
