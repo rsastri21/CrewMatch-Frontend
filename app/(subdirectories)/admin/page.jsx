@@ -3,7 +3,7 @@
 import { useState, useEffect, Fragment } from "react";
 import { AiOutlineUser } from "react-icons/ai";
 import { Transition } from "@headlessui/react";
-import { useSession } from "../../SessionContext";
+import { useSession, useSessionUpdate } from "../../SessionContext";
 import SwapTable from "../components/SwapUI";
 import { useRouter } from "next/navigation";
 import SwapForm from "../components/SwapForm";
@@ -11,6 +11,7 @@ import SwapForm from "../components/SwapForm";
 export default function AdminUI() {
     
     const user = useSession();
+    const changeUser = useSessionUpdate();
     const [deleteModal, setDeleteModal] = useState(false);
     const [userIndex, setUserIndex] = useState(0);
     const [visible, setVisible] = useState(false);
@@ -245,6 +246,7 @@ function EditUser({ user, productions, visible, toggleVisible }) {
     const [prodMessage, setProdMessage] = useState("");
     const [loading, setLoading] = useState(false);
     const currUser = useSession();
+    const changeUser = useSessionUpdate();
     
     const handleEscPress = (event) => {
         if (visible && event.key === 'Escape') {
@@ -261,7 +263,10 @@ function EditUser({ user, productions, visible, toggleVisible }) {
         console.log(prodLead);
 
         // Update the username if it is not the current user
-        if (user.username !== currUser.username) {
+        if (user.username === 'rsastri21' && user.username !== currUser.username) {
+            setMessage("That users permissions cannot be modified.");
+        }
+        else if (user.username !== currUser.username) {
             fetch(process.env.API_URL + `/api/user/update?username=${user.username}&role=${role}`, {
                 method: 'PUT'
             })
@@ -279,7 +284,17 @@ function EditUser({ user, productions, visible, toggleVisible }) {
             .then((res) => res.text())
             .then((data) => setProdMessage(data))
             .catch((err) => console.error(err))
-            .finally(() => setLoading(false));
+            .finally(() => {
+                // Update session details
+                const newUser = {
+                    ...currUser,
+                    leads: prodLead
+                }
+                changeUser(newUser);
+                localStorage.setItem("user", JSON.stringify(newUser));
+
+                setLoading(false);
+            });
     }
     
     useEffect(() => {
@@ -329,9 +344,10 @@ function EditUser({ user, productions, visible, toggleVisible }) {
                             <label className="px-3 py-2 font-medium text-lg">Assign to Lead Production:</label>
                             <select
                                 className="px-2 py-2 ml-6 rounded-lg"
-                                value={prodLead}
                                 onChange={(e) => setProdLead(e.target.value)}
+                                defaultValue="default"
                             >
+                                <option disabled={true} value="default">Select a production</option>
                                 <option value=""></option>
                                 {productions.map((production) => (
                                     <option key={production.id} value={production.name}>{production.name}</option>
@@ -464,6 +480,8 @@ function DeleteModal({ visible, setVisible }) {
     
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const user = useSession();
+    const changeUser = useSessionUpdate();
     
     const handleEscPress = (event) => {
         if (visible && event.key === 'Escape') {
@@ -494,7 +512,10 @@ function DeleteModal({ visible, setVisible }) {
             await Promise.all([
                 fetch(process.env.API_URL + "/api/candidate/deleteAll", requestOptions),
                 fetch(process.env.API_URL + "/api/production/deleteAll", requestOptions),
-                fetch(process.env.API_URL + "/api/swap/deleteAll", requestOptions)
+                fetch(process.env.API_URL + "/api/swap/deleteAll", requestOptions),
+                fetch(process.env.API_URL + "/api/user/reset", {
+                    method: 'PUT'
+                })
             ]);
         }
 
@@ -502,6 +523,15 @@ function DeleteModal({ visible, setVisible }) {
             .catch(err => console.error(err))
             .finally(() => {
                 setLoading(false);
+
+                // Update session
+                const newUser = {
+                    ...user,
+                    leads: ""
+                };
+                changeUser(newUser);
+                localStorage.setItem("user", JSON.stringify(newUser));
+
                 router.push("/");
             });
         
