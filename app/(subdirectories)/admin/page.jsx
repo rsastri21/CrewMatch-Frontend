@@ -383,7 +383,6 @@ function EditUser({ user, productions, visible, toggleVisible }) {
 function ExportCSVUI() {
     
     const [fileName, setFileName] = useState("");
-    const [data, setData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [noName, setNoName] = useState(false);
 
@@ -396,26 +395,23 @@ function ExportCSVUI() {
         setFileName(event.target.value);
     }
     
-    const getCSVFile = () => {
+    const getCSVFile = async () => {
         if (fileName.length === 0) {
             return;
         }
         setLoading(true);
 
-        fetch(process.env.API_URL + `/api/production/getCSV/${fileName}`)
-            .then(res => res.text())
-            .then(res => setData(res))
-            .catch(err => console.error(err))
-            .finally(() => {
-                setLoading(false);
+        const res = await fetch(process.env.API_URL + `/api/production/getCSV/${fileName}`);
+        const data = await res.text();
 
-                const blob = new Blob([data], { type: 'text/csv' });
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.download = fileName + '.csv';
-                link.href = url;
-                link.click();
-            });
+        setLoading(false);
+
+        const blob = new Blob([data], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = fileName + '.csv';
+        link.href = url;
+        link.click();
     }
     
     return (
