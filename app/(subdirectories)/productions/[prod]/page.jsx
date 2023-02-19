@@ -188,7 +188,7 @@ function EditProduction({ visible, setVisible, production }) {
             fields[i] = { role: production.roles[i], member: production.members[i] };
         }
         setFormFields([...fields]);
-    }, [])
+    }, [visible])
     
     useEffect(() => {
         // Event listener
@@ -214,12 +214,16 @@ function EditProduction({ visible, setVisible, production }) {
 
     const submit = (e) => {
         setLoading(true);
-        e.preventDefault();
 
         const roles = [];
         const members = [];
 
         for (let i = 0; i < formFields.length; i++) {
+            if (formFields[i].role.length === 0) {
+                setError(400);
+                setLoading(false);
+                return;
+            }
             roles.push(formFields[i].role);
             members.push(formFields[i].member);
         }
