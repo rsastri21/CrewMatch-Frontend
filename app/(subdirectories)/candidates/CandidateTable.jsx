@@ -29,7 +29,7 @@ export default function CandidateTable({ fetchURL, mode, role, index, prod }) {
         }
 
         get().catch(console.error);
-    }, [edit, modal, interested]);
+    }, [edit, modal, interested, fetchURL]);
 
     function getFetchURL() {
         switch (mode) {
