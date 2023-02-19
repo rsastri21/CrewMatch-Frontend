@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { FaUserEdit } from "react-icons/fa";
 import { AiOutlineUser } from "react-icons/ai";
 import { AiOutlineEdit } from "react-icons/ai";
-import { Transition } from "@headlessui/react";
+import { Switch, Transition } from "@headlessui/react";
 
 export default function CandidateTable({ fetchURL, mode, role, index, prod }) {
     
@@ -15,19 +15,38 @@ export default function CandidateTable({ fetchURL, mode, role, index, prod }) {
     const [indexEdit, setIndexEdit] = useState(0);
     const [modal, setModal] = useState(false);
     const [edit, setEdit] = useState(false);
+    const [interested, setInterested] = useState(true);
+
 
     const user = useSession();
 
     useEffect(() => {
         const get = async () => {
-            const res = await fetch(fetchURL);
+            const res = await fetch(getFetchURL());
             const data = await res.json();
             
             setCandidates(data);
         }
 
         get().catch(console.error);
-    }, [edit, fetchURL, modal]);
+    }, [edit, modal, interested]);
+
+    function getFetchURL() {
+        switch (mode) {
+            case "assign":
+                if (interested) {
+                    return fetchURL;
+                }
+                return process.env.API_URL + '/api/candidate/search?assigned=false&actingInterest=false';
+            case "actor":
+                if (interested) {
+                    return fetchURL;
+                }
+                return process.env.API_URL + '/api/candidate/search?actingInterest=true';
+            default:
+                return fetchURL;
+        }
+    }
 
     const handleNameClick = (e, index) => {
         setCandidateIndex(index);
@@ -150,8 +169,29 @@ export default function CandidateTable({ fetchURL, mode, role, index, prod }) {
                 </Transition.Child>
             </Transition>
             
-            <div className={`bg-white ${(mode === "assign" || mode === "actor") ? "max-h-fit" : "h-16"} w-full rounded-t-2xl drop-shadow-md z-0 flex`}>
+            <div className={`bg-white ${(mode === "assign" || mode === "actor") ? "max-h-fit" : "h-16"} w-full rounded-t-2xl drop-shadow-md z-0 flex justify-between`}>
                 <h1 className="px-3 py-4 font-medium text-2xl">{mode === "assign" ? "Available to Assign" : (mode === "actor" ? "Interested in Acting" : "Enrolled")}</h1>
+                {mode === "assign" || mode === "actor" ?
+                    <div className="flex space-x-4 px-4">
+                        <label className="pr-0 pl-2 py-4 text-2xl font-medium">Interested Members Only</label>
+                        <Switch
+                            checked={interested}
+                            onChange={setInterested}
+                            className={`${
+                                interested ? 'bg-emerald-500' : 'bg-gray-200'} my-auto
+                                relative inline-flex h-[28px] w-[56px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
+                        >
+                            <span className="sr-only">Use setting</span>
+                            <span
+                            aria-hidden="true"
+                            className={`${interested ? 'translate-x-7' : 'translate-x-0'}
+                                pointer-events-none inline-block h-[24px] w-[24px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+                            />
+                        </Switch>
+                    </div>
+                :
+                null
+                }
             </div>
             <div className={`box-border p-2 w-full min-h-4 ${mode === "assign" ? "h-fit" : "max-h-128"} rounded-b-2xl overflow-y-scroll z-0`}>
                 {renderTable()}
@@ -199,18 +239,18 @@ function CandidateModal({ candidate, visible, toggleModal, role, prodID, roleInd
             .catch((err) => console.error(err))
             .finally(() => {
                 setLoading(false);
-                router.push(`/productions/${prodID}`);
                 toggleModal();
             });
     }
 
     return (
+        candidate &&
         <div className="fixed bottom-0 left-0 right-0 z-50 w-screen h-screen p-4 flex flex-col justify-center">
             <section className="mx-auto box-border w-fit min-w-fit h-min bg-white rounded-2xl shadow-md">
-                <div className={`px-4 bg-gradient-to-r ${candidate.actingInterest ? 'from-violet-300 to-purple-300' : (candidate.assigned ? 'from-green-300 to-emerald-300' : 'from-red-300 to-rose-300')} z-50 h-fit w-full rounded-t-2xl drop-shadow-md flex justify-center`}>
+                {candidate && <div className={`px-4 bg-gradient-to-r ${candidate.actingInterest ? 'from-violet-300 to-purple-300' : (candidate.assigned ? 'from-green-300 to-emerald-300' : 'from-red-300 to-rose-300')} z-50 h-fit w-full rounded-t-2xl drop-shadow-md flex justify-center`}>
                     <AiOutlineUser className="w-9 h-9 ml-2 mr-1 my-3" /> 
-                    <h1 className="px-3 py-4 font-medium text-2xl">{candidate.name} {candidate.pronouns !== null ? (candidate.pronouns.length !== 0 ?`(${candidate.pronouns})`: "") : ""} </h1>
-                </div>
+                    {candidate && <h1 className="px-3 py-4 font-medium text-2xl">{candidate.name} {candidate.pronouns !== null ? (candidate.pronouns.length !== 0 ?`(${candidate.pronouns})`: "") : ""} </h1>}
+                </div>}
                 <section className={`box-border p-2 w-full h-fit bg-gradient-to-r ${candidate.actingInterest ? 'from-violet-200 to-purple-200' : (candidate.assigned ? 'from-green-200 to-emerald-200' : 'from-red-200 to-rose-200')} rounded-b-2xl flex flex-col items-center`}>
                     <div className="w-full h-full box-border p-2 columns-sm">
                         <div className="text-center py-2 px-2">

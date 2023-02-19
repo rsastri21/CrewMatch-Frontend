@@ -27,7 +27,7 @@ export default function ProductionUI({ params, }) {
         }
 
         get().catch(console.error);
-    }, [tableVisible]);
+    }, [tableVisible, unassignVisible]);
 
     const toggle = (index) => {
         setIndex(index);
@@ -159,9 +159,10 @@ function CrewMembers({ production, toggle, toggleRemove }) {
                 <div key={index} className="flex w-full min-w-fit justify-between box-border border-2 p-3 mx-2 rounded-lg">
                     <p className="p-2 font-semibold min-w-fit text-lg xl:text-xl">{role}</p>
                     <button onClick={members[index] === "" ? () => toggle(index) : () => toggleRemove(index)} className={`p-2 min-w-fit rounded-lg hover:shadow-md hover:scale-105 active:scale-100 transition-all cursor-pointer
-                    ${members[index] === "" 
-                     ? "italic font-light text-lg active:bg-slate-100"
-                     : "hover:bg-red-100 text-lg lg:text-xl"} `}>{members[index] === "" ? "add member" : members[index]}</button>
+                        ${members[index] === "" 
+                        ? "italic font-light text-lg active:bg-slate-100"
+                        : "hover:bg-red-100 text-lg lg:text-xl"} `}>{members[index] === "" ? "add member" : members[index]}
+                     </button>
                 </div>
             ))}
         </section>
@@ -176,7 +177,13 @@ function RemoveMemberModal({ index, visible, toggleVisible, production }) {
 
     useEffect(() => {
         const getCandidate = async () => {
-            const res = await fetch(process.env.API_URL + `/api/candidate/getByName?name=${members[index]}`);
+            
+            let name = members[index];
+            if (name.indexOf('(') !== -1) {
+                name = name.substring(0, name.indexOf('(') - 1);
+            }
+            
+            const res = await fetch(process.env.API_URL + `/api/candidate/getByName?name=${name}`);
             const data = await res.json();
 
             setCandidate(data);
@@ -224,9 +231,9 @@ function RemoveMemberModal({ index, visible, toggleVisible, production }) {
                 <p className="text-lg text-center font-normal px-3 py-2 ">This action cannot be undone.</p>
                 <div className="w-full h-auto flex space-x-4 justify-center box-border p-4">
                     {candidate &&
-                        <button onClick={(e) => handleDeletePress(e)} className="p-4 w-fit font-medium text-lg text-gray-100 bg-gradient-to-r from-red-500 to-rose-500 rounded-lg shadow-md 
+                        <button onClick={(e) => handleDeletePress(e)} className={`p-4 w-fit font-medium text-lg text-gray-100 bg-gradient-to-r from-red-500 to-rose-500 rounded-lg shadow-md 
                                                         hover:shadow-lg hover:bg-gradient-to-r hover:from-red-600 hover:to-rose-600 
-                                                        active:bg-gradient-to-r active:from-red-700 active:to-rose-700">
+                                                        active:bg-gradient-to-r active:from-red-700 active:to-rose-700 ${loading ? 'cursor-wait' : ''}`}>
                             Confirm Deletion
                         </button>
                     }
