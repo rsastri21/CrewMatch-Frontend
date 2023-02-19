@@ -27,7 +27,7 @@ export default function Page() {
             case 'production head':
                 return (
                     <p className="px-8 py-8 text-3xl text-center text-gray-800">
-                        Welcome, {user.username}. Thank you for leading one of our productions. View glanceable information here.
+                        Welcome, {user.username}. View glanceable information here.
                     </p>
                 );
             case 'admin':

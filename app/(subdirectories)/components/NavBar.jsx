@@ -89,6 +89,7 @@ function UserOptions({ user, signOut }) {
                             <Menu.Item>
                             {({ active }) => (
                                 <button 
+                                    onClick={() => router.push("/prodhead")}
                                     className={`${
                                         active ? 'bg-slate-200' : ''
                                     } group flex w-full items-center rounded-lg px-2 py-2 text-md`}
