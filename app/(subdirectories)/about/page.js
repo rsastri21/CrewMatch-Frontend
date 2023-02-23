@@ -44,6 +44,7 @@ export default function About() {
                         Current known issues are:
                             <li className="px-3 py-2 text-lg">Transitions being broken on some pop-ups.</li>
                             <li className="px-3 py-2 text-lg">Export CSV function occassionally requiring two attempts to initiate <br></br> &nbsp; &nbsp; &nbsp; non-null file download.</li>
+                            <li className="px-3 py-2 text-lg">Incorrect placement of numbers on landing page cards in Safari.</li>
                         </ul>
                     </div>
                 </div>
