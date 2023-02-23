@@ -86,8 +86,8 @@ export default function Productions() {
 function ProductionsOverview({ productions, changeIndex }) {
     
     return (
-        <div className="w-full h-min grid grid-cols-2 gap-8">
-            {productions.length === 0 ? <p className="col-span-2 px-2 py-3 text-xl font-medium text-center my-auto">No productions have been created yet.</p>
+        <div className="w-full h-min grid grid-cols-1 xl:grid-cols-2 gap-8">
+            {productions.length === 0 ? <p className="xl:col-span-2 px-2 py-3 text-xl font-medium text-center my-auto">No productions have been created yet.</p>
                 : null}
             {productions && productions.map((production, index) => (
                 <ProductionCard key={production.id} title={production.name} director={production.members[0]} index={index} changeIndex={changeIndex} /> 
@@ -132,12 +132,12 @@ function RolesUI() {
 
     return (
         <section className="w-1/2 min-w-fit h-min py-4 my-2 mx-auto flex flex-col space-y-8">
-            <h1 className="text-5xl px-4 py-2 font-medium text-center text-gray-800">
+            <h1 className="text-5xl px-4 py-2 h-fit font-medium text-center text-gray-800">
                 Retrieve Roles
             </h1>
             <section className="box-border w-2/3 h-min z-0 mx-auto bg-white rounded-2xl shadow-md flex flex-col space-y-1">
-                <div className="bg-white h-16 w-full rounded-t-2xl drop-shadow-md flex">
-                    <h1 className="px-3 py-4 font-medium text-2xl">All Roles from Current Productions</h1>
+                <div className="bg-white h-fit w-full rounded-t-2xl drop-shadow-md flex">
+                    <h1 className="px-3 py-4 h-fit font-medium text-2xl">All Roles from Current Productions</h1>
                 </div>
                 <div className="box-border p-4 w-full h-min rounded-b-2xl flex flex-col items-center space-y-6 pb-6">
                     <p className="p-2 text-lg text-gray-900 bg-slate-100 rounded-lg">
