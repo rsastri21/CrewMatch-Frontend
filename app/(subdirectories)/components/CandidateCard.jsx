@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useLayoutEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function CandidateCard() {
 
@@ -8,7 +8,7 @@ export default function CandidateCard() {
     const [percentAssigned, setPercentAssigned] = useState(0.0);
     const [percentActing, setPercentActing] = useState(0.0);
 
-    useLayoutEffect(() => {
+    useEffect(() => {
 
         const getCandidateCount = async () => {
             const res = await fetch(process.env.API_URL + '/api/candidate/getCount');
@@ -35,7 +35,7 @@ export default function CandidateCard() {
             {/* Top bar label */}
             <div className="bg-white h-16 w-full rounded-t-2xl drop-shadow-md flex justify-between">
                 <h1 className="px-3 py-4 font-md text-2xl">Candidates</h1>
-                <h1 className="fixed top-0 right-0 mr-2 mt-2 py-2 px-3 font-md text-2xl bg-gradient-to-r from-emerald-600 to-teal-500
+                <h1 className="mr-2 my-auto py-2 px-3 font-md text-2xl bg-gradient-to-r from-emerald-600 to-teal-500
                             rounded-lg text-slate-50 shadow-md">{count}</h1>
             </div>
             <div className="box-border p-2 w-full h-min bg-white rounded-b-2xl flex flex-col items-center">
