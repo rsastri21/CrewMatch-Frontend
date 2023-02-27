@@ -415,18 +415,18 @@ function ExportCSVUI() {
     }
     
     return (
-        <section className="w-1/2 h-auto mx-auto bg-white rounded-2xl shadow-md">
+        <section className="min-w-fit h-auto mx-auto bg-white rounded-2xl shadow-md">
             <div className="bg-white h-fit w-full rounded-t-2xl drop-shadow-md flex">
                 <h1 className="px-3 py-4 font-medium text-2xl">Export Productions</h1>
             </div>
-            <div className="box-border px-2 pt-2 pb-10 w-full h-auto flex flex-col gap-3">
-                <p className="p-2 my-2 text-lg text-gray-900 bg-slate-100 rounded-lg">
+            <div className="box-border px-2 pt-2 pb-10 w-full mx-auto h-auto flex flex-col justify-center gap-3">
+                <p className="p-2 my-2 w-156 text-lg mx-auto text-gray-900 bg-slate-100 rounded-lg">
                     <span className="font-medium">Crew Match </span> allows the productions to be exported as a CSV file containing each production,
                     its current roles, and current members. A file will not be returned if no productions have been created yet. A name should be provided to title the
                     output file. For best compatibility with other file systems, it is recommended that the file name contain <span className="font-medium">no spaces</span>.
                 </p>
-                <div className="flex space-x-4 w-fit mx-auto bg-white rounded-xl shadow-md p-6">
-                    <div className="border p-2 mx-auto w-fit min-w-fit h-auto flex space-x-4 rounded-xl border-slate-200">
+                <div className="flex space-x-4 min-w-fit mx-auto bg-white rounded-xl shadow-md p-6">
+                    <div className="border p-2 mx-auto min-w-fit h-auto flex space-x-4 rounded-xl border-slate-200">
                         <label className="px-2 py-2 font-medium text-xl text-gray-900">Enter a file name:</label>
                         <input
                             className={`p-2 text-lg rounded-lg bg-slate-50 w-auto ${noName && "outline-red-400 outline outline-1"}`}
@@ -438,7 +438,7 @@ function ExportCSVUI() {
                     </div>
                     <button 
                         onClick={() => getCSVFile()}
-                        className={`px-2 py-4 text-lg my-auto rounded-xl font-medium text-slate-100 bg-gradient-to-r from-green-500 to-emerald-500
+                        className={`px-2 py-4 min-w-fit text-lg my-auto rounded-xl font-medium text-slate-100 bg-gradient-to-r from-green-500 to-emerald-500
                                         shadow-md transition-all hover:scale-105 hover:shadow-lg active:scale-100 active:shadow-md
                                         ${loading ? "cursor-wait" : ""}`}>
                         Get File
@@ -452,10 +452,10 @@ function ExportCSVUI() {
 function DeleteProductionBox({ visible, setVisible }) {
     return (
         <section className="w-1/4 min-w-min h-auto shadow-md mx-auto bg-white rounded-2xl flex flex-col">
-            <div className="w-full min-w-min h-16 bg-red-300 rounded-t-2xl shadow-md">
+            <div className="w-full min-w-min h-fit bg-red-300 rounded-t-2xl shadow-md">
                 <h1 className="px-3 py-4 text-gray-900 font-medium text-2xl min-w-fit">Reset Crew Match</h1>
             </div>
-            <div className="box-border p-4 w-full h-min rounded-b-2xl bg-red-100 flex flex-col items-center space-y-6">
+            <div className="box-border p-4 w-104 h-min rounded-b-2xl bg-red-100 flex flex-col items-center space-y-6">
                 <p className="p-2 text-lg text-gray-900 bg-red-50 rounded-lg">
                     Reset <span className="font-medium">Crew Match </span> by deleting all candidates, productions, and swap requests.
                     Users will be persisted for future uses.

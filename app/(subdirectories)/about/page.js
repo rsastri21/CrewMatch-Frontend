@@ -33,7 +33,7 @@ export default function About() {
                         <li className="px-3 ml-8 py-2 text-lg font-normal">Reset the system.</li>
                     </ul>
                 </div>
-                <div className="box-border p-2 bg-white w-full h-fit xl:h-full overflow-y-scroll rounded-2xl shadow-md flex flex-col gap-2">
+                <div className="box-border px-2 pt-2 pb-4 bg-white w-full h-fit xl:h-full overflow-y-scroll rounded-2xl shadow-md flex flex-col gap-2">
                     <h1 className="px-3 py-2 text-3xl font-medium">Changelog</h1>
                     <div className="w-auto mx-2 h-fit shadow-md rounded-xl flex flex-col gap-2 bg-emerald-100">
                         <div className="flex w-full justify-between bg-emerald-200 rounded-t-xl">
@@ -48,7 +48,7 @@ export default function About() {
                         </ul>
                     </div>
                 </div>
-                <div className="box-border p-2 bg-white w-full h-fit xl:h-full overflow-y-scroll rounded-2xl shadow-md flex flex-col gap-2">
+                <div className="box-border px-2 pt-2 pb-4 bg-white w-full h-fit xl:h-full overflow-y-scroll rounded-2xl shadow-md flex flex-col gap-2">
                     <h1 className="px-3 py-2 text-3xl font-medium">Technology</h1>
                     <ul className="px-4 py-1 text-xl list-disc list-inside font-medium"> Crew Match makes use of the following technologies under the hood.
                             <li className="px-3 py-2 text-lg font-normal">Back End: A Spring Boot application written in Java hosted on Heroku with Heroku Postgres

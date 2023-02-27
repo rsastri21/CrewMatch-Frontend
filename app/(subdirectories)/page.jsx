@@ -51,7 +51,7 @@ export default function Page() {
                     <hr className="h-px mt-8 mx-auto bg-gray-800 border-0 w-2/3 items-center"></hr>
                     {renderText()}
                 </div>
-                <div className="w-1/2 h-fit bg-slate-100 space-y-6 mx-auto flex flex-col items-center lg:flex-row lg:space-x-4 lg:space-y-0 lg:items-start">
+                <div className="w-1/2 h-fit space-y-6 mx-auto flex flex-col justify-center items-center lg:flex-row lg:space-x-4 lg:space-y-0 lg:items-start">
                     <CandidateCard />
                     <ProductionCard />
                 </div>
