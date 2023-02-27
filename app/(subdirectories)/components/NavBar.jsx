@@ -24,8 +24,8 @@ export default function NavBar() {
     return (
         <nav className="py-3 w-full max-h-min flex relative shadow-md justify-between rounded-b-lg">
             <div className="flex ml-8 mr-1 rounded-lg hover:bg-slate-200 hover:shadow-md active:bg-slate-300">
-                <GrGroup className="w-8 h-8 mx-2 my-auto"/>
-                <Link href="/" className="px-2 font-semibold text-3xl my-auto">
+                <GrGroup className="w-6 h-6 lg:w-8 lg:h-8 mx-2 my-auto"/>
+                <Link href="/" className="px-2 font-semibold text-xl lg:text-3xl my-auto">
                     Crew Match
                 </Link>
             </div>
