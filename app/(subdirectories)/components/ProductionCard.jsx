@@ -32,8 +32,8 @@ export default function ProductionCard() {
     // console.log(productions);
 
     return (
-        <div className="box-border w-96 h-min min-w-fit mx-auto md:ml-4 bg-white rounded-2xl shadow-md">
-            <div className="bg-white h-16 w-full rounded-t-2xl drop-shadow-md flex justify-between">
+        <div className="box-border w-96 h-min min-w-fit bg-white rounded-2xl shadow-md">
+            <div className="bg-white h-fit w-full rounded-t-2xl drop-shadow-md flex justify-between">
                 <h1 className="px-3 py-4 font-md text-2xl">Productions</h1>
                 <h1 className="mr-2 my-auto py-2 px-4 font-md text-2xl bg-gradient-to-r from-red-600 to-rose-500
                             rounded-lg text-slate-50 shadow-md">{count}</h1>

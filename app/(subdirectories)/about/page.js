@@ -3,7 +3,7 @@ export default function About() {
         <div className="w-screen min-h-screen bg-gradient-to-b from-cyan-200 to-sky-300 flex flex-col items-center gap-8 pb-16">
             <h1 className="px-3 py-4 mt-16 text-8xl text-gray-900">About Crew Match</h1>
             <section className="w-fit xl:h-256 px-4 grid sm:grid-cols-1 xl:grid-cols-2 xl:grid-rows-2 gap-6">
-                <div className="box-border w-full p-4 bg-white h-full overflow-y-scroll rounded-2xl shadow-md flex flex-col gap-4 row-span-2">
+                <div className="box-border w-full p-4 h-fit bg-white xl:h-full overflow-y-scroll rounded-2xl shadow-md flex flex-col gap-4 xl:row-span-2">
                     <h1 className="px-3 py-2 text-3xl font-medium">Crew Match is...</h1>
                     <p className="px-3 py-2 text-xl text-gray-600">
                         ...a system to manage the crew of LUX Productions.

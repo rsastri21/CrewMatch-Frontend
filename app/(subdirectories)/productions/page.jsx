@@ -52,10 +52,10 @@ export default function Productions() {
     return (
         <div className="bg-gradient-to-r from-green-200 to-emerald-200 flex flex-col min-h-screen h-auto w-screen pb-16">
             <section className="w-1/2 h-min min-w-half mx-auto justify-center">
-                <h1 className="pt-24 pb-12 px-8 text-8xl text-center text-gray-800">
+                <h1 className="pt-24 pb-12 font-medium xl:px-8 text-5xl lg:text-6xl xl:text-8xl xl:font-normal text-center text-gray-800">
                    Productions Home. 
                 </h1>
-                <p className="px-8 text-2xl text-center text-gray-800">
+                <p className="px-8 text-xl lg:text-2xl text-center text-gray-800">
                     Create, view, or edit productions — Match candidates and more.
                 </p>
                 <hr className="h-px mt-8 mx-auto bg-gray-800 border-0 w-2/3 items-center"></hr>
@@ -135,7 +135,7 @@ function RolesUI() {
             <h1 className="text-5xl px-4 py-2 h-fit font-medium text-center text-gray-800">
                 Retrieve Roles
             </h1>
-            <section className="box-border w-2/3 h-min z-0 mx-auto bg-white rounded-2xl shadow-md flex flex-col space-y-1">
+            <section className="box-border min-w-[450px] w-2/3 h-min z-0 mx-auto bg-white rounded-2xl shadow-md flex flex-col space-y-1">
                 <div className="bg-white h-fit w-full rounded-t-2xl drop-shadow-md flex">
                     <h1 className="px-3 py-4 h-fit font-medium text-2xl">All Roles from Current Productions</h1>
                 </div>
@@ -176,7 +176,7 @@ function MatchUI() {
     }
     
     return (
-        <section className="w-1/2 h-min py-4 my-2 mx-auto flex flex-col space-y-8">
+        <section className="w-1/2 h-min py-4 my-2 mx-auto flex flex-col justify-center items-center space-y-8">
             <h1 className="text-5xl px-4 py-2 font-medium text-center text-gray-800">
                 Matching Candidates
             </h1>
@@ -225,11 +225,11 @@ function MatchWithPreference({ visible, setVisible, method, setMethod, methodURL
     }
 
     return (
-        <section className="box-border w-2/3 h-min z-0 mx-auto bg-white rounded-2xl shadow-md flex flex-col space-y-1">
-            <div className="bg-white h-16 w-full rounded-t-2xl drop-shadow-md flex">
+        <section className="box-border min-w-fit w-2/3 h-min z-0 bg-white rounded-2xl shadow-md flex flex-col space-y-1">
+            <div className="bg-white h-fit w-full rounded-t-2xl drop-shadow-md flex">
                 <h1 className="px-3 py-4 font-medium text-2xl">Match with Preferences</h1>
             </div>
-            <div className="box-border p-4 w-full h-min rounded-b-2xl flex flex-col items-center space-y-6 pb-6">
+            <div className="box-border p-4 min-w-[450px] w-full h-min rounded-b-2xl flex flex-col items-center space-y-6 pb-6">
                 <p className="p-2 text-lg text-gray-900 bg-slate-100 rounded-lg">
                     Match with Preferences follows the traditional logic of crew matching. <span className="font-medium">Crew Match </span>
                     will use the standard process of prioritizing candidates who have been in LUX the longest, been at UW the longest, response submission time,
@@ -255,11 +255,11 @@ function MatchWithoutPreference({ visible, setVisible, method, setMethod, method
     }
     
     return (
-        <section className="box-border w-2/3 h-min z-0 mx-auto bg-white rounded-2xl shadow-md flex flex-col space-y-1">
-            <div className="bg-white h-16 w-full rounded-t-2xl drop-shadow-md flex">
+        <section className="box-border min-w-fit w-2/3 h-min z-0 bg-white rounded-2xl shadow-md flex flex-col space-y-1">
+            <div className="bg-white h-fit w-full rounded-t-2xl drop-shadow-md flex">
                 <h1 className="px-3 py-4 font-medium text-2xl">Match without Preferences</h1>
             </div>
-            <div className="box-border p-4 w-full h-min rounded-b-2xl flex flex-col items-center space-y-6 pb-6">
+            <div className="box-border p-4 min-w-[450px] w-full h-min rounded-b-2xl flex flex-col items-center space-y-6 pb-6">
                 <p className="p-2 text-lg text-gray-900 bg-slate-100 rounded-lg">
                     Match without Preferences starts with the same logic as Match with Preferences, but it goes further to ensure a role placement
                     if space is available. If a candidate's preferences are not satisfied, <span className="font-medium">Crew Match </span> will place 
