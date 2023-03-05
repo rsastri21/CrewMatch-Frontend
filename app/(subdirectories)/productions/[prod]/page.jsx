@@ -449,7 +449,7 @@ function AvailableCandidateModal({ production, visible, toggleModal, role, index
     return (
         visible &&
         <div className="fixed bottom-0 left-0 right-0 z-10 w-screen h-screen p-4 bg-gray-700 bg-opacity-50 flex flex-col justify-center items-center">
-            <section className="w-1/2 h-1/2">
+            <section className="min-w-fit w-1/2 h-3/4 max-h-fit">
                 <CandidateTable fetchURL={process.env.API_URL + `/api/candidate/search?assigned=false&actingInterest=false&production=${production}`} mode={'assign'} role={role} index={index} prod={prodID} />
             </section>
         </div>
@@ -462,7 +462,7 @@ function DeleteProductionBox({ visible, setVisible }) {
             <div className="w-full min-w-min h-16 bg-red-300 rounded-t-2xl shadow-md">
                 <h1 className="px-3 py-4 text-gray-900 font-medium text-2xl min-w-fit">Delete Production</h1>
             </div>
-            <div className="box-border p-4 w-full h-min rounded-b-2xl bg-red-100 flex flex-col items-center space-y-6">
+            <div className="box-border p-4 w-96 h-min rounded-b-2xl bg-red-100 flex flex-col items-center space-y-6">
                 <p className="p-2 text-lg text-gray-900 bg-red-50 rounded-lg">
                     If this production was created accidentally, or it needs to be removed from the list of active productions, it can be deleted here.
                     <br></br>
@@ -518,10 +518,10 @@ function DeleteModal({ id, visible, setVisible }) {
     
     return (
         <div className="fixed bottom-0 left-0 right-0 z-10 w-screen h-screen p-4 flex flex-col justify-center items-center">
-            <section className="w-1/4 h-auto bg-white rounded-2xl flex flex-col box-border p-4 shadow-2xl">
+            <section className="w-1/4 min-w-min h-auto bg-white rounded-2xl flex flex-col box-border p-4 shadow-2xl">
                 <h1 className="px-3 py-4 font-medium text-2xl text-center">Are you sure you want to delete this production?</h1>
                 <p className="text-lg text-center font-normal px-3 py-2 ">This action cannot be undone.</p>
-                <div className="w-full h-auto flex space-x-4 justify-center box-border p-4">
+                <div className="w-full min-w-fit h-auto flex space-x-4 justify-center box-border p-4">
                     <button onClick={(e) => handleDeletePress(e)} className="p-4 w-fit font-medium text-lg text-gray-100 bg-gradient-to-r from-red-500 to-rose-500 rounded-lg shadow-md 
                                                     hover:shadow-lg hover:bg-gradient-to-r hover:from-red-600 hover:to-rose-600 
                                                     active:bg-gradient-to-r active:from-red-700 active:to-rose-700">

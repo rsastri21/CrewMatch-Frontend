@@ -24,12 +24,12 @@ export default function NavBar() {
     return (
         <nav className="py-3 w-full max-h-min flex relative shadow-md justify-between rounded-b-lg">
             <div className="flex ml-8 mr-1 rounded-lg hover:bg-slate-200 hover:shadow-md active:bg-slate-300">
-                <GrGroup className="w-8 h-8 mx-2 my-auto"/>
-                <Link href="/" className="px-2 font-semibold text-3xl my-auto">
+                <GrGroup className="w-6 h-6 lg:w-8 lg:h-8 mx-2 my-auto"/>
+                <Link href="/" className="px-2 font-semibold text-xl lg:text-3xl my-auto">
                     Crew Match
                 </Link>
             </div>
-            <span className="px-2 py-1 my-auto ml-1 mr-auto rounded-xl bg-red-500 text-slate-100 text-center text-sm font-medium">v1.0.0</span>
+            <span className="px-2 py-1 my-auto ml-1 mr-auto rounded-xl bg-red-500 text-slate-100 text-center text-sm font-medium">v1.0.1</span>
             
             <ul className="flex items-center mr-8 space-x-4">
                 <Link href="/about" className="px-4 py-2 text-md font-medium bg-slate-100 rounded-md shadow-sm hover:bg-slate-200 hover:shadow-md active:bg-slate-300">About</Link>

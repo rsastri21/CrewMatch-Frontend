@@ -83,19 +83,19 @@ export default function Signup() {
     }
     
     return (
-        <div className="h-screen w-screen grid grid-cols-5">
-            <section className="col-span-3 h-full w-full bg-gradient-to-r from-emerald-200 to-teal-200 flex flex-col justify-center">
-                <GrGroup className="w-48 h-48 mx-auto"/>
-                <p className="p-8 text-8xl text-gray-900 mx-auto font-semibold">
+        <div className="min-h-screen w-screen grid grid-cols-1 xl:grid-cols-5">
+            <section className="xl:col-span-3 xl:h-full h-fit xl:pt-0 pt-8 w-full bg-gradient-to-b xl:bg-gradient-to-r from-emerald-200 to-teal-200 flex flex-col justify-center">
+                <GrGroup className="w-28 h-28 xl:w-48 xl:h-48 mx-auto"/>
+                <p className="p-4 xl:p-8 text-6xl xl:text-8xl text-gray-900 mx-auto font-semibold">
                     Crew Match
                 </p>
-                <p className="p-8 mt-16 text-gray-900 text-6xl mx-auto">
+                <p className="p-4 xl:p-8 xl:mt-16 text-gray-900 text-4xl xl:text-6xl mx-auto">
                     Welcome.
                 </p>
             </section>
-            <section className="col-span-2 h-full w-full min-w-fit bg-gradient-to-r from-teal-200 to-emerald-300
+            <section className="xl:col-span-2 h-full w-full min-w-fit bg-gradient-to-b xl:bg-gradient-to-r from-teal-200 to-emerald-300
                                 flex flex-col items-center justify-center">
-                <div className="h-fit w-2/3 m-8 min-h-fit min-w-fit bg-white shadow-md rounded-2xl box-border p-8 flex flex-col items-center">
+                <div className="h-fit w-1/2 xl:w-2/3 m-8 min-h-fit min-w-fit bg-white shadow-md rounded-2xl box-border p-8 flex flex-col items-center">
                     <section className="h-24 w-full rounded-2xl bg-white shadow-md flex flex-col justify-center">
                         <p className="px-4 text-4xl text-gray-900 font-medium text-center">Sign Up</p>
                     </section>
