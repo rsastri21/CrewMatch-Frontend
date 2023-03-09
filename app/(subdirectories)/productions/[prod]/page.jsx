@@ -458,7 +458,7 @@ function AvailableCandidateModal({ production, visible, toggleModal, role, index
 
 function DeleteProductionBox({ visible, setVisible }) {
     return (
-        <section className="w-1/4 min-w-min h-auto shadow-md mx-auto my-16 bg-white rounded-2xl flex flex-col">
+        <section className="w-fit min-w-min h-auto shadow-md mx-auto my-16 bg-white rounded-2xl flex flex-col">
             <div className="w-full min-w-min h-16 bg-red-300 rounded-t-2xl shadow-md">
                 <h1 className="px-3 py-4 text-gray-900 font-medium text-2xl min-w-fit">Delete Production</h1>
             </div>
