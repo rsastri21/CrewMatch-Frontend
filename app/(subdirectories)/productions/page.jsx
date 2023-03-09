@@ -26,7 +26,7 @@ export default function Productions() {
     }, []);
 
     const handleCardClick = (e, index) => {
-        router.push(`/productions/${productions[index].id}`)
+        router.push(`/productions/${productions[index].id}`, undefined, { shallow: false });
     }
 
     const handleCreateClick = (e) => {
