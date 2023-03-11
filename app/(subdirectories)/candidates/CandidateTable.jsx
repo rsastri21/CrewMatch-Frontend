@@ -8,7 +8,7 @@ import { AiOutlineUser } from "react-icons/ai";
 import { AiOutlineEdit } from "react-icons/ai";
 import { Switch, Transition } from "@headlessui/react";
 
-export default function CandidateTable({ fetchURL, mode, role, index, prod }) {
+export default function CandidateTable({ fetchURL, mode, role, index, prod, visible, toggleVisible }) {
     
     const [candidates, setCandidates] = useState([]);
     const [candidateIndex, setCandidateIndex] = useState(0);
@@ -169,7 +169,7 @@ export default function CandidateTable({ fetchURL, mode, role, index, prod }) {
                 </Transition.Child>
             </Transition>
             
-            <div className={`bg-white ${(mode === "assign" || mode === "actor") ? "max-h-fit" : "h-16"} w-full rounded-t-2xl drop-shadow-md z-0 flex justify-between`}>
+            <div className={`bg-white ${(mode === "assign" || mode === "actor") ? "max-h-fit" : "h-fit"} w-full rounded-t-2xl drop-shadow-md z-0 flex justify-between`}>
                 <h1 className="px-3 py-4 font-medium text-2xl">{mode === "assign" ? "Available to Assign" : (mode === "actor" ? "Interested in Acting" : "Enrolled")}</h1>
                 {mode === "assign" || mode === "actor" ?
                     <div className="flex space-x-4 px-4">
@@ -193,8 +193,15 @@ export default function CandidateTable({ fetchURL, mode, role, index, prod }) {
                 null
                 }
             </div>
-            <div className={`box-border p-2 w-full min-h-4 ${mode === "assign" ? "h-fit" : "max-h-128"} rounded-b-2xl overflow-y-scroll z-0`}>
+            <div className={`box-border p-2 w-full min-h-4 flex flex-col ${mode === "assign" ? "h-fit" : "max-h-128"} rounded-b-2xl overflow-y-scroll z-0`}>
                 {renderTable()}
+                {mode === "assign" &&
+                    <button onClick={toggleVisible} className="p-4 w-fit my-4 mx-auto font-medium text-lg text-gray-100 bg-gradient-to-r from-red-500 to-rose-500 rounded-lg shadow-md 
+                                                        hover:shadow-lg hover:bg-gradient-to-r hover:from-red-600 hover:to-rose-600 
+                                                        active:bg-gradient-to-r active:from-red-700 active:to-rose-700">
+                        Return to Page
+                    </button>
+                }
             </div>
         </section>
     );

@@ -253,7 +253,7 @@ function EditProduction({ visible, setVisible, production }) {
     
     return (
         <div className="fixed bottom-0 left-0 right-0 z-10 w-screen h-screen p-4 flex flex-col justify-center items-center">
-            <section className="w-1/2 min-w-fit max-h-[75vh] overflow-y-scroll bg-white rounded-2xl flex flex-col box-border shadow-2xl">
+            <section className="w-fit max-h-[75vh] overflow-y-scroll bg-white rounded-2xl flex flex-col box-border shadow-2xl">
                 <div className="bg-white h-fit w-full rounded-t-2xl drop-shadow-md flex justify-between z-10">
                     <h1 className="px-4 py-4 my-auto font-medium text-2xl mx-auto">Edit Roles of {production.name}</h1>
                 </div>
@@ -261,12 +261,11 @@ function EditProduction({ visible, setVisible, production }) {
                     <p className="p-2 w-256 mx-auto text-lg text-gray-900 bg-slate-100 rounded-lg">
                         The names of roles can be edited here. This process should be done only to increase clarity and not to create roles that are 
                         not already available in <span className="font-medium">Crew Match</span>. For example, a role of "Camera Operator 2" can be renamed to "Camera Operator"
-                        for simplification (although this practice of numbering should be avoided to begin with). <br></br>
+                        for simplification (although this practice of numbering should be avoided to begin with).
                         <br></br><br></br>A desired member can also be added to the production here. Their name can be entered in the second column next to 
                         the intended role. If the member is already enrolled, please ensure their name is spelled the same way. Otherwise,
                         a new candidate entity will be created. 
-                        <br></br><br></br>For best functionality, a member that needs to be removed should be removed 
-                        using the tools on the main production page. <br></br><br></br>
+                        <br></br><br></br>
                         Roles <span className="font-medium">CANNOT </span> be empty. 
                     </p>
                     <h1 className="px-3 py-3 text-xl text-gray-900 font-medium rounded-lg shadow-md">Edit the crew roles and desired members below.</h1>
@@ -454,7 +453,7 @@ function AvailableCandidateModal({ production, visible, toggleModal, role, index
         visible &&
         <div className="fixed bottom-0 left-0 right-0 z-10 w-screen h-screen p-4 bg-gray-700 bg-opacity-50 flex flex-col justify-center items-center">
             <section className="min-w-fit w-1/2 h-3/4 max-h-fit">
-                <CandidateTable fetchURL={process.env.API_URL + `/api/candidate/search?assigned=false&actingInterest=false&production=${production}`} mode={'assign'} role={role} index={index} prod={prodID} />
+                <CandidateTable fetchURL={process.env.API_URL + `/api/candidate/search?assigned=false&actingInterest=false&production=${production}`} mode={'assign'} role={role} index={index} prod={prodID} visible={visible} toggleVisible={toggleModal} />
             </section>
         </div>
     );

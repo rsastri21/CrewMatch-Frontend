@@ -192,7 +192,7 @@ function HeaderForm({ showHeaderForm, toggle }) {
                             </label><input key={"input-" + index} className="py-4 px-3 w-[90%] rounded-lg bg-slate-200 text-gray-700" type="text" name={Headers[index]} value={form} onChange={e => updateFormData(e, index)} required /></React.Fragment>
                         ))}
                     </form>
-                    <footer className="flex justify-end p-4 space-x-4">
+                    <footer className="flex justify-center p-4 space-x-4">
                         <button onClick={submitForm} className={`p-4 w-42 font-medium text-lg text-gray-100 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg shadow-md 
                                             hover:shadow-lg hover:bg-gradient-to-r hover:from-green-600 hover:to-emerald-600 
                                             active:bg-gradient-to-r active:from-green-700 active:to-emerald-700 ${loading ? "cursor-wait" : ""}`}>
