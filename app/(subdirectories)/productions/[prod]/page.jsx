@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from "next/link";
 import { Transition } from '@headlessui/react';
 import CandidateTable from '../../candidates/CandidateTable';
 import { FcFilmReel } from "react-icons/fc";
 import { BiEdit, BiPlusCircle, BiMinusCircle } from "react-icons/bi";
 import { useSession } from '../../../SessionContext';
+import Loading from '../../loading';
 
 export default function ProductionUI({ params, }) {
     
@@ -55,124 +55,125 @@ export default function ProductionUI({ params, }) {
     }
     
     return (
-        
-        <div className="bg-gradient-to-r from-green-200 to-emerald-200 flex flex-col min-h-screen h-auto w-screen pb-16">
-            <div className="w-1/2 h-min min-w-half mx-auto justify-center">
-                <FcFilmReel className="w-48 h-48 pt-12 mx-auto my-2"/>
-                <h1 className="pt-8 pb-12 px-8 text-8xl text-center text-gray-800">
-                    {production.name}
-                </h1>
-                {production.prodLead && 
-                <p className="px-8 text-2xl text-center text-gray-800">
-                    Production Lead: <span className="italic font-medium">{production.prodLead}</span>.
-                </p>
-                }
-                <p className="px-8 text-2xl text-center text-gray-800">
-                    Manage the details of <span className="italic font-medium">{production.name}</span> here.
-                </p>
-                <hr className="h-px mt-8 mx-auto bg-gray-800 border-0 w-2/3 items-center"></hr>
+        <Suspense fallback={<Loading />}>
+            <div className="bg-gradient-to-r from-green-200 to-emerald-200 flex flex-col min-h-screen h-auto w-screen pb-16">
+                <div className="w-1/2 h-min min-w-half mx-auto justify-center">
+                    <FcFilmReel className="w-48 h-48 pt-12 mx-auto my-2"/>
+                    <h1 className="pt-8 pb-12 px-8 text-8xl text-center text-gray-800">
+                        {production.name}
+                    </h1>
+                    {production.prodLead && 
+                    <p className="px-8 text-2xl text-center text-gray-800">
+                        Production Lead: <span className="italic font-medium">{production.prodLead}</span>.
+                    </p>
+                    }
+                    <p className="px-8 text-2xl text-center text-gray-800">
+                        Manage the details of <span className="italic font-medium">{production.name}</span> here.
+                    </p>
+                    <hr className="h-px mt-8 mx-auto bg-gray-800 border-0 w-2/3 items-center"></hr>
+                </div>
+                <section className="w-1/2 min-w-fit h-min py-4 my-2 mx-auto flex flex-col space-y-4">
+                    <h1 className="text-5xl px-8 py-4 font-medium text-center text-gray-800">
+                        Crew Members
+                    </h1>
+                    {Object.keys(production).length !== 0 && <AvailableCandidateModal production={production.name} visible={tableVisible} toggleModal={toggle} role={production.roles[index]} index={index} prodID={production.id} />}
+                    <CrewMembers production={production} toggle={toggle} toggleRemove={toggleRemove} />
+                </section>
+                <button onClick={() => toggleEdit()} className="bg-white flex rounded-xl w-fit mx-auto p-4 text-xl font-medium shadow-md hover:scale-105 hover:shadow-lg active:scale-100 active:bg-slate-200 transition-all">
+                    <span className="ml-0 mr-2 my-auto"><BiEdit className="w-6 h-6"/></span>
+                    Edit Roles
+                </button>
+                <section className="w-1/2 min-w-fit h-min py-4 my-2 mx-auto flex flex-col space-y-4">
+                    <h1 className="text-5xl px-8 py-4 font-medium text-center text-gray-800">
+                        Casting
+                    </h1>
+                    {production && <CandidateTable fetchURL={process.env.API_URL + `/api/candidate/search?assigned=false&actingInterest=true&production=${production.name}`} mode="actor" />}
+                </section>
+                <DeleteProductionBox visible={deleteModal} setVisible={toggleDelete} />
+
+                <Transition show={unassignVisible} >
+                    <Transition.Child
+                        enter="transition-opacity ease-out duration-200"
+                        enterFrom="opacity-0"
+                        enterTo="opacity-100"
+                        leave="transition-opacity ease-out duration-200"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
+                        className="fixed bottom-0 left-0 right-0 w-screen h-screen"
+                    >
+                        <BackgroundOverlay />
+                    </Transition.Child>
+                    
+                    <Transition.Child
+                        enter="transition-all ease-in-out duration-200"
+                        enterFrom="translate-y-full scale-50"
+                        enterTo="translate-y-0 scale-100"
+                        leave="transition-all ease-in-out duration-200"
+                        leaveFrom="translate-y-0 scale-100"
+                        leaveTo="translate-y-full scale-50"
+                        className="fixed bottom-0 left-0 right-0 w-screen h-screen"
+                    >
+                        <RemoveMemberModal index={removeIndex} visible={unassignVisible} toggleVisible={toggleRemoveModal} production={production} />
+                    </Transition.Child>
+                    
+                </Transition>
+
+                <Transition show={edit} >
+                    <Transition.Child
+                        enter="transition-opacity ease-out duration-200"
+                        enterFrom="opacity-0"
+                        enterTo="opacity-100"
+                        leave="transition-opacity ease-out duration-200"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
+                        className="fixed bottom-0 left-0 right-0 w-screen h-screen"
+                    >
+                        <BackgroundOverlay />
+                    </Transition.Child>
+                    
+                    <Transition.Child
+                        enter="transition-all ease-in-out duration-200"
+                        enterFrom="translate-y-full scale-50"
+                        enterTo="translate-y-0 scale-100"
+                        leave="transition-all ease-in-out duration-200"
+                        leaveFrom="translate-y-0 scale-100"
+                        leaveTo="translate-y-full scale-50"
+                        className="fixed bottom-0 left-0 right-0 w-screen h-screen"
+                    >
+                        <EditProduction visible={edit} setVisible={toggleEdit} production={production} />
+                    </Transition.Child>
+                    
+                </Transition>
+                
+                <Transition show={deleteModal} >
+                    <Transition.Child
+                        enter="transition-opacity ease-out duration-200"
+                        enterFrom="opacity-0"
+                        enterTo="opacity-100"
+                        leave="transition-opacity ease-out duration-200"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
+                        className="fixed bottom-0 left-0 right-0 w-screen h-screen"
+                    >
+                        <BackgroundOverlay />
+                    </Transition.Child>
+                    
+                    <Transition.Child
+                        enter="transition-all ease-in-out duration-200"
+                        enterFrom="translate-y-full scale-50"
+                        enterTo="translate-y-0 scale-100"
+                        leave="transition-all ease-in-out duration-200"
+                        leaveFrom="translate-y-0 scale-100"
+                        leaveTo="translate-y-full scale-50"
+                        className="fixed bottom-0 left-0 right-0 w-screen h-screen"
+                    >
+                        <DeleteModal id={production.id} visible={deleteModal} setVisible={toggleDelete} />
+                    </Transition.Child>
+                    
+                </Transition>
+
             </div>
-            <section className="w-1/2 min-w-fit h-min py-4 my-2 mx-auto flex flex-col space-y-4">
-                <h1 className="text-5xl px-8 py-4 font-medium text-center text-gray-800">
-                    Crew Members
-                </h1>
-                {Object.keys(production).length !== 0 && <AvailableCandidateModal production={production.name} visible={tableVisible} toggleModal={toggle} role={production.roles[index]} index={index} prodID={production.id} />}
-                <CrewMembers production={production} toggle={toggle} toggleRemove={toggleRemove} />
-            </section>
-            <button onClick={() => toggleEdit()} className="bg-white flex rounded-xl w-fit mx-auto p-4 text-xl font-medium shadow-md hover:scale-105 hover:shadow-lg active:scale-100 active:bg-slate-200 transition-all">
-                <span className="ml-0 mr-2 my-auto"><BiEdit className="w-6 h-6"/></span>
-                Edit Roles
-            </button>
-            <section className="w-1/2 min-w-fit h-min py-4 my-2 mx-auto flex flex-col space-y-4">
-                <h1 className="text-5xl px-8 py-4 font-medium text-center text-gray-800">
-                    Casting
-                </h1>
-                {production && <CandidateTable fetchURL={process.env.API_URL + `/api/candidate/search?assigned=false&actingInterest=true&production=${production.name}`} mode="actor" />}
-            </section>
-            <DeleteProductionBox visible={deleteModal} setVisible={toggleDelete} />
-
-            <Transition show={unassignVisible} >
-                <Transition.Child
-                    enter="transition-opacity ease-out duration-200"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="transition-opacity ease-out duration-200"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                    className="fixed bottom-0 left-0 right-0 w-screen h-screen"
-                >
-                    <BackgroundOverlay />
-                </Transition.Child>
-                
-                <Transition.Child
-                    enter="transition-all ease-in-out duration-200"
-                    enterFrom="translate-y-full scale-50"
-                    enterTo="translate-y-0 scale-100"
-                    leave="transition-all ease-in-out duration-200"
-                    leaveFrom="translate-y-0 scale-100"
-                    leaveTo="translate-y-full scale-50"
-                    className="fixed bottom-0 left-0 right-0 w-screen h-screen"
-                >
-                    <RemoveMemberModal index={removeIndex} visible={unassignVisible} toggleVisible={toggleRemoveModal} production={production} />
-                </Transition.Child>
-                
-            </Transition>
-
-            <Transition show={edit} >
-                <Transition.Child
-                    enter="transition-opacity ease-out duration-200"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="transition-opacity ease-out duration-200"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                    className="fixed bottom-0 left-0 right-0 w-screen h-screen"
-                >
-                    <BackgroundOverlay />
-                </Transition.Child>
-                
-                <Transition.Child
-                    enter="transition-all ease-in-out duration-200"
-                    enterFrom="translate-y-full scale-50"
-                    enterTo="translate-y-0 scale-100"
-                    leave="transition-all ease-in-out duration-200"
-                    leaveFrom="translate-y-0 scale-100"
-                    leaveTo="translate-y-full scale-50"
-                    className="fixed bottom-0 left-0 right-0 w-screen h-screen"
-                >
-                    <EditProduction visible={edit} setVisible={toggleEdit} production={production} />
-                </Transition.Child>
-                
-            </Transition>
-            
-            <Transition show={deleteModal} >
-                <Transition.Child
-                    enter="transition-opacity ease-out duration-200"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="transition-opacity ease-out duration-200"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                    className="fixed bottom-0 left-0 right-0 w-screen h-screen"
-                >
-                    <BackgroundOverlay />
-                </Transition.Child>
-                
-                <Transition.Child
-                    enter="transition-all ease-in-out duration-200"
-                    enterFrom="translate-y-full scale-50"
-                    enterTo="translate-y-0 scale-100"
-                    leave="transition-all ease-in-out duration-200"
-                    leaveFrom="translate-y-0 scale-100"
-                    leaveTo="translate-y-full scale-50"
-                    className="fixed bottom-0 left-0 right-0 w-screen h-screen"
-                >
-                    <DeleteModal id={production.id} visible={deleteModal} setVisible={toggleDelete} />
-                </Transition.Child>
-                
-            </Transition>
-
-        </div>
+        </Suspense>
     );
 }
 
@@ -252,29 +253,32 @@ function EditProduction({ visible, setVisible, production }) {
     
     return (
         <div className="fixed bottom-0 left-0 right-0 z-10 w-screen h-screen p-4 flex flex-col justify-center items-center">
-            <section className="w-1/2 max-h-[75vh] overflow-y-scroll bg-white rounded-2xl flex flex-col box-border shadow-2xl">
+            <section className="w-fit max-h-[75vh] overflow-y-scroll bg-white rounded-2xl flex flex-col box-border shadow-2xl">
                 <div className="bg-white h-fit w-full rounded-t-2xl drop-shadow-md flex justify-between z-10">
                     <h1 className="px-4 py-4 my-auto font-medium text-2xl mx-auto">Edit Roles of {production.name}</h1>
                 </div>
                 <div className="box-border bg-white p-3 w-full max-w-fit shadow-md rounded-b-2xl flex flex-col justify-center items-center space-y-4">
-                    <p className="p-2 w-full mx-auto text-lg text-gray-900 bg-slate-100 rounded-lg">
+                    <p className="p-2 w-256 mx-auto text-lg text-gray-900 bg-slate-100 rounded-lg">
                         The names of roles can be edited here. This process should be done only to increase clarity and not to create roles that are 
                         not already available in <span className="font-medium">Crew Match</span>. For example, a role of "Camera Operator 2" can be renamed to "Camera Operator"
-                        for simplification (although this practice of numbering should be avoided to begin with). <br></br>
-                        Members cannot be edited here. Use the assign and removal tools on the main page to modify crew members. <br></br><br></br>
+                        for simplification (although this practice of numbering should be avoided to begin with).
+                        <br></br><br></br>A desired member can also be added to the production here. Their name can be entered in the second column next to 
+                        the intended role. If the member is already enrolled, please ensure their name is spelled the same way. Otherwise,
+                        a new candidate entity will be created. 
+                        <br></br><br></br>
                         Roles <span className="font-medium">CANNOT </span> be empty. 
                     </p>
                     <h1 className="px-3 py-3 text-xl text-gray-900 font-medium rounded-lg shadow-md">Edit the crew roles and desired members below.</h1>
 
-                    <form onSubmit={submit} className="w-full max-w-fit bg-white box-border p-4 space-y-4">
+                    <form onSubmit={submit} className="w-fit bg-white box-border p-4 space-y-4">
                         
                         {formFields.map((form, index) => {
                             return (
-                                <div key={index} className="min-w-fit w-full mx-auto overflow-x-scroll grid grid-cols-2 gap-2 border-2 border-slate-200 p-2 rounded-xl">
+                                <div key={index} className="w-fit mx-auto overflow-x-scroll grid grid-cols-2 gap-2 border-2 border-slate-200 p-2 rounded-xl">
                                     <div className="flex spacing-x-4 min-w-fit ml-2 mr-4">
                                         <label className="px-3 py-3 text-xl font-medium min-w-fit">Role:</label>
                                         <input 
-                                            className="p-2 text-lg rounded-lg bg-slate-50 min-w-fit"
+                                            className="p-2 text-lg rounded-lg bg-slate-50 w-fit"
                                             name="role"
                                             placeholder="Enter a role"
                                             onChange={event => handleFormChange(event, index)}
@@ -284,12 +288,11 @@ function EditProduction({ visible, setVisible, production }) {
                                     <div className="flex spacing-x-4 min-w-fit ml-4 mr-4">
                                         <label className="px-3 py-3 text-xl font-medium min-w-fit">Member:</label>
                                         <input 
-                                            className="p-2 text-lg rounded-lg bg-slate-50 min-w-fit hover:cursor-not-allowed"
+                                            className="p-2 text-lg rounded-lg bg-slate-50 w-fit"
                                             name="member"
                                             placeholder="Empty"
                                             onChange={event => handleFormChange(event, index)}
                                             value={form.member}
-                                            disabled={true}
                                         />
                                     </div>
                                 </div>
@@ -406,7 +409,7 @@ function RemoveMemberModal({ index, visible, toggleVisible, production }) {
     
     return (
         <div className="fixed bottom-0 left-0 right-0 z-10 w-screen h-screen p-4 flex flex-col justify-center items-center">
-            <section className="w-1/4 h-auto bg-white rounded-2xl flex flex-col box-border p-4 shadow-2xl">
+            <section className="w-128 h-auto bg-white rounded-2xl flex flex-col box-border p-4 shadow-2xl">
                 <h1 className="px-3 py-4 font-medium text-2xl text-center">Are you sure you want to remove {members[index]} from this production?</h1>
                 <p className="text-lg text-center font-normal px-3 py-2 ">This action cannot be undone.</p>
                 <div className="w-full h-auto flex space-x-4 justify-center box-border p-4">
@@ -450,7 +453,7 @@ function AvailableCandidateModal({ production, visible, toggleModal, role, index
         visible &&
         <div className="fixed bottom-0 left-0 right-0 z-10 w-screen h-screen p-4 bg-gray-700 bg-opacity-50 flex flex-col justify-center items-center">
             <section className="min-w-fit w-1/2 h-3/4 max-h-fit">
-                <CandidateTable fetchURL={process.env.API_URL + `/api/candidate/search?assigned=false&actingInterest=false&production=${production}`} mode={'assign'} role={role} index={index} prod={prodID} />
+                <CandidateTable fetchURL={process.env.API_URL + `/api/candidate/search?assigned=false&actingInterest=false&production=${production}`} mode={'assign'} role={role} index={index} prod={prodID} visible={visible} toggleVisible={toggleModal} />
             </section>
         </div>
     );
