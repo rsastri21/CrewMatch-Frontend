@@ -282,13 +282,15 @@ function EditUser({ user, productions, visible, toggleVisible }) {
             } else {
                 const data2 = await response2.text();
                 setProdMessage(data2);
-                // Update session details
-                const newUser = {
-                    ...currUser,
-                    leads: prodLead
+                // Update session details if the user being updated is the current user
+                if (user.username === currUser.username) {
+                    const newUser = {
+                        ...currUser,
+                        leads: prodLead
+                    }
+                    changeUser(newUser);
+                    localStorage.setItem("user", JSON.stringify(newUser));
                 }
-                changeUser(newUser);
-                localStorage.setItem("user", JSON.stringify(newUser));
             }
         }
 

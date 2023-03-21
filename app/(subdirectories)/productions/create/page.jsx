@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { BiPlusCircle, BiMinusCircle } from "react-icons/bi";
 import { GrLinkPrevious } from "react-icons/gr";
 import { useRouter } from 'next/navigation';
+import { useSession, useSessionUpdate } from '../../../SessionContext';
 import Link from "next/link";
 
 export default function CreateProductionForm() {
@@ -30,8 +31,11 @@ export default function CreateProductionForm() {
     const [name, setName] = useState({ name: "" });
     const [error, setError] = useState(200);
     const [loading, setLoading] = useState(false);
+    const [checked, setChecked] = useState(false);
 
     const router = useRouter();
+    const user = useSession();
+    const changeUser = useSessionUpdate();
 
     useEffect(() => {
         setFormFields([...initialData]);
@@ -99,10 +103,25 @@ export default function CreateProductionForm() {
                 setError(res.status);
                 res.text();
             })
+            .then(res => {
+                if (checked) {
+                    fetch(process.env.API_URL + `/api/user/assign?username=${user.username}&production=${name.name}`, {
+                        method: 'PUT'
+                    }).then(res => setError(res.status));
+                }
+            })
             .catch(err => console.error(err))
             .finally((result) => {
                 setLoading(false);
                 if (error === 200) {
+                    if (checked) {
+                        const newUser = {
+                            ...user,
+                            leads: name.name
+                        }
+                        changeUser(newUser);
+                        localStorage.setItem("user", JSON.stringify(newUser));
+                    }
                     router.push("/productions");
                 }
             });
@@ -179,6 +198,17 @@ export default function CreateProductionForm() {
                                 </div>
                             )
                         })}
+                        <div className="w-fit h-16 bg-white box-border p-2 border-2 border-slate-200 rounded-xl mx-auto flex space-x-4 justify-center">
+                            <input
+                                className="ml-2 w-4 h-4 my-auto"
+                                type="checkbox"
+                                checked={checked}
+                                onChange={(e) => setChecked(e.target.checked)}
+                            />
+                            <label className="my-auto text-lg font-medium">
+                                Make me the production lead for this production.
+                            </label>
+                        </div>
                     </form>
 
                     <label className={`font-medium text-lg text-red-400 ${(error === 200) ? "hidden" : ""}`}>The production could not be created.</label>

@@ -6,6 +6,6 @@
     },
     reactStrictMode: true,
     env: {
-      API_URL: "https://crew-match.vercel.app"
+      API_URL: "http://localhost:8080"
     }
   };
