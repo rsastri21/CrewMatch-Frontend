@@ -313,7 +313,7 @@ function EditUser({ user, productions, visible, toggleVisible }) {
             await updateUser();
             await assignUser();
         } else {
-            await updateUser();
+            await assignUser();
         }
         
         setLoading(false);
