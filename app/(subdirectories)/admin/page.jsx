@@ -242,6 +242,8 @@ function EditUser({ user, productions, visible, toggleVisible }) {
     
     const [role, setRole] = useState(!user.role ? "" : user.role);
     const [prodLead, setProdLead] = useState(!user.leads ? "" : user.leads);
+    const [updateRole, setUpdateRole] = useState(true);
+    const [updateProdLead, setUpdateProdLead] = useState(user.role !== "user");
     const [message, setMessage] = useState("");
     const [prodMessage, setProdMessage] = useState("");
     const [loading, setLoading] = useState(false);
@@ -254,7 +256,44 @@ function EditUser({ user, productions, visible, toggleVisible }) {
         }
     };
 
-    const handleSubmit = (e) => {
+    async function handleSubmit(e) {
+        async function updateUser() {
+            const response = await fetch(process.env.API_URL + `/api/user/update?username=${user.username}&role=${role}`, {
+                method: 'PUT'
+            });
+            if (!response.ok) {
+                const error = `An error has occurred: ${response.status}`;
+                console.error(error);
+                setMessage(error);
+            } else {
+                const data = await response.text();
+                setMessage(data);
+            }
+        }
+
+        async function assignUser() {
+            const response2 = await fetch(process.env.API_URL + `/api/user/assign?username=${user.username}&production=${prodLead}`, {
+                method: 'PUT'
+            });
+            if (!response2.ok) {
+                const error2 = `An error has occurred: ${response2.status}`;
+                console.error(error2);
+                setProdMessage("An error occurred assigning the user.");
+            } else {
+                const data2 = await response2.text();
+                setProdMessage(data2);
+                // Update session details if the user being updated is the current user
+                if (user.username === currUser.username) {
+                    const newUser = {
+                        ...currUser,
+                        leads: prodLead
+                    }
+                    changeUser(newUser);
+                    localStorage.setItem("user", JSON.stringify(newUser));
+                }
+            }
+        }
+
         setLoading(true);
         e.preventDefault();
 
@@ -262,39 +301,29 @@ function EditUser({ user, productions, visible, toggleVisible }) {
         console.log(role);
         console.log(prodLead);
 
-        // Update the username if it is not the current user
-        if (user.username === 'rsastri21' && user.username !== currUser.username) {
+        // Update the username if it is not the current user or the site maintainer
+        if (user.username === 'rsastri21') {
             setMessage("That users permissions cannot be modified.");
-        }
-        else if (user.username !== currUser.username) {
-            fetch(process.env.API_URL + `/api/user/update?username=${user.username}&role=${role}`, {
-                method: 'PUT'
-            })
-                .then((res) => res.text())
-                .then((data) => setMessage(data))
-                .catch((err) => console.error(err));
-
-        } else if (role !== currUser.role) {
+            setUpdateRole(false);
+        } else if (user.username === currUser.username && role !== currUser.role) {
             setMessage("The current user's role cannot be modified.");
+            setUpdateRole(false);
         }
 
-        fetch(process.env.API_URL + `/api/user/assign?username=${user.username}&production=${prodLead}`, {
-            method: 'PUT'
-        })
-            .then((res) => res.text())
-            .then((data) => setProdMessage(data))
-            .catch((err) => console.error(err))
-            .finally(() => {
-                // Update session details
-                const newUser = {
-                    ...currUser,
-                    leads: prodLead
-                }
-                changeUser(newUser);
-                localStorage.setItem("user", JSON.stringify(newUser));
+        // Possible cases
+        if (updateRole) {
+            await updateUser();
+            await assignUser();
+        } else {
+            await assignUser();
+        }
+        
+        setLoading(false);
+    }
 
-                setLoading(false);
-            });
+    function handleRoleChange(e) {
+        setRole(e.target.value);
+        setUpdateProdLead(e.target.value !== "user");
     }
     
     useEffect(() => {
@@ -333,7 +362,7 @@ function EditUser({ user, productions, visible, toggleVisible }) {
                             <select 
                                 className="px-2 py-2 ml-6 rounded-lg"
                                 value={role}
-                                onChange={(e) => setRole(e.target.value)}
+                                onChange={handleRoleChange}
                             >
                                 <option value="user">user</option>
                                 <option value="production head">production head</option>
@@ -343,9 +372,10 @@ function EditUser({ user, productions, visible, toggleVisible }) {
                         <div className="mx-auto my-4 w-full shadow-sm border border-slate-400 bg-slate-50 rounded-lg flex justify-between">
                             <label className="px-3 py-2 font-medium text-lg">Assign to Lead Production:</label>
                             <select
-                                className="px-2 py-2 ml-6 rounded-lg"
+                                className={`px-2 py-2 ml-6 rounded-lg ${updateProdLead ? "" : "hover:cursor-not-allowed"}`}
                                 onChange={(e) => setProdLead(e.target.value)}
                                 defaultValue="default"
+                                disabled={!updateProdLead}
                             >
                                 <option disabled={true} value="default">Select a production</option>
                                 <option value=""></option>
