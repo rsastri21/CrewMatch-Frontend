@@ -6,6 +6,6 @@
     },
     reactStrictMode: true,
     env: {
-      API_URL: "https://crew-match.herokuapp.com"
+      API_URL: "http://localhost:8080"
     }
   };
