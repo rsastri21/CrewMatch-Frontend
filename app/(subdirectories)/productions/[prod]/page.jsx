@@ -201,6 +201,31 @@ function EditProduction({ visible, setVisible, production }) {
         };
     }, [visible]);
 
+    const removeFields = (event, index) => {
+        event.preventDefault();
+        let data = [...formFields];
+        data.splice(index, 1)
+        setFormFields(data);
+    }
+
+    const addFields = (event, index) => {
+        event.preventDefault();
+
+        if (formFields.length > 24) {
+            alert("The maximum number of roles has been reached. Consider reprioritizing which roles are important" +
+            " for the initial assignment.");
+            return;
+        }
+
+        let newObject = {
+            role: '',
+            member: ''
+        };
+        let data = [...formFields];
+        data.splice(index + 1, 0, newObject);
+        setFormFields(data);
+    }
+
     const handleEscPress = (event) => {
         if (visible && event.key === 'Escape') {
             setVisible();
@@ -228,6 +253,8 @@ function EditProduction({ visible, setVisible, production }) {
             roles.push(formFields[i].role);
             members.push(formFields[i].member);
         }
+        console.log(roles);
+        console.log(members);
 
         const requestOptions = {
             method: 'PUT',
@@ -294,7 +321,15 @@ function EditProduction({ visible, setVisible, production }) {
                                             onChange={event => handleFormChange(event, index)}
                                             value={form.member}
                                         />
-                                    </div>
+                                        <div className="flex spacing-x-4 ml-8 max-w-fit">
+                                            <button onClick={(event) => addFields(event, index)} className="hover:scale-110 active:scale-100 transition-all">
+                                                <span><BiPlusCircle className="w-8 h-8 my-auto mr-1 ml-auto" /></span>
+                                            </button>
+                                            <button onClick={(event) => removeFields(event, index)} className="hover:scale-110 active:scale-100 transition-all">
+                                                <span><BiMinusCircle className="w-8 h-8 my-auto ml-1 mr-2" /></span>
+                                            </button>
+                                        </div>
+                                    </div> 
                                 </div>
                             )
                         })}

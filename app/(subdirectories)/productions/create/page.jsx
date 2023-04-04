@@ -93,7 +93,7 @@ export default function CreateProductionForm() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                name: name.name,
+                name: name.name.trim(),
                 roles: [...roles],
                 members: [...members]
             })
