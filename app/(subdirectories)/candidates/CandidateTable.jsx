@@ -265,7 +265,19 @@ function CandidateModal({ candidate, visible, toggleModal, role, prodID, roleInd
                                 {candidate.actingInterest ? "acting" : (candidate.assigned ? "assigned" : "not assigned")}
                             </span>
                         </div>
-                        <div className="mx-auto my-2 w-full shadow-sm border border-slate-400 bg-slate-50 bg-opacity-75 rounded-lg flex justify-between">
+                        {candidate.assigned &&
+                        <>
+                            <div className="mx-auto my-4 w-full shadow-sm border border-slate-400 bg-slate-50 bg-opacity-75 rounded-lg flex justify-between">
+                                <label className="px-3 py-2 font-medium text-lg">Production:</label>
+                                <h2 className="px-3 py-2 font-normal text-lg">{candidate.production}</h2>
+                            </div>
+                            <div className="mx-auto my-4 w-full shadow-sm border border-slate-400 bg-slate-50 bg-opacity-75 rounded-lg flex justify-between">
+                                <label className="px-3 py-2 font-medium text-lg">Role:</label>
+                                <h2 className="px-3 py-2 font-normal text-lg">{candidate.role}</h2>
+                            </div>
+                        </>
+                        }
+                        <div className="mx-auto my-4 w-full shadow-sm border border-slate-400 bg-slate-50 bg-opacity-75 rounded-lg flex justify-between">
                             <label className="px-3 py-2 font-medium text-lg">Contact:</label>
                             <h2 className="px-3 py-2 font-normal text-lg">{candidate.email}</h2>
                         </div>
