@@ -253,7 +253,7 @@ function CandidateModal({ candidate, visible, toggleModal, role, prodID, roleInd
     return (
         candidate &&
         <div className="fixed bottom-0 left-0 right-0 z-50 w-screen h-screen p-4 flex flex-col justify-center">
-            <section className="mx-auto box-border w-fit min-w-fit h-min bg-white rounded-2xl shadow-md">
+            <section className="mx-auto box-border w-fit min-w-fit h-min max-h-[90vh] overflow-y-scroll bg-white rounded-2xl shadow-md">
                 {candidate && <div className={`px-4 bg-gradient-to-r ${candidate.actingInterest ? 'from-violet-300 to-purple-300' : (candidate.assigned ? 'from-green-300 to-emerald-300' : 'from-red-300 to-rose-300')} z-50 h-fit w-full rounded-t-2xl drop-shadow-md flex justify-center`}>
                     <AiOutlineUser className="w-9 h-9 ml-2 mr-1 my-3" /> 
                     {candidate && <h1 className="px-3 py-4 font-medium text-2xl">{candidate.name} {candidate.pronouns !== null ? (candidate.pronouns.length !== 0 ?`(${candidate.pronouns})`: "") : ""} </h1>}
@@ -265,7 +265,19 @@ function CandidateModal({ candidate, visible, toggleModal, role, prodID, roleInd
                                 {candidate.actingInterest ? "acting" : (candidate.assigned ? "assigned" : "not assigned")}
                             </span>
                         </div>
-                        <div className="mx-auto my-2 w-full shadow-sm border border-slate-400 bg-slate-50 bg-opacity-75 rounded-lg flex justify-between">
+                        {candidate.assigned &&
+                        <>
+                            <div className="mx-auto my-4 w-full shadow-sm border border-slate-400 bg-slate-50 bg-opacity-75 rounded-lg flex justify-between">
+                                <label className="px-3 py-2 font-medium text-lg">Production:</label>
+                                <h2 className="px-3 py-2 font-normal text-lg">{candidate.production}</h2>
+                            </div>
+                            <div className="mx-auto my-4 w-full shadow-sm border border-slate-400 bg-slate-50 bg-opacity-75 rounded-lg flex justify-between">
+                                <label className="px-3 py-2 font-medium text-lg">Role:</label>
+                                <h2 className="px-3 py-2 font-normal text-lg">{candidate.role}</h2>
+                            </div>
+                        </>
+                        }
+                        <div className="mx-auto my-4 w-full shadow-sm border border-slate-400 bg-slate-50 bg-opacity-75 rounded-lg flex justify-between">
                             <label className="px-3 py-2 font-medium text-lg">Contact:</label>
                             <h2 className="px-3 py-2 font-normal text-lg">{candidate.email}</h2>
                         </div>
