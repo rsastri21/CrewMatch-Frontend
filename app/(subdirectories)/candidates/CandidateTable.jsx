@@ -253,7 +253,7 @@ function CandidateModal({ candidate, visible, toggleModal, role, prodID, roleInd
     return (
         candidate &&
         <div className="fixed bottom-0 left-0 right-0 z-50 w-screen h-screen p-4 flex flex-col justify-center">
-            <section className="mx-auto box-border w-fit min-w-fit h-min bg-white rounded-2xl shadow-md">
+            <section className="mx-auto box-border w-fit min-w-fit h-min max-h-[90vh] overflow-y-scroll bg-white rounded-2xl shadow-md">
                 {candidate && <div className={`px-4 bg-gradient-to-r ${candidate.actingInterest ? 'from-violet-300 to-purple-300' : (candidate.assigned ? 'from-green-300 to-emerald-300' : 'from-red-300 to-rose-300')} z-50 h-fit w-full rounded-t-2xl drop-shadow-md flex justify-center`}>
                     <AiOutlineUser className="w-9 h-9 ml-2 mr-1 my-3" /> 
                     {candidate && <h1 className="px-3 py-4 font-medium text-2xl">{candidate.name} {candidate.pronouns !== null ? (candidate.pronouns.length !== 0 ?`(${candidate.pronouns})`: "") : ""} </h1>}
