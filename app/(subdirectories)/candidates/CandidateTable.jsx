@@ -265,18 +265,18 @@ function CandidateModal({ candidate, visible, toggleModal, role, prodID, roleInd
                                 {candidate.actingInterest ? "acting" : (candidate.assigned ? "assigned" : "not assigned")}
                             </span>
                         </div>
-                        {candidate.assigned &&
+                        {candidate.assigned && candidate.assignedProduction.map((production, index) => (
                         <>
-                            <div className="mx-auto my-4 w-full shadow-sm border border-slate-400 bg-slate-50 bg-opacity-75 rounded-lg flex justify-between">
+                            <div key={production + index} className="mx-auto my-4 w-full shadow-sm border border-slate-400 bg-slate-50 bg-opacity-75 rounded-lg flex justify-between">
                                 <label className="px-3 py-2 font-medium text-lg">Production:</label>
-                                <h2 className="px-3 py-2 font-normal text-lg">{candidate.production}</h2>
+                                <h2 className="px-3 py-2 font-normal text-lg">{candidate.assignedProduction[index]}</h2>
                             </div>
-                            <div className="mx-auto my-4 w-full shadow-sm border border-slate-400 bg-slate-50 bg-opacity-75 rounded-lg flex justify-between">
+                            <div key={production+index + "_2"} className="mx-auto my-4 w-full shadow-sm border border-slate-400 bg-slate-50 bg-opacity-75 rounded-lg flex justify-between">
                                 <label className="px-3 py-2 font-medium text-lg">Role:</label>
-                                <h2 className="px-3 py-2 font-normal text-lg">{candidate.role}</h2>
+                                <h2 className="px-3 py-2 font-normal text-lg">{candidate.assignedRole[index]}</h2>
                             </div>
                         </>
-                        }
+                        ))}
                         <div className="mx-auto my-4 w-full shadow-sm border border-slate-400 bg-slate-50 bg-opacity-75 rounded-lg flex justify-between">
                             <label className="px-3 py-2 font-medium text-lg">Contact:</label>
                             <h2 className="px-3 py-2 font-normal text-lg">{candidate.email}</h2>
