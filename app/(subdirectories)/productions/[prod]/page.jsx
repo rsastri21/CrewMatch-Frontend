@@ -186,7 +186,7 @@ function EditProduction({ visible, setVisible, production }) {
     useEffect(() => {
         const fields = [];
         for (let i = 0; i < production.members.length; i++) {
-            fields[i] = { role: production.roles[i], member: production.members[i] };
+            fields[i] = { role: production.roles[i], weight: production.roleWeights[i], member: production.members[i] };
         }
         setFormFields([...fields]);
     }, [visible])
@@ -219,6 +219,7 @@ function EditProduction({ visible, setVisible, production }) {
 
         let newObject = {
             role: '',
+            weight: 1,
             member: ''
         };
         let data = [...formFields];
@@ -242,6 +243,7 @@ function EditProduction({ visible, setVisible, production }) {
         setLoading(true);
 
         const roles = [];
+        const weights = [];
         const members = [];
 
         for (let i = 0; i < formFields.length; i++) {
@@ -251,9 +253,11 @@ function EditProduction({ visible, setVisible, production }) {
                 return;
             }
             roles.push(formFields[i].role);
+            weights.push(formFields[i].weight);
             members.push(formFields[i].member);
         }
         console.log(roles);
+        console.log(weights);
         console.log(members);
 
         const requestOptions = {
@@ -261,6 +265,7 @@ function EditProduction({ visible, setVisible, production }) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 roles: [...roles],
+                roleWeights: [...weights],
                 members: [...members]
             })
         };
@@ -302,7 +307,7 @@ function EditProduction({ visible, setVisible, production }) {
                         {formFields.map((form, index) => {
                             return (
                                 <div key={index} className="w-fit mx-auto overflow-x-scroll grid grid-cols-2 gap-2 border-2 border-slate-200 p-2 rounded-xl">
-                                    <div className="flex spacing-x-4 min-w-fit ml-2 mr-4">
+                                    <div className="flex gap-2 min-w-fit ml-2 mr-4">
                                         <label className="px-3 py-3 text-xl font-medium min-w-fit">Role:</label>
                                         <input 
                                             className="p-2 text-lg rounded-lg bg-slate-50 w-fit"
@@ -310,6 +315,15 @@ function EditProduction({ visible, setVisible, production }) {
                                             placeholder="Enter a role"
                                             onChange={event => handleFormChange(event, index)}
                                             value={form.role}
+                                        />
+                                        <input 
+                                            className="p-2 text-lg rounded-lg bg-slate-50 w-20"
+                                            name="weight"
+                                            placeholder="Role weight"
+                                            type="number"
+                                            min="0"
+                                            onChange={event => handleFormChange(event, index)}
+                                            value={form.weight}
                                         />
                                     </div>
                                     <div className="flex spacing-x-4 min-w-fit ml-4 mr-4">
