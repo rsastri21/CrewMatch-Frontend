@@ -10,21 +10,21 @@ import Link from "next/link";
 export default function CreateProductionForm() {
     
     const initialData = [
-        { role: 'Director', member: '' },
-        { role: 'Assistant Director', member: '' },
-        { role: 'Producer', member: '' },
-        { role: 'Director of Photography', member: '' },
-        { role: 'Camera Operator', member: '' },
-        { role: 'Boom Operator', member: '' },
-        { role: 'Sound Recordist', member: '' },
-        { role: 'Editor', member: '' },
-        { role: 'Assistant Editor', member: '' },
-        { role: 'Art Department', member: '' },
-        { role: 'Makeup', member: '' },
-        { role: 'Assistant Writer', member: '' },
-        { role: 'Script Supervisor', member: '' },
-        { role: 'Production Assistant', member: '' },
-        { role: 'Soundtrack', member: '' }
+        { role: 'Director', weight: 1, member: '' },
+        { role: 'Assistant Director', weight: 1, member: '' },
+        { role: 'Producer', weight: 1, member: '' },
+        { role: 'Director of Photography', weight: 1, member: '' },
+        { role: 'Camera Operator', weight: 1, member: '' },
+        { role: 'Boom Operator', weight: 1, member: '' },
+        { role: 'Sound Recordist', weight: 1, member: '' },
+        { role: 'Editor', weight: 1, member: '' },
+        { role: 'Assistant Editor', weight: 1, member: '' },
+        { role: 'Art Department', weight: 1, member: '' },
+        { role: 'Makeup', weight: 1, member: '' },
+        { role: 'Assistant Writer', weight: 1, member: '' },
+        { role: 'Script Supervisor', weight: 1, member: '' },
+        { role: 'Production Assistant', weight: 1, member: '' },
+        { role: 'Soundtrack', weight: 1, member: '' }
     ];
 
     const [formFields, setFormFields] = useState([]);
@@ -70,6 +70,7 @@ export default function CreateProductionForm() {
 
         let newObject = {
             role: '',
+            weight: 1,
             member: ''
         };
         let data = [...formFields];
@@ -82,10 +83,12 @@ export default function CreateProductionForm() {
         e.preventDefault();
 
         const roles = [];
+        const weights = [];
         const members = [];
 
         for (let i = 0; i < formFields.length; i++) {
             roles.push(formFields[i].role);
+            weights.push(formFields[i].weight);
             members.push(formFields[i].member);
         }
 
@@ -95,6 +98,7 @@ export default function CreateProductionForm() {
             body: JSON.stringify({
                 name: name.name.trim(),
                 roles: [...roles],
+                roleWeights: [...weights],
                 members: [...members]
             })
         };
@@ -167,7 +171,7 @@ export default function CreateProductionForm() {
                         {formFields.map((form, index) => {
                             return (
                                 <div key={index} className="min-w-fit w-full mx-auto overflow-x-scroll grid grid-cols-2 gap-2 border-2 border-slate-200 p-2 rounded-xl">
-                                    <div className="flex spacing-x-4 min-w-fit ml-2 mr-4">
+                                    <div className="flex gap-2 min-w-fit ml-2 mr-4">
                                         <label className="px-3 py-3 text-xl font-medium min-w-fit">Role:</label>
                                         <input 
                                             className="p-2 text-lg rounded-lg bg-slate-50 min-w-fit"
@@ -175,6 +179,15 @@ export default function CreateProductionForm() {
                                             placeholder="Enter a role"
                                             onChange={event => handleFormChange(event, index)}
                                             value={form.role}
+                                        />
+                                        <input 
+                                            className="p-2 text-lg rounded-lg bg-slate-50 w-16"
+                                            name="weight"
+                                            placeholder="Role weight"
+                                            type="number"
+                                            min="0"
+                                            onChange={event => handleFormChange(event, index)}
+                                            value={form.weight}
                                         />
                                     </div>
                                     <div className="flex spacing-x-4 min-w-fit ml-4 mr-4">
