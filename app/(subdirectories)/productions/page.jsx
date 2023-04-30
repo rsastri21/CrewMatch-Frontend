@@ -182,6 +182,7 @@ function MatchUI() {
             </h1>
             <p className="text-center text-xl my-2">View the different candidate matching processes below.</p>
 
+            <WeightedMatch visible={visible} setVisible={toggleVisible} method={method} setMethod={changeMethod} methodURL={methodURL} setMethodURL={changeMethodURL} />
             <MatchWithPreference visible={visible} setVisible={toggleVisible} method={method} setMethod={changeMethod} methodURL={methodURL} setMethodURL={changeMethodURL} />
             <MatchWithoutPreference visible={visible} setVisible={toggleVisible} method={method} setMethod={changeMethod} methodURL={methodURL} setMethodURL={changeMethodURL} />
 
@@ -214,6 +215,37 @@ function MatchUI() {
             
         </section>
     );
+}
+
+function WeightedMatch({ visible, setVisible, method, setMethod, methodURL, setMethodURL }) {
+
+    function handleMatchClick(event) {
+        setMethod("Weighted Match With Preferences");
+        setMethodURL("/api/production/weightedMatch");
+        setVisible();
+    }
+
+    return (
+        <section className="box-border min-w-fit w-2/3 h-min z-0 bg-white rounded-2xl shadow-md flex flex-col space-y-1">
+            <div className="bg-white h-fit w-full rounded-t-2xl drop-shadow-md flex">
+                <h1 className="px-3 py-4 font-medium text-2xl">Weighted Match with Preferences</h1>
+            </div>
+            <div className="box-border p-4 min-w-[450px] w-full h-min rounded-b-2xl flex flex-col items-center space-y-6 pb-6">
+                <p className="p-2 text-lg text-gray-900 bg-slate-100 rounded-lg">
+                    Weighted Match with Preferences is an updated algorithm which takes into account the importance of roles on productions when assigning candidates. <span className="font-medium">Crew Match </span>
+                    will use the standard process of prioritizing candidates who have been in LUX the longest, been at UW the longest, response submission time,
+                    and lastly, alphabetically if all else fails. But, the matching will be multiplied and normalized against the various importances of roles on a given production before candidate placement. <br></br><br></br>
+                    Weighted Match with Preferences takes all preferences into account and will not place a candidate if the available role does not satisfy at least one 
+                    of their preferences. 
+                </p>
+                <button onClick={(e) => handleMatchClick(e)} className="p-4 w-64 font-medium text-xl text-gray-100 bg-slate-600 rounded-lg shadow-md hover:shadow-lg hover:bg-slate-500 active:bg-slate-700
+                    hover:scale-105 transition-all">
+                    Match Candidates
+                </button>
+            </div>
+        </section>
+    );
+
 }
 
 function MatchWithPreference({ visible, setVisible, method, setMethod, methodURL, setMethodURL }) {
@@ -268,7 +300,7 @@ function MatchWithoutPreference({ visible, setVisible, method, setMethod, method
                     If there are open roles available, Match without Preferences ensures placement.
                     <br></br><br></br>
                     <span className="font-medium">A Note on Usage: </span> <br></br>
-                    This method of matching is best used as a supplement to Match with Preferences. In the normal assignment workflow,
+                    This method of matching is best used as a supplement to Weighted Match and Match with Preferences. In the normal assignment workflow,
                     candidates will be placed first by the previous method, and then by this method. However, no errors will be encountered
                     if this is used first, though the matching cannot be undone without a site reset. 
                 </p>
