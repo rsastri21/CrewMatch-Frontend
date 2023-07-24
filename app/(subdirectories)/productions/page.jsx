@@ -12,6 +12,7 @@ export default function Productions() {
     
     const router = useRouter();
     const [productions, setProductions] = useState([]);
+    const [archive, setArchived] = useState([]);
     const user = useSession();
 
     useEffect(() => {
@@ -21,12 +22,23 @@ export default function Productions() {
 
             setProductions(data);
         }
+        const getArchived = async () => {
+            const res = await fetch(process.env.API_URL + '/api/production/getArchived');
+            const data = await res.json();
+
+            setArchived(data);
+        }
 
         get().catch(console.error);
+        getArchived().catch(console.error);
     }, []);
 
-    const handleCardClick = (e, index) => {
-        router.push(`/productions/${productions[index].id}`, undefined, { shallow: true });
+    const handleCardClick = (e, index, archived) => {
+        if (archived) {
+            router.push(`/productions/${archive[index].id}`, undefined, { shallow: true });
+        } else {
+            router.push(`/productions/${productions[index].id}`, undefined, { shallow: true });
+        }
     }
 
     const handleCreateClick = (e) => {
@@ -79,6 +91,18 @@ export default function Productions() {
                     <hr className="h-px my-4 mx-auto bg-gray-800 border-0 w-1/3 items-center"></hr>
                 </> : null }
             {user.role === "admin" ? <MatchUI /> : null}
+            {user.role === "admin" ? 
+            <>
+                <hr className="h-px my-4 mx-auto bg-gray-800 border-0 w-1/3 items-center"></hr>
+                <section className="w-2/3 max-w-3xl min-w-min h-min py-4 my-2 mx-auto flex flex-col space-y-6">
+                    <h1 className="text-5xl px-4 py-2 font-medium text-center text-gray-800">
+                        Archived Productions
+                    </h1>
+                    <p className="text-center text-xl my-2">Select a production to redirect to it's management page.</p>
+                    <ProductionsOverview productions={archive} changeIndex={handleCardClick} />
+                </section>
+            </>
+            : null}
         </div>
     );
 }
@@ -87,21 +111,21 @@ function ProductionsOverview({ productions, changeIndex }) {
     
     return (
         <div className="w-full h-min grid grid-cols-1 xl:grid-cols-2 gap-8">
-            {productions.length === 0 ? <p className="xl:col-span-2 px-2 py-3 text-xl font-medium text-center my-auto">No productions have been created yet.</p>
+            {productions.length === 0 ? <p className="xl:col-span-2 px-2 py-3 text-xl font-medium text-center my-auto">No productions have been created or archived yet.</p>
                 : null}
             {productions && productions.map((production, index) => (
-                <ProductionCard key={production.id} title={production.name} director={production.members[0]} index={index} changeIndex={changeIndex} /> 
+                <ProductionCard key={production.id} prod={production} title={production.name} director={production.members[0]} index={index} changeIndex={changeIndex} /> 
             ))}
         </div>
     );
 }
 
-function ProductionCard({ title, director, index, changeIndex }) {
+function ProductionCard({ prod, title, director, index, changeIndex }) {
     
     const user = useSession();
     
     return (
-        <div onClick={(event) => (user.role === "admin" || user.role === "production head") ? changeIndex(event, index) : alert("Only production heads or admin can modify productions.")} 
+        <div onClick={(event) => (user.role === "admin" || user.role === "production head") ? (prod.archived ? changeIndex(event, index, true) : changeIndex(event, index, false)) : alert("Only production heads or admin can modify productions.")} 
             className="w-auto min-w-fit h-fit bg-white px-2 py-3 rounded-2xl shadow-md flex flex-col items-start space-y-4
             hover:cursor-pointer hover:scale-105 hover:shadow-lg active:scale-100 active:bg-slate-100 transition-all">
             <div className="w-full min-w-fit flex justify-start shadow-md rounded-lg p-1">
