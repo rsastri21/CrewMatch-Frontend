@@ -6,6 +6,7 @@ import { Transition } from '@headlessui/react';
 import CandidateTable from '../../candidates/CandidateTable';
 import { FcFilmReel } from "react-icons/fc";
 import { BiEdit, BiPlusCircle, BiMinusCircle } from "react-icons/bi";
+import { BsFillExclamationTriangleFill } from "react-icons/bs";
 import { useSession } from '../../../SessionContext';
 import Loading from '../../loading';
 
@@ -64,9 +65,17 @@ export default function ProductionUI({ params, }) {
             <div className="bg-gradient-to-r from-green-200 to-emerald-200 flex flex-col min-h-screen h-auto w-screen pb-16">
                 <div className="w-1/2 h-min min-w-half mx-auto justify-center">
                     <FcFilmReel className="w-48 h-48 pt-12 mx-auto my-2"/>
-                    <h1 className="pt-8 pb-12 px-8 text-8xl text-center text-gray-800">
+                    <h1 className="py-4 px-8 mb-4 text-8xl text-center text-gray-800">
                         {production.name}
                     </h1>
+                    {production.archived &&
+                    <div className="w-fit h-16 mx-auto my-4 bg-orange-300 rounded-xl flex justify-center shadow-md">
+                        <BsFillExclamationTriangleFill className="w-14 h-14 ml-1 my-auto py-2"/>
+                        <p className="text-2xl font-medium text-center text-gray-800 px-2 py-2 my-auto">
+                            This production is archived.
+                        </p>
+                    </div>
+                    }
                     {production.prodLead && 
                     <p className="px-8 text-2xl text-center text-gray-800">
                         Production Lead: <span className="italic font-medium">{production.prodLead}</span>.
@@ -95,7 +104,7 @@ export default function ProductionUI({ params, }) {
                     {production && <CandidateTable fetchURL={process.env.API_URL + `/api/candidate/search?assigned=false&actingInterest=true&production=${production.name}`} mode="actor" />}
                 </section>
                 <section className="w-1/2 min-w-fit mx-auto grid grid-cols-1 xl:grid-cols-2">
-                    <ArchiveProductionBox visible={archiveModal} setVisible={toggleArchive} />
+                    <ArchiveProductionBox prod={production} visible={archiveModal} setVisible={toggleArchive} />
                     <DeleteProductionBox visible={deleteModal} setVisible={toggleDelete} />
                 </section>
 
@@ -202,7 +211,7 @@ export default function ProductionUI({ params, }) {
                         leaveTo="translate-y-full scale-50"
                         className="fixed bottom-0 left-0 right-0 w-screen h-screen"
                     >
-                        <ArchiveModal id={production.id} visible={archiveModal} setVisible={toggleArchive} />
+                        <ArchiveModal prod={production} id={production.id} visible={archiveModal} setVisible={toggleArchive} />
                     </Transition.Child>
                     
                 </Transition>
@@ -543,22 +552,30 @@ function AvailableCandidateModal({ production, visible, toggleModal, role, index
     );
 }
 
-function ArchiveProductionBox({ visible, setVisible }) {
+function ArchiveProductionBox({ prod, visible, setVisible }) {
     return (
         <section className="w-fit min-w-min h-auto shadow-md mx-auto xl:mr-3 my-8 bg-white rounded-2xl flex flex-col">
             <div className="w-full min-w-min h-16 bg-orange-300 rounded-t-2xl shadow-md">
-                <h1 className="px-3 py-4 text-gray-900 font-medium text-2xl min-w-fit">Archive Production</h1>
+                <h1 className="px-3 py-4 text-gray-900 font-medium text-2xl min-w-fit">{prod.archived ? "Restore" : "Archive"} Production</h1>
             </div>
             <div className="box-border p-4 w-96 h-min rounded-b-2xl bg-orange-100 flex flex-col items-center space-y-6">
+                {!prod.archived ?
                 <p className="p-2 text-lg text-gray-900 bg-orange-50 rounded-lg">
                     If this is no longer an active production, it can be archived here. 
                     <br></br>
                     <span className="font-semibold">Warning:</span> Reverting this action may produce unexpected results if the candidate set changes, so please ensure that the archival of this production is intentional.
                 </p>
+                :
+                <p className="p-2 text-lg text-gray-900 bg-orange-50 rounded-lg">
+                    Restoring this production will bring it back into the list of active productions and remove it from the archive. 
+                    <br></br>
+                    <span className="font-semibold">Warning:</span> This action is treated as creating a new production. Candidates that do not exist but are listed as crew will be created. 
+                </p>
+                }
                 <button onClick={() => setVisible()} className="p-4 w-fit font-medium text-lg text-gray-100 bg-gradient-to-r from-red-500 to-rose-500 rounded-lg shadow-md 
                                                 hover:shadow-lg hover:bg-gradient-to-r hover:from-red-600 hover:to-rose-600 
                                                 active:bg-gradient-to-r active:from-red-700 active:to-rose-700">
-                    Archive Production
+                    {prod.archived ? "Restore" : "Archive"} Production
                 </button>
             </div>
         </section>
@@ -647,7 +664,7 @@ function DeleteModal({ id, visible, setVisible }) {
     );   
 }
 
-function ArchiveModal({ id, visible, setVisible }) {
+function ArchiveModal({ prod, id, visible, setVisible }) {
     
     const [loading, setLoading] = useState(false);
     const router = useRouter();
@@ -676,25 +693,25 @@ function ArchiveModal({ id, visible, setVisible }) {
         const requestOptions = {
             method: 'PUT'
         }
-        fetch(process.env.API_URL + "/api/production/archive/" + id, requestOptions)
+        fetch(process.env.API_URL + `/api/production/${prod.archived ? "restore" : "archive"}/` + id, requestOptions)
             .then((res) => res.text())
             .catch(err => console.error(err))
             .finally((result) => {
                 setLoading(false);
-                router.push("/productions");
+                router.push("/productions")
             });
     }
     
     return (
         <div className="fixed bottom-0 left-0 right-0 z-10 w-screen h-screen p-4 flex flex-col justify-center items-center">
             <section className="w-1/4 min-w-min h-auto bg-white rounded-2xl flex flex-col box-border p-4 shadow-2xl">
-                <h1 className="px-3 py-4 font-medium text-2xl text-center">Are you sure you want to archive this production?</h1>
-                <p className="text-lg text-center font-normal px-3 py-2 ">This action can be reverted from the productions archive.</p>
+                <h1 className="px-3 py-4 font-medium text-2xl text-center">Are you sure you want to {prod.archived ? "restore" : "archive"} this production?</h1>
+                <p className="text-lg text-center font-normal px-3 py-2 ">This action can be reverted later.</p>
                 <div className="w-full min-w-fit h-auto flex space-x-4 justify-center box-border p-4">
                     <button onClick={(e) => handleArchivePress(e)} className="p-4 w-fit font-medium text-lg text-gray-100 bg-gradient-to-r from-red-500 to-rose-500 rounded-lg shadow-md 
                                                     hover:shadow-lg hover:bg-gradient-to-r hover:from-red-600 hover:to-rose-600 
                                                     active:bg-gradient-to-r active:from-red-700 active:to-rose-700">
-                        Confirm Archive
+                        Confirm {prod.archived ? "Restore" : "Archive"}
                     </button>
                     <button onClick={() => setVisible()} className="p-4 w-fit font-medium text-lg text-gray-100 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg shadow-md 
                                                     hover:shadow-lg hover:bg-gradient-to-r hover:from-green-600 hover:to-emerald-600 
