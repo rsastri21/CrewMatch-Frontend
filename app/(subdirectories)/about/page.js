@@ -30,6 +30,7 @@ export default function About() {
                         <li className="px-3 ml-16 py-2 text-lg font-normal">Change permissions levels or assign a user to be a production head.</li>
                         <li className="px-3 ml-8 py-2 text-lg font-normal">Swap members between productions via Swap Requests. <br></br><span className="italic font-light">(Also available to Production Heads)</span></li>
                         <li className="px-3 ml-8 py-2 text-lg font-normal">Export match data to a CSV file.</li>
+                        <li className="px-3 ml-8 py-2 text-lg font-normal">Archive and restore productions.</li>
                         <li className="px-3 ml-8 py-2 text-lg font-normal">Reset the system.</li>
                     </ul>
                 </div>
@@ -37,13 +38,18 @@ export default function About() {
                     <h1 className="px-3 py-2 text-3xl font-medium">Changelog</h1>
                     <div className="w-auto mx-2 h-fit shadow-md rounded-xl flex flex-col gap-2 bg-emerald-100">
                         <div className="flex w-full justify-between bg-emerald-200 rounded-t-xl">
-                            <h1 className="px-2 py-2 text-2xl font-medium w-full h-fit">Latest Release: Version 1.2</h1>
+                            <h1 className="px-2 py-2 text-2xl font-medium w-full h-fit">Latest Release: Version 2.0</h1>
+                            <span className="px-2 py-1 my-auto mr-3 ml-auto rounded-xl bg-red-500 text-slate-100 text-center text-sm font-medium shadow-md">v2.0</span>
+                        </div>
+                        <ul className="px-4 py-2 text-xl list-disc list-inside">A new algorithm! Productions can now specify the relative importance of roles for better matching. Older productions can now be archived or restored.
+                        </ul>
+                    </div>
+                    <div className="w-auto mx-2 h-fit shadow-md rounded-xl flex flex-col gap-2 bg-slate-100">
+                        <div className="flex w-full justify-between bg-slate-200 rounded-t-xl">
+                            <h1 className="px-2 py-2 text-2xl font-medium w-full h-fit">Version 1.2</h1>
                             <span className="px-2 py-1 my-auto mr-3 ml-auto rounded-xl bg-red-500 text-slate-100 text-center text-sm font-medium shadow-md">v1.2</span>
                         </div>
-                        <ul className="px-4 py-2 text-xl list-disc list-inside">Production assignments are now visible in a candidate's card. Bug fixes in productions editing and CSV input processing.<br></br>
-                        <span className="font-medium">Current known issues are:</span>
-                            <li className="px-3 py-2 text-lg">Transitions being broken on some pop-ups.</li>
-                        </ul>
+                        <ul className="px-4 py-2 text-xl list-disc list-inside">Production assignments are now visible in a candidate's card. Bug fixes in productions editing and CSV input processing. </ul>
                     </div>
                     <div className="w-auto mx-2 h-fit shadow-md rounded-xl flex flex-col gap-2 bg-slate-100">
                         <div className="flex w-full justify-between bg-slate-200 rounded-t-xl">

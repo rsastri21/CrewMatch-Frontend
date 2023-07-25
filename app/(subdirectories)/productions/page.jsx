@@ -12,6 +12,7 @@ export default function Productions() {
     
     const router = useRouter();
     const [productions, setProductions] = useState([]);
+    const [archive, setArchived] = useState([]);
     const user = useSession();
 
     useEffect(() => {
@@ -21,12 +22,23 @@ export default function Productions() {
 
             setProductions(data);
         }
+        const getArchived = async () => {
+            const res = await fetch(process.env.API_URL + '/api/production/getArchived');
+            const data = await res.json();
+
+            setArchived(data);
+        }
 
         get().catch(console.error);
+        getArchived().catch(console.error);
     }, []);
 
-    const handleCardClick = (e, index) => {
-        router.push(`/productions/${productions[index].id}`, undefined, { shallow: true });
+    const handleCardClick = (e, index, archived) => {
+        if (archived) {
+            router.push(`/productions/${archive[index].id}`, undefined, { shallow: true });
+        } else {
+            router.push(`/productions/${productions[index].id}`, undefined, { shallow: true });
+        }
     }
 
     const handleCreateClick = (e) => {
@@ -79,6 +91,18 @@ export default function Productions() {
                     <hr className="h-px my-4 mx-auto bg-gray-800 border-0 w-1/3 items-center"></hr>
                 </> : null }
             {user.role === "admin" ? <MatchUI /> : null}
+            {user.role === "admin" ? 
+            <>
+                <hr className="h-px my-4 mx-auto bg-gray-800 border-0 w-1/3 items-center"></hr>
+                <section className="w-2/3 max-w-3xl min-w-min h-min py-4 my-2 mx-auto flex flex-col space-y-6">
+                    <h1 className="text-5xl px-4 py-2 font-medium text-center text-gray-800">
+                        Archived Productions
+                    </h1>
+                    <p className="text-center text-xl my-2">Select a production to redirect to it's management page.</p>
+                    <ProductionsOverview productions={archive} changeIndex={handleCardClick} />
+                </section>
+            </>
+            : null}
         </div>
     );
 }
@@ -87,21 +111,21 @@ function ProductionsOverview({ productions, changeIndex }) {
     
     return (
         <div className="w-full h-min grid grid-cols-1 xl:grid-cols-2 gap-8">
-            {productions.length === 0 ? <p className="xl:col-span-2 px-2 py-3 text-xl font-medium text-center my-auto">No productions have been created yet.</p>
+            {productions.length === 0 ? <p className="xl:col-span-2 px-2 py-3 text-xl font-medium text-center my-auto">No productions have been created or archived yet.</p>
                 : null}
             {productions && productions.map((production, index) => (
-                <ProductionCard key={production.id} title={production.name} director={production.members[0]} index={index} changeIndex={changeIndex} /> 
+                <ProductionCard key={production.id} prod={production} title={production.name} director={production.members[0]} index={index} changeIndex={changeIndex} /> 
             ))}
         </div>
     );
 }
 
-function ProductionCard({ title, director, index, changeIndex }) {
+function ProductionCard({ prod, title, director, index, changeIndex }) {
     
     const user = useSession();
     
     return (
-        <div onClick={(event) => (user.role === "admin" || user.role === "production head") ? changeIndex(event, index) : alert("Only production heads or admin can modify productions.")} 
+        <div onClick={(event) => (user.role === "admin" || user.role === "production head") ? (prod.archived ? changeIndex(event, index, true) : changeIndex(event, index, false)) : alert("Only production heads or admin can modify productions.")} 
             className="w-auto min-w-fit h-fit bg-white px-2 py-3 rounded-2xl shadow-md flex flex-col items-start space-y-4
             hover:cursor-pointer hover:scale-105 hover:shadow-lg active:scale-100 active:bg-slate-100 transition-all">
             <div className="w-full min-w-fit flex justify-start shadow-md rounded-lg p-1">
@@ -182,6 +206,7 @@ function MatchUI() {
             </h1>
             <p className="text-center text-xl my-2">View the different candidate matching processes below.</p>
 
+            <WeightedMatch visible={visible} setVisible={toggleVisible} method={method} setMethod={changeMethod} methodURL={methodURL} setMethodURL={changeMethodURL} />
             <MatchWithPreference visible={visible} setVisible={toggleVisible} method={method} setMethod={changeMethod} methodURL={methodURL} setMethodURL={changeMethodURL} />
             <MatchWithoutPreference visible={visible} setVisible={toggleVisible} method={method} setMethod={changeMethod} methodURL={methodURL} setMethodURL={changeMethodURL} />
 
@@ -214,6 +239,37 @@ function MatchUI() {
             
         </section>
     );
+}
+
+function WeightedMatch({ visible, setVisible, method, setMethod, methodURL, setMethodURL }) {
+
+    function handleMatchClick(event) {
+        setMethod("Weighted Match With Preferences");
+        setMethodURL("/api/production/weightedMatch");
+        setVisible();
+    }
+
+    return (
+        <section className="box-border min-w-fit w-2/3 h-min z-0 bg-white rounded-2xl shadow-md flex flex-col space-y-1">
+            <div className="bg-white h-fit w-full rounded-t-2xl drop-shadow-md flex">
+                <h1 className="px-3 py-4 font-medium text-2xl">Weighted Match with Preferences</h1>
+            </div>
+            <div className="box-border p-4 min-w-[450px] w-full h-min rounded-b-2xl flex flex-col items-center space-y-6 pb-6">
+                <p className="p-2 text-lg text-gray-900 bg-slate-100 rounded-lg">
+                    Weighted Match with Preferences is an updated algorithm which takes into account the importance of roles on productions when assigning candidates. <span className="font-medium">Crew Match </span>
+                    will use the standard process of prioritizing candidates who have been in LUX the longest, been at UW the longest, response submission time,
+                    and lastly, alphabetically if all else fails. But, the matching will be multiplied and normalized against the various importances of roles on a given production before candidate placement. <br></br><br></br>
+                    Weighted Match with Preferences takes all preferences into account and will not place a candidate if the available role does not satisfy at least one 
+                    of their preferences. 
+                </p>
+                <button onClick={(e) => handleMatchClick(e)} className="p-4 w-64 font-medium text-xl text-gray-100 bg-slate-600 rounded-lg shadow-md hover:shadow-lg hover:bg-slate-500 active:bg-slate-700
+                    hover:scale-105 transition-all">
+                    Match Candidates
+                </button>
+            </div>
+        </section>
+    );
+
 }
 
 function MatchWithPreference({ visible, setVisible, method, setMethod, methodURL, setMethodURL }) {
@@ -268,7 +324,7 @@ function MatchWithoutPreference({ visible, setVisible, method, setMethod, method
                     If there are open roles available, Match without Preferences ensures placement.
                     <br></br><br></br>
                     <span className="font-medium">A Note on Usage: </span> <br></br>
-                    This method of matching is best used as a supplement to Match with Preferences. In the normal assignment workflow,
+                    This method of matching is best used as a supplement to Weighted Match and Match with Preferences. In the normal assignment workflow,
                     candidates will be placed first by the previous method, and then by this method. However, no errors will be encountered
                     if this is used first, though the matching cannot be undone without a site reset. 
                 </p>
