@@ -415,6 +415,7 @@ function ExportCSVUI() {
     const [fileName, setFileName] = useState("");
     const [loading, setLoading] = useState(false);
     const [noName, setNoName] = useState(false);
+    const [checked, setChecked] = useState(false);
 
     const handleChange = (event) => {
         if (event.target.value.length === 0) {
@@ -431,7 +432,7 @@ function ExportCSVUI() {
         }
         setLoading(true);
 
-        const res = await fetch(process.env.API_URL + `/api/production/getCSV/${fileName}`);
+        const res = await fetch(process.env.API_URL + `/api/production/getCSV?filename=${fileName}&includeArchive=${checked}`);
         const data = await res.text();
 
         setLoading(false);
@@ -455,24 +456,37 @@ function ExportCSVUI() {
                     its current roles, and current members. A file will not be returned if no productions have been created yet. A name should be provided to title the
                     output file. For best compatibility with other file systems, it is recommended that the file name contain <span className="font-medium">no spaces</span>.
                 </p>
-                <div className="flex space-x-4 min-w-fit mx-auto bg-white rounded-xl shadow-md p-6">
-                    <div className="border p-2 mx-auto min-w-fit h-auto flex space-x-4 rounded-xl border-slate-200">
-                        <label className="px-2 py-2 font-medium text-xl text-gray-900">Enter a file name:</label>
-                        <input
-                            className={`p-2 text-lg rounded-lg bg-slate-50 w-auto ${noName && "outline-red-400 outline outline-1"}`}
-                            name="filename"
-                            placeholder="File name"
-                            onChange={event => handleChange(event)}
-                            value={fileName}
-                        />
+                <div className="flex-col justify-center space-y-2 min-w-fit mx-auto bg-white rounded-xl shadow-md p-6">
+                    <div className="flex space-x-4 min-w-fit mx-auto">
+                        <div className="border p-2 mx-auto min-w-fit h-auto flex space-x-4 rounded-xl border-slate-200">
+                            <label className="px-2 py-2 font-medium text-xl text-gray-900">Enter a file name:</label>
+                            <input
+                                className={`p-2 text-lg rounded-lg bg-slate-50 w-auto ${noName && "outline-red-400 outline outline-1"}`}
+                                name="filename"
+                                placeholder="File name"
+                                onChange={event => handleChange(event)}
+                                value={fileName}
+                            />
+                        </div>
+                        <button 
+                            onClick={() => getCSVFile()}
+                            className={`px-2 py-4 min-w-fit text-lg my-auto rounded-xl font-medium text-slate-100 bg-gradient-to-r from-green-500 to-emerald-500
+                                            shadow-md transition-all hover:scale-105 hover:shadow-lg active:scale-100 active:shadow-md
+                                            ${loading ? "cursor-wait" : ""}`}>
+                            Get File
+                        </button>
                     </div>
-                    <button 
-                        onClick={() => getCSVFile()}
-                        className={`px-2 py-4 min-w-fit text-lg my-auto rounded-xl font-medium text-slate-100 bg-gradient-to-r from-green-500 to-emerald-500
-                                        shadow-md transition-all hover:scale-105 hover:shadow-lg active:scale-100 active:shadow-md
-                                        ${loading ? "cursor-wait" : ""}`}>
-                        Get File
-                    </button>
+                    <div className="w-fit h-fit bg-white p-2 rounded-xl mx-auto flex space-x-4 justify-center">
+                        <input
+                            className="ml-2 w-4 h-4 my-auto"
+                            type="checkbox"
+                            checked={checked}
+                            onChange={(e) => setChecked(e.target.checked)}
+                        />
+                        <label className="my-auto text-lg font-medium">
+                            Include archived productions.
+                        </label>
+                    </div>
                 </div>
             </div>
         </section>
