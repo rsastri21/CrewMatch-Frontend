@@ -62,7 +62,7 @@ export default function CreateProductionForm() {
     const addFields = (event, index) => {
         event.preventDefault();
 
-        if (formFields.length > 24) {
+        if (formFields.length > 50) {
             alert("The maximum number of roles has been reached. Consider reprioritizing which roles are important" +
             " for the initial assignment.");
             return;
