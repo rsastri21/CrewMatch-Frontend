@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useRef } from 'react';
+import useForceUpdate from 'use-force-update';
 import { useRouter } from 'next/navigation';
 import { Transition } from '@headlessui/react';
 import CandidateTable from '../../candidates/CandidateTable';
@@ -224,8 +225,9 @@ export default function ProductionUI({ params, }) {
 function EditProduction({ visible, setVisible, production }) {
     
     const [formFields, setFormFields] = useState([]);
-    const [error, setError] = useState(200);
+    const error = useRef(200);
     const [loading, setLoading] = useState(false);
+    const forceUpdate = useForceUpdate();
 
     useEffect(() => {
         const fields = [];
@@ -292,8 +294,9 @@ function EditProduction({ visible, setVisible, production }) {
 
         for (let i = 0; i < formFields.length; i++) {
             if (formFields[i].role.length === 0) {
-                setError(400);
+                error.current = 400;
                 setLoading(false);
+                forceUpdate();
                 return;
             }
             roles.push(formFields[i].role);
@@ -315,13 +318,16 @@ function EditProduction({ visible, setVisible, production }) {
         };
         fetch(process.env.API_URL + `/api/production/update/${production.id}`, requestOptions)
             .then((res) => {
-                setError(res.status);
+                error.current = res.status;
                 res.text();
             })
-            .catch(err => console.error(err))
+            .catch(err => {
+                console.error(err);
+            })
             .finally((result) => {
                 setLoading(false);
-                if (error === 200) {
+                console.log(error);
+                if (error.current === 200) {
                     setVisible();
                 }
             });
@@ -354,14 +360,14 @@ function EditProduction({ visible, setVisible, production }) {
                                     <div className="flex gap-2 min-w-fit ml-2 mr-4">
                                         <label className="px-3 py-3 text-xl font-medium min-w-fit">Role:</label>
                                         <input 
-                                            className="p-2 text-lg rounded-lg bg-slate-50 w-fit"
+                                            className={`p-2 text-lg rounded-lg bg-slate-50 w-fit ${form.role.length === 0 ? "border-2 border-red-400 outline-2 outline-red-400" : ""}`}
                                             name="role"
                                             placeholder="Enter a role"
                                             onChange={event => handleFormChange(event, index)}
                                             value={form.role}
                                         />
                                         <input 
-                                            className="p-2 text-lg rounded-lg bg-slate-50 w-20"
+                                            className={`p-2 text-lg rounded-lg bg-slate-50 w-20 ${form.weight.length === 0 ? "border-2 border-red-400 outline-2 outline-red-400" : ""}`}
                                             name="weight"
                                             placeholder="Role weight"
                                             type="number"
@@ -393,7 +399,7 @@ function EditProduction({ visible, setVisible, production }) {
                         })}
                     </form>
 
-                    <label className={`font-medium text-lg text-red-400 ${(error === 200) ? "hidden" : ""}`}>The production could not be edited.</label>
+                    <label className={`font-medium text-lg text-red-400 ${(error.current === 200) ? "hidden" : ""}`}>The production could not be edited. Check that all Role and Weight fields are not empty.</label>
 
                     <footer className="flex justify-end p-4 space-x-4">
                         <button onClick={submit} disabled={loading} className={`p-4 w-42 font-medium text-lg text-gray-100 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg shadow-md 
