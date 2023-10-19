@@ -228,6 +228,7 @@ function EditProduction({ visible, setVisible, production }) {
     const error = useRef(200);
     const [loading, setLoading] = useState(false);
     const forceUpdate = useForceUpdate();
+    const [maxSize, setMaxSize] = useState(24);
 
     useEffect(() => {
         const fields = [];
@@ -235,6 +236,14 @@ function EditProduction({ visible, setVisible, production }) {
             fields[i] = { role: production.roles[i], weight: production.roleWeights[i], member: production.members[i] };
         }
         setFormFields([...fields]);
+
+        const get = async () => {
+            const res = await fetch(process.env.API_URL + '/api/config/getByName?name=maxCrewSize');
+            const data = await res.json();
+
+            setMaxSize(data.value);
+        }
+        get().catch(console.error);
     }, [visible])
     
     useEffect(() => {
@@ -257,7 +266,7 @@ function EditProduction({ visible, setVisible, production }) {
     const addFields = (event, index) => {
         event.preventDefault();
 
-        if (formFields.length > 50) {
+        if (formFields.length >= maxSize) {
             alert("The maximum number of roles has been reached. Consider reprioritizing which roles are important" +
             " for the initial assignment.");
             return;
