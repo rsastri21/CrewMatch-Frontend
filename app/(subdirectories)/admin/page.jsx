@@ -498,6 +498,40 @@ function MaxProductionSizeUI() {
     
     const [value, setValue] = useState(24);
     const [enabled, setEnabled] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const get = async () => {
+            const res = await fetch(process.env.API_URL + '/api/config/getByName?name=maxCrewSize');
+            const data = await res.json();
+
+            setValue(data.value);
+        }
+        get().catch(console.error)
+    }, []);
+
+    const handleButtonClick = () => {
+
+        if (enabled) {
+            setLoading(true);
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: 'maxCrewSize',
+                    value: value
+                })
+            }
+            fetch(process.env.API_URL + '/api/config/update', requestOptions)
+                .then((res) => res.json())
+                .then((res) => console.log(res))
+                .finally(() => {
+                    setLoading(false);
+                });
+        }
+
+        setEnabled(!enabled);
+    }
 
     return (
         <section className="min-w-fit h-auto mx-auto bg-white rounded-2xl shadow-md">
@@ -514,17 +548,17 @@ function MaxProductionSizeUI() {
                     <h1 className="p-1 font-medium text-xl">{value}</h1>
                 </div>
                 <div className="w-156 h-fit p-2 flex-col text-center bg-white rounded-xl">
-                    <input className="w-full accent-sky-600" disabled={enabled} type="range" name="slider" value={value} min="10" max="60" onInput={(event) => setValue(event.target.value)}/>
-                    <div class="-mt-2 flex w-full justify-between">
-                        <span class="text-sm text-gray-600">10</span>
-                        <span class="text-sm text-gray-600">60</span>
+                    <input className="w-full accent-sky-600" disabled={!enabled} type="range" name="slider" value={value} min="10" max="60" onInput={(event) => setValue(event.target.value)}/>
+                    <div className="-mt-2 flex w-full justify-between">
+                        <span className="text-sm text-gray-600">10</span>
+                        <span className="text-sm text-gray-600">60</span>
                     </div>
                     <button 
-                        onClick={() => setEnabled(!enabled)}
-                        className={`mt-2 px-3 py-4 w-fit text-lg rounded-xl font-medium text-slate-100 bg-gradient-to-r ${!enabled ? "from-green-500 to-emerald-500" : "from-red-500 to-rose-500"}
-                                        shadow-md transition-all hover:scale-105 hover:shadow-lg active:scale-100 active:shadow-md
+                        onClick={() => handleButtonClick()}
+                        className={`mt-2 px-3 py-4 w-fit text-lg rounded-xl font-medium text-slate-100 bg-gradient-to-r ${enabled ? "from-green-500 to-emerald-500" : "from-red-500 to-rose-500"}
+                                        shadow-md transition-all hover:scale-105 hover:shadow-lg active:scale-100 active:shadow-md ${loading ? "cursor-wait" : ""}
                                     `}>
-                        {enabled ? "Unlock" : "Save"}
+                        {!enabled ? "Unlock" : "Save"}
                     </button>
                 </div>
             </div>
