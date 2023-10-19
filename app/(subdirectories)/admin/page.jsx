@@ -548,9 +548,9 @@ function MaxProductionSizeUI() {
                     <h1 className="p-1 font-medium text-xl">{value}</h1>
                 </div>
                 <div className="w-156 h-fit p-2 flex-col text-center bg-white rounded-xl">
-                    <input className="w-full accent-sky-600" disabled={!enabled} type="range" name="slider" value={value} min="10" max="60" onInput={(event) => setValue(event.target.value)}/>
+                    <input className="w-full accent-sky-600" disabled={!enabled} type="range" name="slider" value={value} min="15" max="60" onInput={(event) => setValue(event.target.value)}/>
                     <div className="-mt-2 flex w-full justify-between">
-                        <span className="text-sm text-gray-600">10</span>
+                        <span className="text-sm text-gray-600">15</span>
                         <span className="text-sm text-gray-600">60</span>
                     </div>
                     <button 
