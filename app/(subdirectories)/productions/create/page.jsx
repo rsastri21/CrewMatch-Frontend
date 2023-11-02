@@ -32,6 +32,7 @@ export default function CreateProductionForm() {
     const [error, setError] = useState(200);
     const [loading, setLoading] = useState(false);
     const [checked, setChecked] = useState(false);
+    const [maxSize, setMaxSize] = useState(24);
 
     const router = useRouter();
     const user = useSession();
@@ -39,6 +40,14 @@ export default function CreateProductionForm() {
 
     useEffect(() => {
         setFormFields([...initialData]);
+
+        const get = async () => {
+            const res = await fetch(process.env.API_URL + '/api/config/getByName?name=maxCrewSize');
+            const data = await res.json();
+
+            setMaxSize(data.value);
+        }
+        get().catch(console.error);
     }, []);
 
     const handleFormChange = (event, index) => {
@@ -62,7 +71,7 @@ export default function CreateProductionForm() {
     const addFields = (event, index) => {
         event.preventDefault();
 
-        if (formFields.length > 50) {
+        if (formFields.length >= maxSize) {
             alert("The maximum number of roles has been reached. Consider reprioritizing which roles are important" +
             " for the initial assignment.");
             return;

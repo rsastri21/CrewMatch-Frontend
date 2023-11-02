@@ -156,6 +156,7 @@ export default function AdminUI() {
             </div>
             <ManageUsers users={users} handleUsernameClick={handleUsernameClick} />
             <ExportCSVUI />
+            <MaxProductionSizeUI />
             {user.leads &&
                 <>
                     <SwapTable outgoing={false} form={formVisible} setForm={toggleForm} />
@@ -487,6 +488,78 @@ function ExportCSVUI() {
                             Include archived productions.
                         </label>
                     </div>
+                </div>
+            </div>
+        </section>
+    )
+}
+
+function MaxProductionSizeUI() {
+    
+    const [value, setValue] = useState(24);
+    const [enabled, setEnabled] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const get = async () => {
+            const res = await fetch(process.env.API_URL + '/api/config/getByName?name=maxCrewSize');
+            const data = await res.json();
+
+            setValue(data.value);
+        }
+        get().catch(console.error)
+    }, []);
+
+    const handleButtonClick = () => {
+
+        if (enabled) {
+            setLoading(true);
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: 'maxCrewSize',
+                    value: value
+                })
+            }
+            fetch(process.env.API_URL + '/api/config/update', requestOptions)
+                .then((res) => res.json())
+                .then((res) => console.log(res))
+                .finally(() => {
+                    setLoading(false);
+                });
+        }
+
+        setEnabled(!enabled);
+    }
+
+    return (
+        <section className="min-w-fit h-auto mx-auto bg-white rounded-2xl shadow-md">
+            <div className="bg-white h-fit w-full rounded-t-2xl drop-shadow-md flex">
+                <h1 className="px-3 py-4 font-medium text-2xl">Max Production Size</h1>
+            </div>
+            <div className="box-border px-2 pt-2 pb-2 w-full mx-auto h-auto flex flex-col justify-center gap-3">
+                <p className="p-2 my-2 w-156 text-lg mx-auto text-gray-900 bg-slate-100 rounded-lg">
+                    Adjust the maximum number of crew members allowed on a production by unlocking the slider, selecting a value, and clicking save. 
+                    This value determines the max size for future creations/edits made and will not shrink current productions over the new limit. 
+                </p>
+                <div className="w-156 h-fit p-2 flex justify-between bg-white border-2 border-slate-200 rounded-xl shadow-md">
+                    <h1 className="p-1 font-medium text-xl">Current Maximum Size: </h1>
+                    <h1 className="p-1 font-medium text-xl">{value}</h1>
+                </div>
+                <div className="w-156 h-fit p-2 flex-col text-center bg-white rounded-xl">
+                    <input className="w-full accent-sky-600" disabled={!enabled} type="range" name="slider" value={value} min="15" max="60" onInput={(event) => setValue(event.target.value)}/>
+                    <div className="-mt-2 flex w-full justify-between">
+                        <span className="text-sm text-gray-600">15</span>
+                        <span className="text-sm text-gray-600">60</span>
+                    </div>
+                    <button 
+                        onClick={() => handleButtonClick()}
+                        className={`mt-2 px-3 py-4 w-fit text-lg rounded-xl font-medium text-slate-100 bg-gradient-to-r ${enabled ? "from-green-500 to-emerald-500" : "from-red-500 to-rose-500"}
+                                        shadow-md transition-all hover:scale-105 hover:shadow-lg active:scale-100 active:shadow-md ${loading ? "cursor-wait" : ""}
+                                    `}>
+                        {!enabled ? "Unlock" : "Save"}
+                    </button>
                 </div>
             </div>
         </section>
