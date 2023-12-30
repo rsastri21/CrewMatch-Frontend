@@ -13,6 +13,7 @@ export default function AdminUI() {
     const user = useSession();
     const changeUser = useSessionUpdate();
     const [deleteModal, setDeleteModal] = useState(false);
+    const [deleteCandidateModal, setDeleteCandidateModal] = useState(false);
     const [userIndex, setUserIndex] = useState(0);
     const [visible, setVisible] = useState(false);
     const [users, setUsers] = useState([]);
@@ -22,6 +23,10 @@ export default function AdminUI() {
 
     const toggleDelete = () => {
         setDeleteModal(!deleteModal);
+    }
+
+    const toggleCandidateDelete = () => {
+        setDeleteCandidateModal(!deleteCandidateModal);
     }
 
     const handleUsernameClick = (event, index) => {
@@ -109,6 +114,32 @@ export default function AdminUI() {
                 </Transition.Child>
             </Transition>
 
+            <Transition show={deleteCandidateModal} className="z-50">
+                <Transition.Child
+                    enter="transition-opacity ease-out duration-200"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="transition-opacity ease-out duration-200"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                    className="fixed bottom-0 left-0 right-0 w-screen h-screen"
+                >
+                    <BackgroundOverlay />
+                </Transition.Child>
+                
+                <Transition.Child
+                    enter="transition-all ease-in-out duration-200"
+                    enterFrom="translate-y-full scale-50"
+                    enterTo="translate-y-0 scale-100"
+                    leave="transition-all ease-in-out duration-200"
+                    leaveFrom="translate-y-0 scale-100"
+                    leaveTo="translate-y-full scale-50"
+                    className="fixed bottom-0 left-0 right-0 w-screen h-screen"
+                >
+                    <DeleteCandidateModal visible={deleteCandidateModal} setVisible={toggleCandidateDelete} />
+                </Transition.Child>
+            </Transition>
+
             <Transition show={formVisible} className="z-50">
                 <Transition.Child
                     enter="transition-opacity ease-out duration-200"
@@ -163,6 +194,7 @@ export default function AdminUI() {
                     <SwapTable outgoing={true} form={formVisible} setForm={toggleForm} />
                 </>
             }
+            <DeleteCandidateBox visible={deleteCandidateModal} setVisible={toggleCandidateDelete} />
             <DeleteProductionBox visible={deleteModal} setVisible={toggleDelete} />
         </div>
     );
@@ -587,6 +619,96 @@ function DeleteProductionBox({ visible, setVisible }) {
             </div>
         </section>
     )
+}
+
+function DeleteCandidateBox({ visible, setVisible }) {
+    return (
+        <section className="w-fit min-w-min h-auto shadow-md mx-auto bg-white rounded-2xl flex flex-col">
+            <div className="w-full min-w-min h-fit bg-orange-300 rounded-t-2xl shadow-md">
+                <h1 className="px-3 py-4 text-gray-900 font-medium text-2xl min-w-fit">Delete All Candidates</h1>
+            </div>
+            <div className="box-border p-4 w-104 h-min rounded-b-2xl bg-orange-100 flex flex-col items-center space-y-6">
+                <p className="p-2 text-lg text-gray-900 bg-orange-50 rounded-lg">
+                    Delete all candidates to prepare for a future assignment cycle. It is recommended that this action is done 
+                    after archiving productions to maintain the previous assignment history. 
+                    <br></br>
+                    <span className="font-semibold">Warning:</span> This action cannot be undone, so please ensure that this deletion is intentional.
+                </p>
+                <button onClick={() => setVisible()} className="p-4 w-fit font-medium text-lg text-gray-100 bg-gradient-to-r from-red-500 to-rose-500 rounded-lg shadow-md 
+                                                hover:shadow-lg hover:bg-gradient-to-r hover:from-red-600 hover:to-rose-600 
+                                                active:bg-gradient-to-r active:from-red-700 active:to-rose-700">
+                    Delete Candidates
+                </button>
+            </div>
+        </section>
+    )
+}
+
+function DeleteCandidateModal({ visible, setVisible }) {
+    
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
+    const user = useSession();
+    const changeUser = useSessionUpdate();
+    
+    const handleEscPress = (event) => {
+        if (visible && event.key === 'Escape') {
+            setVisible();
+        }
+    };
+
+    useEffect(() => {
+        // Event listener
+        document.addEventListener('keydown', handleEscPress);
+
+        // Remove event listener
+        return () => {
+            document.removeEventListener('keydown', handleEscPress);
+        };
+    }, [visible]);
+
+    const handleDeletePress = (e) => {
+        
+        setLoading(true);
+        e.preventDefault();
+
+        const requestOptions = {
+            method: 'DELETE'
+        }
+
+        const deleteAll = async () => {
+            await fetch(process.env.API_URL + "/api/candidate/deleteAll", requestOptions);
+        }
+
+        deleteAll()
+            .catch(err => console.error(err))
+            .finally(() => {
+                setLoading(false);
+                router.push("/");
+            });
+        
+    }
+    
+    return (
+        <div className="fixed bottom-0 left-0 right-0 z-10 w-screen h-screen p-4 flex flex-col justify-center items-center">
+            <section className="w-1/4 h-auto bg-white rounded-2xl flex flex-col box-border p-4 shadow-2xl">
+                <h1 className="px-3 py-4 font-medium text-2xl text-center">Are you sure you want to delete all candidates?</h1>
+                <p className="text-lg text-center font-normal px-3 py-2 ">This action cannot be undone.</p>
+                <div className="w-full h-auto flex space-x-4 justify-center box-border p-4">
+                    <button onClick={(e) => handleDeletePress(e)} className="p-4 w-fit font-medium text-lg text-gray-100 bg-gradient-to-r from-red-500 to-rose-500 rounded-lg shadow-md 
+                                                    hover:shadow-lg hover:bg-gradient-to-r hover:from-red-600 hover:to-rose-600 
+                                                    active:bg-gradient-to-r active:from-red-700 active:to-rose-700">
+                        Confirm Delete
+                    </button>
+                    <button onClick={() => setVisible()} className="p-4 w-fit font-medium text-lg text-gray-100 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg shadow-md 
+                                                    hover:shadow-lg hover:bg-gradient-to-r hover:from-green-600 hover:to-emerald-600 
+                                                    active:bg-gradient-to-r active:from-green-700 active:to-emerald-700">
+                        Return to Page
+                    </button>
+                </div>
+            </section>
+        </div>
+    );   
 }
 
 function DeleteModal({ visible, setVisible }) {
