@@ -70,7 +70,7 @@ export default function ProductionUI({ params, }) {
                         {production.name}
                     </h1>
                     {production.archived &&
-                    <div className="w-fit h-16 mx-auto my-4 bg-orange-300 rounded-xl flex justify-center shadow-md">
+                    <div className="w-fit h-fit mx-auto my-4 bg-orange-300 rounded-xl flex justify-center shadow-md">
                         <BsFillExclamationTriangleFill className="w-14 h-14 ml-1 my-auto py-2"/>
                         <p className="text-2xl font-medium text-center text-gray-800 px-2 py-2 my-auto">
                             This production is archived.
