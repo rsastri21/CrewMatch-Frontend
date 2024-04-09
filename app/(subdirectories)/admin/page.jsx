@@ -625,11 +625,11 @@ function DeleteCandidateBox({ visible, setVisible }) {
     return (
         <section className="w-fit min-w-min h-auto shadow-md mx-auto bg-white rounded-2xl flex flex-col">
             <div className="w-full min-w-min h-fit bg-orange-300 rounded-t-2xl shadow-md">
-                <h1 className="px-3 py-4 text-gray-900 font-medium text-2xl min-w-fit">Delete All Candidates</h1>
+                <h1 className="px-3 py-4 text-gray-900 font-medium text-2xl min-w-fit">Delete All Unmatched Candidates</h1>
             </div>
             <div className="box-border p-4 w-104 h-min rounded-b-2xl bg-orange-100 flex flex-col items-center space-y-6">
                 <p className="p-2 text-lg text-gray-900 bg-orange-50 rounded-lg">
-                    Delete all candidates to prepare for a future assignment cycle. It is recommended that this action is done 
+                    Delete all unmatched candidates to prepare for a future assignment cycle. It is recommended that this action is done 
                     after archiving productions to maintain the previous assignment history. 
                     <br></br>
                     <span className="font-semibold">Warning:</span> This action cannot be undone, so please ensure that this deletion is intentional.
@@ -677,7 +677,7 @@ function DeleteCandidateModal({ visible, setVisible }) {
         }
 
         const deleteAll = async () => {
-            await fetch(process.env.API_URL + "/api/candidate/deleteAll", requestOptions);
+            await fetch(process.env.API_URL + "/api/candidate/deleteUnassigned", requestOptions);
         }
 
         deleteAll()
@@ -692,7 +692,7 @@ function DeleteCandidateModal({ visible, setVisible }) {
     return (
         <div className="fixed bottom-0 left-0 right-0 z-10 w-screen h-screen p-4 flex flex-col justify-center items-center">
             <section className="w-1/4 h-auto bg-white rounded-2xl flex flex-col box-border p-4 shadow-2xl">
-                <h1 className="px-3 py-4 font-medium text-2xl text-center">Are you sure you want to delete all candidates?</h1>
+                <h1 className="px-3 py-4 font-medium text-2xl text-center">Are you sure you want to delete all unmatched candidates?</h1>
                 <p className="text-lg text-center font-normal px-3 py-2 ">This action cannot be undone.</p>
                 <div className="w-full h-auto flex space-x-4 justify-center box-border p-4">
                     <button onClick={(e) => handleDeletePress(e)} className="p-4 w-fit font-medium text-lg text-gray-100 bg-gradient-to-r from-red-500 to-rose-500 rounded-lg shadow-md 
