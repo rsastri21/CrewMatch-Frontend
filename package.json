@@ -15,6 +15,7 @@
     "@ionic/react": "^6.4.1",
     "@next/font": "13.1.1",
     "@svgr/webpack": "^6.5.1",
+    "@vercel/analytics": "^1.2.2",
     "eslint": "8.31.0",
     "eslint-config-next": "13.1.1",
     "ionicons": "^6.0.4",
@@ -27,8 +28,13 @@
     "use-force-update": "^1.0.11"
   },
   "devDependencies": {
+    "@types/node": "20.12.7",
+    "@types/react": "^18.2.77",
     "autoprefixer": "^10.4.13",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-import": "^2.29.1",
     "postcss": "^8.4.20",
-    "tailwindcss": "^3.2.4"
+    "tailwindcss": "^3.2.4",
+    "typescript": "^5.4.5"
   }
 }

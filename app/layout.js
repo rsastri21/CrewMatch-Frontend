@@ -1,5 +1,8 @@
+'use client';
+
 import './globals.css';
 import { SessionProvider } from './SessionContext';
+import { Analytics } from '@vercel/analytics/react';
 import React from 'react';
 
 export default function RootLayout({ children }) {
@@ -11,7 +14,8 @@ export default function RootLayout({ children }) {
         <SessionProvider>
           {children}
         </SessionProvider>
-        </body>
+        <Analytics />
+      </body>
     </html>
   )
 }
