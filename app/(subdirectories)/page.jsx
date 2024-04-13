@@ -3,14 +3,14 @@
 import CandidateCard from "./components/CandidateCard";
 import ProductionCard from "./components/ProductionCard";
 
-import { useSession, useSessionUpdate } from "../SessionContext.js";
+import { useSession, useSessionUpdate } from "../SessionContext";
 
 export default function Page() {
     
     const user = useSession();
 
     const renderText = () => {
-        if (Object.keys(user).length === 0) {
+        if (user.username.length === 0) {
             return (
                 <p className="px-8 py-8 text-3xl text-center text-gray-800">
                     View glanceable information here or login to get started. 
@@ -21,19 +21,19 @@ export default function Page() {
             case 'user': 
                 return (
                     <p className="px-8 py-8 text-3xl text-center text-gray-800">
-                        Welcome, {user.username}. View glanceable information here.
+                        Welcome, {user.name}. View glanceable information here.
                     </p>
                 );
             case 'production head':
                 return (
                     <p className="px-8 py-8 text-3xl text-center text-gray-800">
-                        Welcome, {user.username}. View glanceable information here.
+                        Welcome, {user.name}. View glanceable information here.
                     </p>
                 );
             case 'admin':
                 return (
                     <p className="px-8 py-8 text-2xl xl:text-3xl text-center text-gray-800">
-                        Welcome, admin {user.username}. View glanceable information here.
+                        Welcome, admin {user.name}. View glanceable information here.
                     </p>
                 );
         }
