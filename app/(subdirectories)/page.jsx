@@ -2,6 +2,7 @@
 
 import CandidateCard from "./components/CandidateCard";
 import ProductionCard from "./components/ProductionCard";
+import RegistrationCard from "./components/RegistrationCard";
 
 import { useSession, useSessionUpdate } from "../SessionContext";
 
@@ -50,6 +51,9 @@ export default function Page() {
                     </p>
                     <hr className="h-px mt-8 mx-auto bg-gray-800 border-0 w-2/3 items-center"></hr>
                     {renderText()}
+                </div>
+                <div className="w-1/2 min-w-fit h-fit mx-auto mb-6 flex justify-center">
+                    <RegistrationCard />
                 </div>
                 <div className="w-1/2 h-fit space-y-6 mx-auto flex flex-col justify-center items-center lg:flex-row lg:space-x-4 lg:space-y-0 lg:items-start">
                     <CandidateCard />
