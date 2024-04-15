@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useState, createContext, useLayoutEffect, ReactNode } from 'react';
+import { useContext, useState, createContext, useEffect, ReactNode } from 'react';
 
 export interface User {
     username: string;
@@ -26,15 +26,19 @@ export function useSessionUpdate() {
 
 export function SessionProvider({ children }: { children: ReactNode }) {
     
-    const storedUserString: string | null = localStorage.getItem('user');
-    const storedUser: User | null = storedUserString ? JSON.parse(storedUserString!) : null;
-
-    const [user, setUser] = useState<User>(storedUser || {
+    const [user, setUser] = useState<User>({
         username: '',
         name: '',
         role: '',
         leads: '',
     });
+
+    useEffect(() => {
+        const storedUser: string | null = localStorage.getItem('user');
+        if (storedUser !== null) {
+            setUser(JSON.parse(storedUser!));
+        }
+    }, []);
 
     function changeSession(newUser: User) {
         setUser({...newUser});
