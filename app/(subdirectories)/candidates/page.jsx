@@ -14,7 +14,7 @@ export default function Candidate() {
         setShowHeaderForm(!showHeaderForm);
     }
 
-    if (user.role === undefined) {
+    if (user.role.length === 0) {
         return (
             <div className="bg-gradient-to-r from-cyan-200 to-teal-200 flex flex-col min-h-screen h-auto w-screen pb-16">
                 <div className="w-2/3 h-min min-w-half mx-auto justify-center">

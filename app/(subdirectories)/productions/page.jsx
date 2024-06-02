@@ -45,7 +45,7 @@ export default function Productions() {
         router.push("/productions/create");
     }
 
-    if (user.role === undefined) {
+    if (user.role.length === 0) {
         return (
             <div className="bg-gradient-to-r from-green-200 to-emerald-200 flex flex-col min-h-screen h-auto w-screen pb-16">
                 <section className="w-1/2 h-min min-w-half mx-auto justify-center">
