@@ -1,7 +1,7 @@
 "use client";
 
 import { useLayoutEffect, useEffect, useState } from "react";
-import { useSession, useSessionUpdate } from "../../SessionContext.js";
+import { useSession, useSessionUpdate } from "../../SessionContext";
 import { useRouter } from 'next/navigation';
 import { FaUserEdit } from "react-icons/fa";
 import { AiOutlineUser } from "react-icons/ai";

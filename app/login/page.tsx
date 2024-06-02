@@ -2,38 +2,49 @@
 
 import { GrGroup } from "react-icons/gr";
 import { useState } from 'react';
-import { useSession, useSessionUpdate } from "../SessionContext.js";
+import { useSession, useSessionUpdate, User } from "../SessionContext";
 import { useRouter } from 'next/navigation';
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
+
+interface LoginData {
+    username: string;
+    password: string;
+}
 
 export default function Login() {
     
-    const router = useRouter();
-    const [data, setData] = useState({
-        username: "",
-        password: ""
+    const router: AppRouterInstance = useRouter();
+    const [formData, setFormData] = useState<LoginData>({
+        username: '',
+        password: ''
     });
 
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState("");
 
     const changeUser = useSessionUpdate();
-    const { username, password } = data;
+    const { username, password }: { username: string, password: string} = formData;
 
-    const handleChange = e => {
-        setData({...data, [e.target.name]: e.target.value});
+    const handleChange = (e: any) => {
+        setFormData({...formData, [e.target.name]: e.target.value});
     }
 
-    const submitForm = e => {
+    const submitForm = (e: any) => {
         setLoading(true);
     
         e.preventDefault();
 
-        let user = {};
+        const user: User = {
+            username: "",
+            name: "",
+            role: "",
+            leads: null
+        };
 
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
+            body: JSON.stringify(formData)
         }
         fetch(process.env.API_URL + "/api/user/login", requestOptions)
             .then((res) => {
@@ -52,14 +63,17 @@ export default function Login() {
             })
             .then((data) => {
                 if (data !== "error") {
-                    user = { username: username, role: data[0], leads: data[1] };
+                    user.username = username;
+                    user.name = data[0];
+                    user.role = data[1];
+                    user.leads = data[2]; 
                 }
             })
             .catch((err) => {
                 console.error(err);
             }).finally(() => {
                 setLoading(false);
-                if (Object.keys(user).length !== 0) {
+                if (user.username.length !== 0) {
                     changeUser(user);
                     localStorage.setItem("user", JSON.stringify(user));
                     router.push("/");

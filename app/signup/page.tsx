@@ -2,47 +2,71 @@
 
 import { GrGroup } from "react-icons/gr";
 import { useState } from 'react';
-import { useSession, useSessionUpdate } from "../SessionContext.js";
+import { User, useSession, useSessionUpdate } from "../SessionContext";
 import { useRouter } from 'next/navigation';
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.js";
+
+interface SignUpData {
+    name: string;
+    username: string;
+    password: string;
+    // Optional field to validate password before sending register request
+    confirmPassword?: string;
+}
+
 
 export default function Signup() {
     
-    const router = useRouter();
-    const [data, setData] = useState({
+    const router: AppRouterInstance = useRouter();
+    const [data, setData] = useState<SignUpData>({
+        name: "",
         username: "",
         password: "",
         confirmPassword: "",
     });
 
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string>("");
 
     const changeUser = useSessionUpdate();
-    const { username, password, confirmPassword } = data;
+    const { name, username, password, confirmPassword } = data;
 
-    const handleChange = e => {
-        setData({...data, [e.target.name]: e.target.value});
+    const handleChange = (e: any) => {
+        setData({ ...data, [e.target.name]: e.target.value });
     }
 
-    const submitForm = e => {
+    const submitForm = (e: any) => {
         
         if (data.confirmPassword !== data.password) {
             setError("The passwords do not match.");
             return;
         }
 
-        // Check fields are present
-        if (data.password.length === 0 || data.username.length === 0) {
+        // Check fields are present before registering
+        if (data.password.length === 0 || data.username.length === 0 || data.name.length === 0) {
+            setError("Enter missing information.");
             return;
         }
 
         delete data.confirmPassword;
 
+        // Trim username and name
+        setData({
+            ...data,
+            username: data.username.trim(),
+            name: data.name.trim()
+        });
+
         setLoading(true);
     
         e.preventDefault();
 
-        let user = {};
+        const user: User = {
+            name: '',
+            username: '',
+            role: '',
+            leads: '',
+        };
 
         const requestOptions = {
             method: 'POST',
@@ -66,14 +90,17 @@ export default function Signup() {
             })
             .then((status) => {
                 if (status === 201) {
-                    user = { username: username, role: "user", leads: null };
+                    user.name = name;
+                    user.username = username;
+                    user.role = 'user';
+                    user.leads = null;
                 }
             })
             .catch((err) => {
                 console.error(err);
             }).finally(() => {
                 setLoading(false);
-                if (Object.keys(user).length !== 0) {
+                if (user.username.length !== 0) {
                     changeUser(user);
                     localStorage.setItem("user", JSON.stringify(user));
                     router.push("/");
@@ -84,7 +111,7 @@ export default function Signup() {
     
     return (
         <div className="min-h-screen w-screen grid grid-cols-1 xl:grid-cols-5">
-            <section className="xl:col-span-3 xl:h-full h-fit xl:pt-0 pt-8 w-full bg-gradient-to-b xl:bg-gradient-to-r from-emerald-200 to-teal-200 flex flex-col justify-center">
+            <section className="xl:col-span-3 xl:h-full h-full xl:pt-0 pt-8 w-full bg-gradient-to-b xl:bg-gradient-to-r from-emerald-200 to-teal-200 flex flex-col justify-center">
                 <GrGroup className="w-28 h-28 xl:w-48 xl:h-48 mx-auto"/>
                 <p className="p-4 xl:p-8 text-6xl xl:text-8xl text-gray-900 mx-auto font-semibold">
                     Crew Match
@@ -101,6 +128,8 @@ export default function Signup() {
                     </section>
                     <form onSubmit={submitForm} className={`mt-8 mb-6 w-full min-w-fit rounded-2xl shadow-md py-8 px-4 grid grid-cols-2 grid-rows-2 gap-8 hover:scale-[102%] transition-all
                                                             ${error.length > 0 ? "border border-red-400" : ""}`}>
+                        <label className="w-full min-w-fit px-4 py-6 text-2xl font-medium">Name:</label>
+                        <input onChange={handleChange} className="w-full min-w-fit px-4 py-4 text-xl font-normal border-2 rounded-xl" placeholder="First and last name" type="text" name="name" value={name}></input>
                         <label className="w-full min-w-fit px-4 py-6 text-2xl font-medium">Username:</label>
                         <input onChange={handleChange} className="w-full min-w-fit px-4 py-4 text-xl font-normal border-2 rounded-xl" placeholder="Enter a username" type="text" name="username" value={username}></input>
                         <label className="w-full min-w-fit px-4 py-6 text-2xl font-medium">Password:</label>

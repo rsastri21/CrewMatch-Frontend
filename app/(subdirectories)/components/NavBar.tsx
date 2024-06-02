@@ -5,18 +5,24 @@ import { BiUserCircle, BiChevronDown } from "react-icons/bi";
 import { FcSettings, FcUndo } from "react-icons/fc";
 import Link from "next/link";
 import { Menu, Transition } from "@headlessui/react";
-import { useSession, useSessionUpdate } from "../../SessionContext.js";
+import { ChangeUser, User, useSession, useSessionUpdate } from "../../SessionContext";
 import { Fragment } from "react";
 import { useRouter } from "next/navigation";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 
 export default function NavBar() {
     
-    const user = useSession();
-    const updateUser = useSessionUpdate();
-    const router = useRouter();
+    const user: User = useSession();
+    const updateUser: ChangeUser = useSessionUpdate();
+    const router: AppRouterInstance = useRouter();
 
     function handleSignOut() {
-        updateUser({});
+        updateUser({
+            username: '',
+            name: '',
+            role: '',
+            leads: null,
+        });
         localStorage.removeItem('user');
         router.push("/");
     }
@@ -33,13 +39,13 @@ export default function NavBar() {
             
             <ul className="flex items-center mr-8 space-x-4">
                 <Link href="/about" className="px-4 py-2 text-md font-medium bg-slate-100 rounded-md shadow-sm hover:bg-slate-200 hover:shadow-md active:bg-slate-300">About</Link>
-                {(user.role === "user" || Object.keys(user).length === 0) ? null :
+                {(user.role === "user" || user.username.length === 0) ? null :
                     <>
                         <Link href="/candidates" className="px-4 py-2 text-md font-medium bg-slate-100 rounded-md shadow-sm hover:bg-slate-200 hover:shadow-md active:bg-slate-300">Candidates</Link>
                         <Link href="/productions" className="px-4 py-2 text-md font-medium bg-slate-100 rounded-md shadow-sm hover:bg-slate-200 hover:shadow-md active:bg-slate-300">Productions</Link>
                     </>
                 }
-                {Object.keys(user).length === 0 ? 
+                {user.username.length === 0 ? 
                     <Link href="/login" className="px-4 py-2 text-md font-medium bg-slate-100 rounded-md shadow-sm hover:bg-slate-200 hover:shadow-md active:bg-slate-300">Log In</Link>
                     :
                     <UserOptions user={user} signOut={handleSignOut} />
@@ -49,9 +55,12 @@ export default function NavBar() {
     );
 }
 
-function UserOptions({ user, signOut }) {
+function UserOptions({ user, signOut }: {
+    user: User,
+    signOut: () => void,
+}) {
     
-    const router = useRouter();
+    const router: AppRouterInstance = useRouter();
 
     return (
         <Menu as="div" className="relative">

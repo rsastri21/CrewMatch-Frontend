@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { Transition } from "@headlessui/react";
-import { useSession } from "../../SessionContext.js";
-import CandidateTable from "./CandidateTable.jsx";
+import { useSession } from "../../SessionContext";
+import CandidateTable from "./CandidateTable";
 
 export default function Candidate() {
 
