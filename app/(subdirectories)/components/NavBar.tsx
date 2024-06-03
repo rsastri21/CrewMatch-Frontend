@@ -45,6 +45,11 @@ export default function NavBar() {
                         <Link href="/productions" className="px-4 py-2 text-md font-medium bg-slate-100 rounded-md shadow-sm hover:bg-slate-200 hover:shadow-md active:bg-slate-300">Productions</Link>
                     </>
                 }
+                {(user.role.length === 0) ? null :
+                    <>
+                        <Link href="/awards" className="px-4 py-2 text-md font-medium bg-slate-100 rounded-md shadow-sm hover:bg-slate-200 hover:shadow-md active:bg-slate-300">Awards</Link>
+                    </>
+                }
                 {user.username.length === 0 ? 
                     <Link href="/login" className="px-4 py-2 text-md font-medium bg-slate-100 rounded-md shadow-sm hover:bg-slate-200 hover:shadow-md active:bg-slate-300">Log In</Link>
                     :
