@@ -1,14 +1,26 @@
 "use client";
 
+import { useEffect } from "react";
+
 import CandidateCard from "./components/CandidateCard";
 import ProductionCard from "./components/ProductionCard";
 import RegistrationCard from "./components/RegistrationCard";
 
 import { useSession, useSessionUpdate } from "../SessionContext";
+import posthog from "posthog-js";
 
 export default function Page() {
     
     const user = useSession();
+    
+    useEffect(() => {
+        if (user.username.length > 0) {
+            posthog.identify(
+                user.username,
+                { name: user.name, role: user.role }
+            );
+        }
+    }, []);
 
     const renderText = () => {
         if (user.username.length === 0) {

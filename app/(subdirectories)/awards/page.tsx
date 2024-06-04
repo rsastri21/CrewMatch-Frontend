@@ -5,6 +5,7 @@ import { User, useSession } from "../../SessionContext";
 import { countVote, extractAwardCategory, transformCSVFile } from "../../utils/AwardsCSVTransformer";
 import { AWARDS, ProcessedAwardsVotingData, VotingResults } from "../../utils/AwardsTypes";
 import { BiCameraMovie, BiTrophy } from "react-icons/bi";
+import posthog from "posthog-js";
 
 
 export default function Awards(): JSX.Element {
@@ -86,6 +87,7 @@ const UploadCard = ({ setVotingData, setVotingResults }: UploadCardProps): JSX.E
         const { files } = event.target;
         if (files && files[0]) {
             setFile(files[0]);
+            posthog.capture('csv file uploaded');
         }
     }
 
@@ -142,6 +144,8 @@ const ProcessVoteCard = ({ votingData, setVotingResults }: ProcessVoteCardProps)
         if (!votingData) {
             return;
         }
+
+        posthog.capture('LUXies voting results retrieved');
 
         const results: VotingResults = {};
 

@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useSession, useSessionUpdate, User } from "../SessionContext";
 import { useRouter } from 'next/navigation';
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
+import posthog from "posthog-js";
 
 interface LoginData {
     username: string;
@@ -71,11 +72,17 @@ export default function Login() {
             })
             .catch((err) => {
                 console.error(err);
+                posthog.capture('login failed');
             }).finally(() => {
                 setLoading(false);
                 if (user.username.length !== 0) {
                     changeUser(user);
                     localStorage.setItem("user", JSON.stringify(user));
+                    posthog.identify(
+                        user.username,
+                        { name: user.name, role: user.role }
+                    );
+                    posthog.capture('user logged in');
                     router.push("/");
                 }
             });

@@ -9,6 +9,7 @@ import { ChangeUser, User, useSession, useSessionUpdate } from "../../SessionCon
 import { Fragment } from "react";
 import { useRouter } from "next/navigation";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
+import posthog from "posthog-js";
 
 export default function NavBar() {
     
@@ -24,6 +25,7 @@ export default function NavBar() {
             leads: null,
         });
         localStorage.removeItem('user');
+        posthog.reset();
         router.push("/");
     }
     

@@ -9,7 +9,9 @@
           },
           reactStrictMode: true,
           env: {
-            API_URL: "http://localhost:8080"
+            API_URL: "http://localhost:8080",
+            NEXT_PUBLIC_POSTHOG_KEY: "phc_lXKrOLIKzQ85vVsDLidPHuSbd5QSTwCXFM1qrLZqtew",
+            NEXT_PUBLIC_POSTHOG_HOST: "https://us.i.posthog.com"
           }
       }
     }
@@ -19,8 +21,11 @@
         appDir: true,
       },
       reactStrictMode: true,
+      skipTrailingSlashRedirect: true,
       env: {
-        API_URL: "https://crew-match.herokuapp.com"
+        API_URL: "https://crew-match.herokuapp.com",
+        NEXT_PUBLIC_POSTHOG_KEY: "phc_lXKrOLIKzQ85vVsDLidPHuSbd5QSTwCXFM1qrLZqtew",
+        NEXT_PUBLIC_POSTHOG_HOST: "https://us.i.posthog.com"
       }
     }
     

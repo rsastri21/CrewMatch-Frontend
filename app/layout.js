@@ -2,7 +2,7 @@
 
 import './globals.css';
 import { SessionProvider } from './SessionContext';
-import { Analytics } from '@vercel/analytics/react';
+import { CSPostHogProvider } from './providers';
 import React from 'react';
 
 export default function RootLayout({ children }) {
@@ -10,12 +10,13 @@ export default function RootLayout({ children }) {
   return (
     <html>
       <head />
-      <body>
-        <SessionProvider>
-          {children}
-        </SessionProvider>
-        <Analytics />
-      </body>
+      <CSPostHogProvider>
+        <body>
+          <SessionProvider>
+            {children}
+          </SessionProvider>
+        </body>
+      </CSPostHogProvider>
     </html>
   )
 }
