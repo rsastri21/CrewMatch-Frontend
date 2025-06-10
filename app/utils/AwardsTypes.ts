@@ -1,24 +1,25 @@
 export enum AWARDS {
-    SCREENPLAY = 'Screenplay',
-    COSTUME_AND_MAKEUP = 'Costume and Makeup',
-    PRODUCTION_DESIGN = 'Production Design',
-    GAFFING = 'Gaffing',
-    SOUND = 'Sound',
-    SCORE = 'Score',
-    EDITING = 'Editing',
-    SUPPORTING_ACTOR = 'Supporting Actor',
-    LEAD_ACTOR = 'Lead Actor',
-    CINEMATOGRAPHY = 'Cinematography',
-    DIRECTOR = 'Director',
-    INDEPENDENT_FILM = 'Independent Film',
-    PICTURE = 'Picture',
-    PEOPLES_CHOICE = 'People\'s Choice',
+    SCREENPLAY = "Screenplay",
+    COSTUME_AND_MAKEUP = "Costume and Makeup",
+    PRODUCTION_DESIGN = "Production Design",
+    GAFFING = "Gaffing",
+    SOUND = "Sound",
+    SCORE = "Score",
+    EDITING = "Editing",
+    SUPPORTING_ACTOR = "Supporting Actor",
+    LEAD_ACTOR = "Lead Actor",
+    CINEMATOGRAPHY = "Cinematography",
+    DIRECTOR = "Director",
+    INDEPENDENT_FILM = "Independent Film",
+    PICTURE = "Picture",
+    PEOPLES_CHOICE = "People's Choice",
+    PRODUCER = "Producer",
 }
 
 export enum CHOICES {
-    FIRST = '[First Choice]',
-    SECOND = '[Second Choice]',
-    THIRD = '[Third Choice]',
+    FIRST = "[First Choice]",
+    SECOND = "[Second Choice]",
+    THIRD = "[Third Choice]",
 }
 
 export interface AwardKey {

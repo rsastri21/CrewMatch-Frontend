@@ -205,7 +205,7 @@ const VotingResultsGallery = ({ votingResults }: VotingResultsGalleryProps) => {
 
 const ResultCard = ({ award, winner }: { award: string; winner: string }): JSX.Element => {
     return (
-        <div className="w-auto min-w-fit h-fit bg-white px-2 py-3 rounded-2xl shadow-md flex flex-col items-start space-y-4">
+        <div className="w-auto min-w-fit max-w-156 h-fit bg-white px-2 py-3 rounded-2xl shadow-md flex flex-col items-start space-y-4">
             <div className="w-full min-w-fit flex justify-start shadow-md rounded-lg p-1">
                 <BiTrophy className="w-12 h-12 p-2" />
                 <p className="px-2 py-3 font-semibold text-xl">{award === 'People\'s Choice' ? '' : 'Best '} {award}</p>
